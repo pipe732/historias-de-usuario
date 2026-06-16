@@ -3,7 +3,6 @@ Django settings for core project.
 """
 
 from pathlib import Path
-from decouple import config as env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,7 +11,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ─────────────────────────────────────────────────────────────
 #  SEGURIDAD
 # ─────────────────────────────────────────────────────────────
-SECRET_KEY = env('SECRET_KEY')
+# ADVERTENCIA: cambia esta clave en producción y nunca la publiques
+SECRET_KEY = 'django-insecure-)1t4q$yd=#qejd0tu*58*n89e8i^(=)&*=5()7it#l0b997(w^'
 
 DEBUG = True
 
@@ -37,8 +37,6 @@ INSTALLED_APPS = [
     'pagina_principal',
     'mantenimiento',
     'reportes',
-    'debug_toolbar',
-    'configuracion'
 ]
 
 MIDDLEWARE = [
@@ -49,7 +47,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -75,28 +72,20 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # ─────────────────────────────────────────────────────────────
 #  BASE DE DATOS
 # ─────────────────────────────────────────────────────────────
-_DB_ENGINE = env('DB_ENGINE', default='nube')
-
-if _DB_ENGINE == 'local':
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'neondb',
+        'USER': 'neondb_owner',
+        'PASSWORD': 'npg_P4mVbJ6ckRad',
+        'HOST': 'ep-snowy-hall-ap8oi5l1-pooler.c-7.us-east-1.aws.neon.tech',
+        'PORT': '5432',
+        'CONN_MAX_AGE': 300, #cambiamos el valor de 0  a 300 para reutilizar conexiones cada 5 minutos y mejorar el rendimiento   
+        'OPTIONS': {
+        'sslmode': 'require',
+        },
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': env('DB_NAME', default='neondb'),
-            'USER': env('DB_USER', default=''),
-            'PASSWORD': env('DB_PASSWORD', default=''),
-            'HOST': env('DB_HOST', default=''),
-            'PORT': env('DB_PORT', default='5432'),
-            'CONN_MAX_AGE': 300,
-            'OPTIONS': {'sslmode': 'require'},
-        }
-    }
+}
 
 
 # ─────────────────────────────────────────────────────────────
@@ -113,9 +102,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # ─────────────────────────────────────────────────────────────
 #  INTERNACIONALIZACIÓN
 # ─────────────────────────────────────────────────────────────
-LANGUAGE_CODE = 'es-co'
+LANGUAGE_CODE = 'es-co'   # ✅ cambiado a español Colombia
 
-TIME_ZONE = 'America/Bogota'
+TIME_ZONE = 'America/Bogota'  # ✅ zona horaria correcta
 
 USE_I18N = True
 USE_TZ = True
@@ -134,27 +123,27 @@ MEDIA_ROOT = BASE_DIR / 'media'
 #  SESIONES
 # ─────────────────────────────────────────────────────────────
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_AGE = 3600
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 3600          # sesión expira en 1 hora (segundos)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # cierra sesión al cerrar el navegador
 
 
 # ─────────────────────────────────────────────────────────────
-#  REDIRECCIONES DE AUTH
+#  REDIRECCIONES DE AUTH  ✅ corregidas
 # ─────────────────────────────────────────────────────────────
-LOGIN_URL = '/'
-LOGIN_REDIRECT_URL = '/home/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/'               # si no está logueado, va al login (ruta raíz)
+LOGIN_REDIRECT_URL = '/home/' # después de login exitoso, va a home
+LOGOUT_REDIRECT_URL = '/'     # después de logout, vuelve al login
 
 
 # ─────────────────────────────────────────────────────────────
-#  CORREO
+#  CORREO (configura con tus credenciales reales)
 # ─────────────────────────────────────────────────────────────
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = 'mineinventory01@gmail.com'       
+EMAIL_HOST_PASSWORD = 'koww utbl mhzs cayf'    
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
@@ -162,7 +151,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 #  CAMPO PK POR DEFECTO
 # ─────────────────────────────────────────────────────────────
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
+# Permite que JS lea la cookie CSRF
 CSRF_COOKIE_HTTPONLY = False
 # Silencia el warning Cross-Origin-Opener-Policy en desarrollo HTTP
 # (en producción con HTTPS esto no es necesario)
@@ -171,4 +160,3 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 # Permite que JS lea la cookie CSRF (ya estaba, confirmar que existe)
 CSRF_COOKIE_HTTPONLY = False
  
-INTERNAL_IPS = ['127.0.0.1']

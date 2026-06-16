@@ -19,9 +19,3 @@ urlpatterns = [
     path('reportes/', include('reportes.urls')),
     path('configuracion/', include('configuracion.urls')),
 ]
-
-if settings.DEBUG:
-    import debug_toolbar
-    urlpatterns += [
-        path('__debug__/', include(debug_toolbar.urls)),
-    ]
