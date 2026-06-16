@@ -200,9 +200,11 @@ aside::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius
     transition: color .15s, background .15s, border-color .15s;
     cursor: pointer;
 }
-.nav-link i {
+.nav-link i,
+.nav-link .nav-icon {
     font-size: 1rem;
     width: 20px;
+    height: 20px;
     text-align: center;
     flex-shrink: 0;
     opacity: .6;
@@ -213,14 +215,16 @@ aside::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius
     background: rgba(255,255,255,.07);
     border-left-color: rgba(152,71,62,.35);
 }
-.nav-link:hover i { opacity: 1; }
+.nav-link:hover i,
+.nav-link:hover .nav-icon { opacity: 1; }
 .nav-link.active {
     color: var(--cream) !important;
     background: rgba(152,71,62,.13);
     border-left-color: var(--rust);
     font-weight: 700;
 }
-.nav-link.active i { opacity: 1; color: #c47a74; }
+.nav-link.active i,
+.nav-link.active .nav-icon { opacity: 1; color: #c47a74; }
 
 .nav-pill {
     margin-left: auto;
