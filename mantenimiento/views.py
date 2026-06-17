@@ -558,8 +558,8 @@ def registrar_desde_inventario(request):
 
     if form.is_valid():
         mantenimiento = form.save(commit=False)
-        mantenimiento.producto = producto
-
+        mantenimiento.producto = producto #Esta linea corrige el error de la query duplicada
+        
         # Auditoría: asignar creado_por desde la sesión propia
         doc = request.session.get("usuario_documento")
         if doc:
