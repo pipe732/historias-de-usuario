@@ -558,6 +558,7 @@ def registrar_desde_inventario(request):
 
     if form.is_valid():
         mantenimiento = form.save(commit=False)
+        mantenimiento.producto = producto
 
         # Auditoría: asignar creado_por desde la sesión propia
         doc = request.session.get("usuario_documento")
