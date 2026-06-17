@@ -1,63 +1,88 @@
 # devoluciones/models.py
 from django.db import models
-from prestamo.models import Prestamo, ItemPrestamo
+from prestamo.models import DetallePrestamo   # FK principal según el MER
+from herramienta.models import Herramienta    # FK directa según el MER
 
 
-class Devolucion(models.Model):
+class DevolucionHerramienta(models.Model):
+    """
+    Representa la devolución de una herramienta asociada a un detalle de préstamo.
 
-    numero_orden = models.CharField(max_length=100, default='', blank=True)
-    producto = models.CharField(max_length=255, default='', blank=True)
-    cantidad = models.PositiveIntegerField(default=1)
-    prestamo = models.ForeignKey(
-        Prestamo,
+    Relaciones según el MER:
+      - detalle_prestamo (FK) → tabla detalle_prestamo
+      - herramienta      (FK) → tabla herramienta
+    """
+
+    detalle_prestamo = models.ForeignKey(
+        DetallePrestamo,
         on_delete=models.PROTECT,
         related_name='devoluciones',
-        verbose_name='Préstamo',
+        verbose_name='Detalle de préstamo',
     )
-    items = models.ManyToManyField(
-        ItemPrestamo,
+    herramienta = models.ForeignKey(
+        Herramienta,
+        on_delete=models.PROTECT,
         related_name='devoluciones',
-        verbose_name='Ítems devueltos',
+        verbose_name='Herramienta',
+    )
+    observaciones = models.TextField(
         blank=True,
+        default='',
+        verbose_name='Observaciones',
     )
-    devolucion_total = models.BooleanField(
-        default=True,
-        help_text='True = todas las herramientas; False = devolución parcial',
-    )
-    motivo = models.TextField()
+
+    # ── Auditoría ──────────────────────────────────────────────────────────────
     fecha_creacion      = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
 
+    # ── Representación ─────────────────────────────────────────────────────────
     def __str__(self):
-        tipo = "total" if self.devolucion_total else "parcial"
-        return f"Devolución #{self.id} ({tipo}) — Préstamo #{self.prestamo_id}"
+        return (
+            f"Devolución #{self.pk} — "
+            f"Herramienta: {self.herramienta} — "
+            f"Detalle préstamo #{self.detalle_prestamo_id}"
+        )
 
-    def aplicar(self, cantidades=None):
+    # ── Lógica de negocio ──────────────────────────────────────────────────────
+    def aplicar(self):
         """
-        Marca los ítems seleccionados como devueltos,
-        restaura el stock en inventario y recalcula el estado del préstamo.
+        Marca el detalle de préstamo como devuelto y restaura el stock
+        de la herramienta en el inventario (Stock).
 
-        :param cantidades: dict opcional {item_pk: cantidad_a_devolver}.
-                           Si no se pasa, se usa la cantidad completa de cada ítem.
+        Llama a actualizar_estado() en el préstamo padre para recalcular
+        si el préstamo completo quedó cerrado.
         """
-        if cantidades is None:
-            cantidades = {}
+        detalle = self.detalle_prestamo
 
-        for item in self.items.select_related('producto'):
-            cantidad_devuelta = cantidades.get(item.pk, item.cantidad)
-            # Sanitizar: nunca devolver más de lo prestado
-            cantidad_devuelta = max(1, min(cantidad_devuelta, item.cantidad))
+        # 1. Marcar el ítem como devuelto
+        detalle.devuelto = True
+        detalle.save(update_fields=['devuelto'])
 
-            item.devuelto = True
-            item.save(update_fields=['devuelto'])
+        # 2. Restaurar stock: la cantidad a restaurar viene del detalle
+        herramienta = self.herramienta
+        herramienta.stock += detalle.cantidad
+        herramienta.save(update_fields=['stock'])
 
-            # Restaurar stock al inventario
-            item.producto.stock += cantidad_devuelta
-            item.producto.save(update_fields=['stock', 'actualizado_en'])
+        # 3. Recalcular estado del préstamo padre
+        detalle.prestamo.actualizar_estado()
 
-        self.prestamo.actualizar_estado()
-
+    # ── Meta ───────────────────────────────────────────────────────────────────
     class Meta:
-        verbose_name        = 'Devolución'
-        verbose_name_plural = 'Devoluciones'
+        db_table            = 'devolucion_herramienta'   # nombre exacto del MER
+        verbose_name        = 'Devolución de herramienta'
+        verbose_name_plural = 'Devoluciones de herramientas'
         ordering            = ['-fecha_creacion']
+        constraints = [
+            # Una herramienta no puede devolverse dos veces en el mismo detalle
+            models.UniqueConstraint(
+                fields=['detalle_prestamo', 'herramienta'],
+                name='unique_devolucion_por_detalle_herramienta',
+            )
+        ]    estado = models.ForeignKey(
+                'bitacora.BitacoraEstado',           # ← app.Modelo de tu proyecto
+                on_delete=models.PROTECT,
+                related_name='prestamos',
+                verbose_name='Estado',
+                help_text='Estado actual del préstamo (referencia a bitácora de estados).',
+            )
+        
