@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'pagina_principal',
     'mantenimiento',
     'reportes',
-    'debug_toolbar', #Herramienta para debugging.
-]
+    'configuracion',
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -48,7 +48,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware', #Herramienta para debugging.
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -115,8 +114,9 @@ USE_TZ = True
 # ─────────────────────────────────────────────────────────────
 #  ARCHIVOS ESTÁTICOS Y MEDIA
 # ─────────────────────────────────────────────────────────────
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -162,4 +162,3 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 # Permite que JS lea la cookie CSRF (ya estaba, confirmar que existe)
 CSRF_COOKIE_HTTPONLY = False
  
-INTERNAL_IPS = ['127.0.0.1']

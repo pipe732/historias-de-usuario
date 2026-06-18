@@ -28,9 +28,9 @@ logger = logging.getLogger(__name__)
 
 DOC_RULES = {
     'CC': re.compile(r'^\d{6,10}$'),
-    'CE': re.compile(r'^[A-Za-z0-9]{12}$'),
-    'PP': re.compile(r'^[A-Za-z0-9]{9}$'),
-    'TI': re.compile(r'^\d{10}$'),
+    'CE': re.compile(r'^[A-Za-z0-9]{6,12}$'),
+    'PP': re.compile(r'^[A-Za-z0-9]{5,9}$'),
+    'TI': re.compile(r'^\d{10,11}$'),
 }
 DOC_LABELS = {
     'CC': 'Cédula de Ciudadanía',
@@ -39,14 +39,14 @@ DOC_LABELS = {
     'TI': 'Tarjeta de Identidad',
 }
 DOC_HINTS = {
-    'CC': 'La Cédula de Ciudadanía debe tener entre 10 dígitos.',
-    'CE': 'La Cédula de Extranjería debe tener entre 12 caracteres alfanuméricos.',
-    'PP': 'El Pasaporte debe tener entre 9 caracteres alfanuméricos.',
-    'TI': 'La Tarjeta de Identidad debe tener 10 dígitos.',
+    'CC': 'La Cédula de Ciudadanía debe tener entre 6 y 10 dígitos.',
+    'CE': 'La Cédula de Extranjería debe tener entre 6 y 12 caracteres alfanuméricos.',
+    'PP': 'El Pasaporte debe tener entre 5 y 9 caracteres alfanuméricos.',
+    'TI': 'La Tarjeta de Identidad debe tener 10 u 11 dígitos.',
 }
 TIPOS_VALIDOS = set(DOC_RULES.keys())
-
-ROLES = [{'id': r[0], 'nombre': r[1]} for r in Usuario.ROL_CHOICES]
+ROLES_VALIDOS = [r[0] for r in Usuario.ROL_CHOICES]
+ROLES         = [{'id': r[0], 'nombre': r[1]} for r in Usuario.ROL_CHOICES]
 
 
 def _validar_documento(tipo, numero):
@@ -82,18 +82,22 @@ def login_view(request):
                 else f"Falta completar el campo: {faltantes[0]}."
             )
             messages.error(request, mensaje)
-            return render(request, 'login.html', {
+            context = {
                 'tipo_documento': tipo_documento,
                 'documento': documento,
-            })
+            }
+
+            return render(request, 'login.html', context)
 
         error_doc = _validar_documento(tipo_documento, documento)
         if error_doc:
             messages.error(request, error_doc)
-            return render(request, 'login.html', {
+            context = {
                 'tipo_documento': tipo_documento,
                 'documento': documento,
-            })
+            }
+
+            return render(request, 'login.html', context)
 
         try:
             usuario = Usuario.objects.get(
@@ -102,17 +106,21 @@ def login_view(request):
             )
         except Usuario.DoesNotExist:
             messages.error(request, 'Documento o contraseña incorrectos.')
-            return render(request, 'login.html', {
+            context = {
                 'tipo_documento': tipo_documento,
                 'documento': documento,
-            })
+            }
+
+            return render(request, 'login.html', context)
 
         if not check_password(password, usuario.password):
             messages.error(request, 'Documento o contraseña incorrectos.')
-            return render(request, 'login.html', {
+            context = {
                 'tipo_documento': tipo_documento,
                 'documento': documento,
-            })
+            }
+
+            return render(request, 'login.html', context)
 
         request.session['usuario_documento']      = usuario.numero_documento
         request.session['usuario_nombre']         = usuario.nombre_completo
@@ -149,11 +157,6 @@ def registro_view(request):
         'nombre_programa': '',
     }
 
-    # Todos los roles disponibles para el registro
-    """
-    linea comentada temporal
-    roles_disponibles = Rol.objects.all()
-    """
     if request.method == 'POST':
         username        = request.POST.get('username', '').strip()
         email           = request.POST.get('email', '').strip().lower()
@@ -253,7 +256,7 @@ def olvido_contrasena_view(request):
         # Generar token y guardarlo en la base de datos (no en sesión)
         token = get_random_string(40)
         usuario.reset_token        = token
-        usuario.reset_token_expira = time.time() + 900  # 15 minutos
+        usuario.reset_token_expira = time.time() + 900
         usuario.save(update_fields=['reset_token', 'reset_token_expira'])
 
         uid  = urlsafe_base64_encode(force_bytes(usuario.numero_documento))
@@ -316,7 +319,7 @@ def nueva_contrasena_view(request, uid, token):
             messages.error(request, 'Las contraseñas no coinciden.')
             return render(request, 'nueva_contrasena.html')
 
-        usuario.password        = make_password(password1)
+        usuario.password           = make_password(password1)
         usuario.reset_token        = ''
         usuario.reset_token_expira = 0
         usuario.save(update_fields=['password', 'reset_token', 'reset_token_expira'])
@@ -340,10 +343,65 @@ def home_view(request):
 
 
 # ─────────────────────────────────────────────────────────────
-#  LISTA DE USUARIOS  — solo Admin
+#  LISTA DE USUARIOS — solo Admin
 # ─────────────────────────────────────────────────────────────
 @admin_required
 def lista_usuarios_view(request):
+
+    # ── POST: editar usuario ──────────────────────────────────
+    if request.method == 'POST' and request.POST.get('accion') == 'editar_usuario':
+        doc             = request.POST.get('numero_documento', '').strip()
+        nombre          = request.POST.get('nombre_completo', '').strip()
+        correo          = request.POST.get('correo', '').strip().lower()
+        telefono        = request.POST.get('telefono', '').strip()
+        numero_ficha    = request.POST.get('numero_ficha', '').strip()
+        nombre_programa = request.POST.get('nombre_programa', '').strip()
+        rol_id          = request.POST.get('rol', '').strip()
+        nueva_password  = request.POST.get('nueva_password', '').strip()
+
+        usuario = get_object_or_404(Usuario, numero_documento=doc)
+
+        if not nombre:
+            messages.error(request, 'El nombre no puede estar vacío.')
+            return redirect('lista_usuarios')
+
+        if not correo or '@' not in correo:
+            messages.error(request, 'Ingresa un correo válido.')
+            return redirect('lista_usuarios')
+
+        if telefono and not telefono.isdigit():
+            messages.error(request, 'El teléfono solo debe contener dígitos.')
+            return redirect('lista_usuarios')
+
+        if Usuario.objects.filter(correo=correo).exclude(numero_documento=doc).exists():
+            messages.error(request, 'Ese correo ya está en uso por otro usuario.')
+            return redirect('lista_usuarios')
+
+        if rol_id not in ROLES_VALIDOS:
+            messages.error(request, 'Rol no válido.')
+            return redirect('lista_usuarios')
+
+        campos = ['nombre_completo', 'correo', 'telefono', 'numero_ficha', 'nombre_programa', 'rol']
+        usuario.nombre_completo  = nombre
+        usuario.correo           = correo
+        usuario.telefono         = telefono
+        usuario.numero_ficha     = numero_ficha
+        usuario.nombre_programa  = nombre_programa
+        usuario.rol              = rol_id
+
+        if nueva_password:
+            if len(nueva_password) < 8:
+                messages.error(request, 'La nueva contraseña debe tener al menos 8 caracteres.')
+                return redirect('lista_usuarios')
+            usuario.password = make_password(nueva_password)
+            campos.append('password')
+
+        usuario.save(update_fields=campos)
+
+        messages.success(request, f'Usuario {usuario.nombre_completo} actualizado correctamente.')
+        return redirect('lista_usuarios')
+
+    # ── GET: listar con filtros ───────────────────────────────
     qs = Usuario.objects.order_by('nombre_completo')
 
     q        = request.GET.get('q', '').strip()
@@ -393,21 +451,21 @@ def detalle_usuario_json(request, numero_documento):
     prestamos = []
     for p in prestamos_qs:
         prestamos.append({
-            'pk': p.pk,
-            'estado': p.estado,
-            'estado_display': p.get_estado_display(),
-            'fecha_prestamo': p.fecha_prestamo.strftime('%d/%m/%Y'),
-            'fecha_vencimiento': p.fecha_vencimiento.strftime('%d/%m/%Y') if p.fecha_vencimiento else '—',
-            'dias_restantes': p.dias_restantes,
-            'observaciones': p.observaciones or '',
-            'motivo_solicitud': p.motivo_solicitud or '',
+            'pk':                        p.pk,
+            'estado':                    p.estado,
+            'estado_display':            p.get_estado_display(),
+            'fecha_prestamo':            p.fecha_prestamo.strftime('%d/%m/%Y'),
+            'fecha_vencimiento':         p.fecha_vencimiento.strftime('%d/%m/%Y') if p.fecha_vencimiento else '—',
+            'dias_restantes':            p.dias_restantes,
+            'observaciones':             p.observaciones or '',
+            'motivo_solicitud':          p.motivo_solicitud or '',
             'pendiente_para_devolucion': p.estado in ['activo', 'parcial'],
             'items': [
                 {
-                    'nombre': item.producto.nombre,
+                    'nombre':   item.producto.nombre,
                     'cantidad': item.cantidad,
                     'devuelto': item.devuelto,
-                    'serial': item.serial_entregado,
+                    'serial':   item.serial_entregado,
                 }
                 for item in p.items.all()
             ],
@@ -421,16 +479,17 @@ def detalle_usuario_json(request, numero_documento):
         'numero_ficha':           usuario.numero_ficha,
         'nombre_programa':        usuario.nombre_programa,
         'tipo_documento_display': usuario.get_tipo_documento_display(),
+        'tipo_documento':         usuario.tipo_documento,
         'rol':                    usuario.rol,
-        'destinado':      usuario.destinado.nombre_completo if usuario.destinado else None,
-        'destinado_doc':  usuario.destinado.numero_documento if usuario.destinado else None,
-        'solicitado':     usuario.solicitado.nombre_completo if usuario.solicitado else None,
+        'destinado':      usuario.destinado.nombre_completo  if usuario.destinado  else None,
+        'destinado_doc':  usuario.destinado.numero_documento if usuario.destinado  else None,
+        'solicitado':     usuario.solicitado.nombre_completo  if usuario.solicitado else None,
         'solicitado_doc': usuario.solicitado.numero_documento if usuario.solicitado else None,
-        'prestamos_totales':  prestamos_qs.count(),
-        'prestamos_activos':  prestamos_qs.filter(estado='activo').count(),
+        'prestamos_totales':   prestamos_qs.count(),
+        'prestamos_activos':   prestamos_qs.filter(estado='activo').count(),
         'prestamos_parciales': prestamos_qs.filter(estado='parcial').count(),
-        'prestamos_vencidos': prestamos_qs.filter(estado='vencido').count(),
-        'prestamos':         prestamos,
+        'prestamos_vencidos':  prestamos_qs.filter(estado='vencido').count(),
+        'prestamos':           prestamos,
     }
     return JsonResponse(data)
 
@@ -551,7 +610,7 @@ def perfil_view(request):
     cfg_notif_vencimientos = request.session.get('cfg_notif_vencimientos', True)
     cfg_notif_devoluciones = request.session.get('cfg_notif_devoluciones', True)
 
-    return render(request, 'perfil.html', {
+    context = {
         'usuario':       usuario,
         'errores':       errores,
         'accion_activa': accion_activa,
@@ -571,4 +630,11 @@ def perfil_view(request):
         'cfg_notif_prestamos':    cfg_notif_prestamos,
         'cfg_notif_vencimientos': cfg_notif_vencimientos,
         'cfg_notif_devoluciones': cfg_notif_devoluciones,
-    })
+    }
+
+
+    return render(request, 'perfil.html', context)
+
+
+def registro_qr_pdf(request):
+    pass

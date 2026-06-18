@@ -17,10 +17,9 @@ urlpatterns = [
     path('almacenamiento/', include('almacenamiento.urls')),
     path('mantenimiento/', include('mantenimiento.urls')),
     path('reportes/', include('reportes.urls')),
+    path('configuracion/', include('configuracion.urls')),
 ]
 
 if settings.DEBUG:
-    import debug_toolbar
-    urlpatterns += [
-        path('__debug__/', include(debug_toolbar.urls)),
-    ]
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
