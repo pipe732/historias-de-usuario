@@ -20,10 +20,12 @@ MODULOS = [
 @sesion_requerida                                    
 def reportes_view(request):
     historial = ReporteHistorial.objects.all()[:50]
-    return render(request, 'reportes.html', {
+    context = {
         'modulos':   MODULOS,
         'historial': historial,
-    })
+    }
+
+    return render(request, 'reportes.html', context)
 
 
 @sesion_requerida                                    

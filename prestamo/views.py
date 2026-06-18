@@ -57,7 +57,7 @@ def prestamo_usuario_view(request):
 
     productos_disponibles = Producto.objects.filter(stock__gt=0).order_by('nombre')
 
-    return render(request, 'prestamo_usuario.html', {
+    context = {
         'usuario':               usuario,
         'all_prestamos':         all_prestamos,
         'total_prestamos':       total_prestamos,
@@ -65,7 +65,10 @@ def prestamo_usuario_view(request):
         'vencidos_count':        vencidos_count,
         'proximos_vencer':       proximos_vencer,
         'productos_disponibles': productos_disponibles,
-    })
+    }
+
+
+    return render(request, 'prestamo_usuario.html', context)
 
 
 # ── Vista de aprobación de solicitudes (Admin) ─────────────────────────────
@@ -134,10 +137,12 @@ def aprobar_prestamo_view(request, pk):
                 return redirect('prestamo')
 
     items = prestamo.items.select_related('producto').all()
-    return render(request, 'aprobar_prestamo.html', {
+    context = {
         'prestamo': prestamo,
         'items':    items,
-    })
+    }
+
+    return render(request, 'aprobar_prestamo.html', context)
 
 
 # ── Vista principal de préstamos (Admin) ───────────────────────────────────
@@ -429,7 +434,7 @@ def prestamos_view(request):
         fecha_vencimiento__gte=hoy,
     ).count()
 
-    return render(request, 'prestamo.html', {
+    context = {
         'form':                 form,
         'prestamos':            prestamos,
         'productos':            productos,
@@ -444,7 +449,10 @@ def prestamos_view(request):
         'filtro_q':             q,
         'filtro_estado':        estado_f,
         'filtro_vencidos':      vencidos_f,
-    })
+    }
+
+
+    return render(request, 'prestamo.html', context)
 
 
 # ── Vista para solicitud de préstamo desde el portal de usuario ────────────

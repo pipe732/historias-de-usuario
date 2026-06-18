@@ -2,140 +2,152 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from inventario.models import Producto
 
-# ---------------------------------------------------------------------------
-# Entidades de soporte (referenciadas por préstamo)
-# ---------------------------------------------------------------------------
+import django
 
-class BitacoraEstado(models.Model):
-    """Catálogo de estados posibles para un préstamo."""
-
-    descripcion  = models.CharField(max_length=200, verbose_name='Descripción')
-    estado       = models.CharField(max_length=100, verbose_name='Estado')
-    nivel_estado = models.CharField(
-        max_length=50,
-        blank=True,
-        default='',
-        verbose_name='Nivel de estado',
-        help_text='Ej: info, warning, danger',
-    )
-
-    def __str__(self):
-        return f'{self.estado} — {self.descripcion}'
-
-    class Meta:
-        verbose_name        = 'Bitácora de estado'
-        verbose_name_plural = 'Bitácoras de estado'
-        ordering            = ['estado']
-
-
-class Usuario(models.Model):
-    """Aprendiz o persona que solicita un préstamo."""
-
-    TIPO_DOC_CHOICES = [
-        ('CC',  'Cédula de ciudadanía'),
-        ('TI',  'Tarjeta de identidad'),
-        ('CE',  'Cédula de extranjería'),
-        ('PA',  'Pasaporte'),
-        ('NUIP','NUIP'),
-    ]
-
-    ROL_CHOICES = [
-        ('aprendiz',    'Aprendiz'),
-        ('instructor',  'Instructor'),
-        ('funcionario', 'Funcionario'),
-    ]
-
-    numero_documento = models.CharField(
-        max_length=20,
-        unique=True,
-        verbose_name='Número de documento',
-    )
-    id_rol = models.CharField(
-        max_length=20,
-        choices=ROL_CHOICES,
-        default='aprendiz',
-        verbose_name='Rol',
-    )
-    nombre_completo = models.CharField(max_length=200, verbose_name='Nombre completo')
-    correo          = models.EmailField(blank=True, default='', verbose_name='Correo')
-    telefono        = models.CharField(
-        max_length=20,
-        blank=True,
-        default='',
-        verbose_name='Teléfono',
-    )
-    tipo_documento  = models.CharField(
-        max_length=10,
-        choices=TIPO_DOC_CHOICES,
-        default='CC',
-        verbose_name='Tipo de documento',
-    )
-
-    def __str__(self):
-        return f'{self.nombre_completo} ({self.numero_documento})'
-
-    class Meta:
-        verbose_name        = 'Usuario'
-        verbose_name_plural = 'Usuarios'
-        ordering            = ['nombre_completo']
-
-
-# ---------------------------------------------------------------------------
-# Préstamo
-# ---------------------------------------------------------------------------
 
 class Prestamo(models.Model):
-    """
-    Registro principal de un préstamo de herramientas.
 
-    Relaciones según el MER:
-    - usuario (numero_documento) → Usuario
-    - id_estado                  → BitacoraEstado
-    - genera                     → DetallePrestamo  (acceso por related_name='detalles')
-    - originada                  → DevolucionHerramienta (acceso por related_name='devoluciones')
-    """
+    ESTADO_CHOICES = [
+        ('pendiente',  'Pendiente de aprobación'),
+        ('activo',     'Activo'),
+        ('parcial',    'Devuelto parcialmente'),
+        ('devuelto',   'Devuelto'),
+        ('vencido',    'Vencido'),
+        ('rechazado',  'Rechazado'),
+    ]
 
-    usuario = models.ForeignKey(
-        Usuario,
-        on_delete=models.PROTECT,
-        related_name='prestamos',
-        to_field='numero_documento',
-        verbose_name='Usuario (documento)',
+    usuario           = models.CharField(
+        max_length=150,
+        verbose_name='Documento / ID del usuario',
     )
-    id_estado = models.ForeignKey(
-        BitacoraEstado,
-        on_delete=models.PROTECT,
-        related_name='prestamos',
-        verbose_name='Estado',
-    )
-    observaciones = models.TextField(
+    nombre_usuario    = models.CharField(
+        max_length=200,
         blank=True,
         default='',
+        verbose_name='Nombre del responsable',
+    )
+    observaciones     = models.TextField(
+        blank=True,
         verbose_name='Observaciones',
     )
-
-    # Auditoría
-    fecha_prestamo      = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de préstamo')
-    fecha_actualizacion = models.DateTimeField(auto_now=True,     verbose_name='Última actualización')
+    motivo_solicitud  = models.TextField(
+        blank=True,
+        default='',
+        verbose_name='Motivo de la solicitud',
+    )
+    motivo_rechazo    = models.TextField(
+        blank=True,
+        default='',
+        verbose_name='Motivo de rechazo',
+    )
+    estado            = models.CharField(
+        max_length=20,
+        choices=ESTADO_CHOICES,
+        default='pendiente',
+        db_index=True,
+        verbose_name='Estado',
+    )
+    fecha_prestamo    = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Fecha de préstamo',
+    )
+    fecha_actualizacion = models.DateTimeField(
+        auto_now=True,
+        verbose_name='Última actualización',
+    )
+    fecha_vencimiento = models.DateField(
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name='Fecha de vencimiento',
+        help_text='Fecha límite para la devolución. Dejar vacío si no aplica.',
+    )
+    hora_max_entrega  = models.TimeField(
+        null=True,
+        blank=True,
+        verbose_name='Hora máxima de entrega',
+        help_text='Hora límite del día en que debe devolverse el préstamo.',
+    )
 
     # ── Validaciones ────────────────────────────────────────────────────
     def clean(self):
         super().clean()
         errors = {}
-        if not self.usuario_id:
-            errors['usuario'] = 'Debe indicar el usuario del préstamo.'
+
+        if not self.usuario or not self.usuario.strip():
+            errors['usuario'] = 'El documento / ID del usuario no puede estar vacío.'
+
+        if self.fecha_vencimiento:
+            if not self.pk and self.fecha_vencimiento < timezone.localdate():
+                errors['fecha_vencimiento'] = 'La fecha de vencimiento no puede ser en el pasado.'
+
         if errors:
             raise ValidationError(errors)
 
     # ── Propiedades calculadas ──────────────────────────────────────────
     @property
-    def tiene_items_pendientes(self):
-        return self.detalles.filter(devolucion__isnull=True).exists()
+    def esta_vencido(self):
+        if not self.fecha_vencimiento:
+            return False
+        if self.estado == 'devuelto':
+            return False
+        return timezone.localdate() > self.fecha_vencimiento
 
-    # ── Representación ──────────────────────────────────────────────────
+    @property
+    def dias_restantes(self):
+        if not self.fecha_vencimiento:
+            return None
+        return (self.fecha_vencimiento - timezone.localdate()).days
+
+    @property
+    def urgencia(self):
+        dias = self.dias_restantes
+        if dias is None:
+            return 'sin_fecha'
+        if dias < 0:
+            return 'vencido'
+        if dias <= 3:
+            return 'proximo'
+        return 'ok'
+
+    @property
+    def tiene_items_pendientes(self):
+        return self.items.filter(devuelto=False).exists()
+
+    # ── Lógica de negocio ───────────────────────────────────────────────
+    def actualizar_estado(self):
+        items = self.items.all()
+        if not items.exists():
+            return
+
+        total     = items.count()
+        devueltos = items.filter(devuelto=True).count()
+
+        if devueltos == total:
+            nuevo = 'devuelto'
+        elif devueltos == 0:
+            nuevo = 'vencido' if self.esta_vencido else 'activo'
+        else:
+            nuevo = 'parcial'
+
+        if self.estado != nuevo:
+            self.estado = nuevo
+            self.save(update_fields=['estado', 'fecha_actualizacion'])
+
+    def cancelar(self):
+        for item in self.items.filter(devuelto=False).select_related('producto'):
+            item.producto.stock += item.cantidad
+            item.producto.save(update_fields=['stock', 'actualizado_en'])
+            item.devuelto = True
+            item.save(update_fields=['devuelto'])
+        self.estado = 'devuelto'
+        self.save(update_fields=['estado', 'fecha_actualizacion'])
+
     def __str__(self):
-        return f'Préstamo #{self.pk} — {self.usuario}'
+        nombre = f' ({self.nombre_usuario})' if self.nombre_usuario else ''
+        return f'Préstamo #{self.pk} — {self.usuario}{nombre}'
 
     class Meta:
         verbose_name        = 'Préstamo'
@@ -143,73 +155,35 @@ class Prestamo(models.Model):
         ordering            = ['-fecha_prestamo']
 
 
-# ---------------------------------------------------------------------------
-# Herramienta (referenciada por DetallePrestamo)
-# ---------------------------------------------------------------------------
+class ItemPrestamo(models.Model):
 
-class CategoriaHerramienta(models.Model):
-    tipo_herramienta = models.CharField(max_length=100, verbose_name='Tipo de herramienta')
-    descripcion      = models.TextField(blank=True, default='', verbose_name='Descripción')
-
-    def __str__(self):
-        return self.tipo_herramienta
-
-    class Meta:
-        verbose_name        = 'Categoría de herramienta'
-        verbose_name_plural = 'Categorías de herramienta'
-
-
-class Herramienta(models.Model):
-    """Herramienta física disponible para préstamo."""
-
-    categoria   = models.ForeignKey(
-        CategoriaHerramienta,
-        on_delete=models.PROTECT,
-        related_name='herramientas',
-        verbose_name='Categoría',
-    )
-    nombre_herramienta = models.CharField(max_length=200, verbose_name='Nombre')
-    descripcion        = models.TextField(blank=True, default='', verbose_name='Descripción')
-
-    def __str__(self):
-        return self.nombre_herramienta
-
-    class Meta:
-        verbose_name        = 'Herramienta'
-        verbose_name_plural = 'Herramientas'
-        ordering            = ['nombre_herramienta']
-
-
-# ---------------------------------------------------------------------------
-# Detalle de préstamo
-# ---------------------------------------------------------------------------
-
-class DetallePrestamo(models.Model):
-    """
-    Línea de detalle: qué herramienta y cuántas unidades se prestan
-    dentro de un Prestamo.
-
-    Relaciones según el MER:
-    - id_prestamo    → Prestamo
-    - id_herramienta → Herramienta
-    - genera         → DevolucionHerramienta (acceso por related_name='devolucion')
-    """
-
-    prestamo    = models.ForeignKey(
+    prestamo = models.ForeignKey(
         Prestamo,
         on_delete=models.CASCADE,
-        related_name='detalles',
+        related_name='items',
         verbose_name='Préstamo',
     )
-    herramienta = models.ForeignKey(
-        Herramienta,
+    producto = models.ForeignKey(
+        Producto,
         on_delete=models.PROTECT,
-        related_name='detalles_prestamo',
-        verbose_name='Herramienta',
+        related_name='items_prestamo',
+        verbose_name='Producto',
     )
     cantidad = models.PositiveIntegerField(
         default=1,
         verbose_name='Cantidad prestada',
+    )
+    serial_entregado = models.CharField(
+        max_length=200,
+        blank=True,
+        default='',
+        verbose_name='Serial / N° de serie entregado',
+        help_text='Número de serie de la herramienta física entregada al usuario.',
+    )
+    devuelto = models.BooleanField(
+        default=False,
+        db_index=True,
+        verbose_name='Devuelto',
     )
 
     # ── Validaciones ────────────────────────────────────────────────────
@@ -220,54 +194,19 @@ class DetallePrestamo(models.Model):
 
     # ── Propiedades ─────────────────────────────────────────────────────
     @property
-    def esta_devuelto(self):
-        """True si existe una devolución asociada a este detalle."""
-        return hasattr(self, 'devolucion') and self.devolucion is not None
+    def cantidad_pendiente(self):
+        return 0 if self.devuelto else self.cantidad
 
     def __str__(self):
-        estado = '✓' if self.esta_devuelto else '✗'
-        return f'{estado} {self.herramienta} ×{self.cantidad} [{self.prestamo}]'
+        estado = '✓' if self.devuelto else '✗'
+        return f'{estado} {self.producto.nombre} ×{self.cantidad} [{self.prestamo}]'
 
     class Meta:
-        verbose_name        = 'Detalle de préstamo'
-        verbose_name_plural = 'Detalles de préstamo'
+        verbose_name        = 'Ítem de préstamo'
+        verbose_name_plural = 'Ítems de préstamo'
         constraints = [
             models.CheckConstraint(
-                condition=models.Q(cantidad__gte=1),
-                name='detalleprestamo_cantidad_gte_1',
+                **({'condition' if django.VERSION >= (5, 1) else 'check': models.Q(cantidad__gte=1)}),
+                name='itemprestamo_cantidad_gte_1',
             )
         ]
-
-
-# ---------------------------------------------------------------------------
-# Devolución de herramienta
-# ---------------------------------------------------------------------------
-
-class DevolucionHerramienta(models.Model):
-    """
-    Registro de la devolución de una herramienta prestada.
-    Se origina desde un DetallePrestamo (relación 1-a-1).
-    """
-
-    detalle_prestamo = models.OneToOneField(
-        DetallePrestamo,
-        on_delete=models.CASCADE,
-        related_name='devolucion',
-        verbose_name='Detalle de préstamo',
-    )
-    herramienta = models.ForeignKey(
-        Herramienta,
-        on_delete=models.PROTECT,
-        related_name='devoluciones',
-        verbose_name='Herramienta devuelta',
-    )
-    observaciones     = models.TextField(blank=True, default='', verbose_name='Observaciones')
-    fecha_devolucion  = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de devolución')
-
-    def __str__(self):
-        return f'Devolución de {self.herramienta} — {self.detalle_prestamo}'
-
-    class Meta:
-        verbose_name        = 'Devolución de herramienta'
-        verbose_name_plural = 'Devoluciones de herramienta'
-        ordering            = ['-fecha_devolucion']

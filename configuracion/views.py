@@ -89,7 +89,10 @@ def configuracion_view(request):
     config = Config()
     config.almacenamiento = almacenamiento_actual
 
-    return render(request, 'configuracion.html', {'config': config})
+    context = {'config': config}
+
+
+    return render(request, 'configuracion.html', context)
 
 
 @admin_required
