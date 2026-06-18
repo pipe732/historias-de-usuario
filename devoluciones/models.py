@@ -1,7 +1,7 @@
 # devoluciones/models.py
 from django.db import models
 from prestamo.models import DetallePrestamo   # FK principal según el MER
-from herramienta.models import Herramienta    # FK directa según el MER
+from inventario.models import Herramienta    # FK directa según el MER
 
 
 class DevolucionHerramienta(models.Model):
@@ -78,11 +78,4 @@ class DevolucionHerramienta(models.Model):
                 fields=['detalle_prestamo', 'herramienta'],
                 name='unique_devolucion_por_detalle_herramienta',
             )
-        ]    estado = models.ForeignKey(
-                'bitacora.BitacoraEstado',           # ← app.Modelo de tu proyecto
-                on_delete=models.PROTECT,
-                related_name='prestamos',
-                verbose_name='Estado',
-                help_text='Estado actual del préstamo (referencia a bitácora de estados).',
-            )
-        
+        ]
