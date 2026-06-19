@@ -289,16 +289,19 @@ class MantenimientoForm(forms.ModelForm):
         self.fields["estado_registro"].empty_label = "-- Selecciona el estado --"
 
         self.fields["prioridad"].empty_label = "-- Selecciona la prioridad --"
-
-        self.fields["responsable"].queryset = Usuario.objects.filter(
-            is_active=True
-        ).order_by("first_name", "username")
+        
+        self.fields["responsable"].queryset = Usuario.objects.all().order_by("first_name", "username")
+        
+        #self.fields["responsable"].queryset = Usuario.objects.filter(
+        #    is_active=True
+        #).order_by("first_name", "username")
+        
         self.fields["responsable"].empty_label = "-- Selecciona un técnico --"
         self.fields["responsable"].label_from_instance = (
             lambda u: f"{u.get_full_name() or u.username} ({u.username})"
         )
 
-        # Prellenar búsqueda de producto en caso de edición
+        # Prellenar úsqueda de producto en caso de edición
         if self.instance.pk and self.instance.producto_id:
             p = self.instance.producto
             self.fields["producto_busqueda"].initial = f"[{p.codigo_sku}] {p.nombre}"
