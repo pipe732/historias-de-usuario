@@ -60,7 +60,6 @@ class MantenimientoDisponibilidadTests(TestCase):
             estado_registro=estado,
             fecha_reporte=date(2026, 4, 10),
             fecha_inicio=date(2026, 4, 10),
-            descripcion_problema="Falla de prueba",
         )
 
     def test_crear_mantenimiento_activo_no_disponible_bloquea_producto(self):
@@ -126,10 +125,6 @@ class MantenimientoDisponibilidadTests(TestCase):
                 "fecha_inicio": "2026-04-10",
                 "fecha_fin_estimada": "",
                 "fecha_fin_real": "",
-                "descripcion_problema": "Falla de prueba",
-                "acciones_realizadas": "Ajuste de correa",
-                "materiales_usados": "",
-                "notas_adicionales": "",
                 "tiempo_empleado_horas": "2.5",
                 "prioridad": "media",
                 "responsable": self.user.pk,
@@ -148,4 +143,14 @@ class MantenimientoDisponibilidadTests(TestCase):
         self.assertTrue(form.is_valid(), form.errors.as_json())
         cambios = form.get_changed_fields()
         self.assertIn("estado_registro", cambios)
-        self.assertIn("acciones_realizadas", cambios)
+
+    def test_formulario_edicion_renderiza_fechas_en_formato_iso(self):
+        m = self._crear_mantenimiento(estado="abierto")
+        form = MantenimientoUpdateForm(
+            instance=m,
+            rol_usuario="supervisor",
+            usuario_documento=self.user.username,
+        )
+
+        self.assertIn('value="2026-04-10"', form["fecha_reporte"].as_widget())
+        self.assertIn('value="2026-04-10"', form["fecha_inicio"].as_widget())

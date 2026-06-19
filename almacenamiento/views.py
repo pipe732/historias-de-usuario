@@ -81,7 +81,7 @@ def vista_almacenes(request):
             get_object_or_404(Almacen, pk=pk).delete()
             return redirect('almacenes')
 
-    return render(request, 'almacenes.html', {
+    context = {
         'almacenes': almacenes,
         'form': form,
         'form_editar': form_editar,
@@ -89,7 +89,10 @@ def vista_almacenes(request):
         'show_modal_editar': show_modal_editar,
         'total_almacenes': almacenes.count(),
         'total_estantes': Estante.objects.count(),
-    })
+    }
+
+
+    return render(request, 'almacenes.html', context)
 
 
 @sesion_requerida
@@ -122,7 +125,7 @@ def vista_estantes(request):
             get_object_or_404(Estante, pk=pk).delete()
             return redirect('estantes')
 
-    return render(request, 'estantes.html', {
+    context = {
         'estantes': estantes,
         'almacenes': Almacen.objects.all(),
         'form': form,
@@ -131,7 +134,10 @@ def vista_estantes(request):
         'show_modal_editar': show_modal_editar,
         'total_estantes': estantes.count(),           # ← agregar
         'total_almacenes': Almacen.objects.count(),   # ← agregar
-    })
+    }
+
+
+    return render(request, 'estantes.html', context)
 
 
 @sesion_requerida
@@ -141,7 +147,9 @@ def crear_estante(request):
 def detalle_almacen(request, pk):
     almacen = get_object_or_404(Almacen, pk=pk)
     estantes = Estante.objects.filter(almacen=almacen)
-    return render(request, 'detalle_almacen.html', {
+    context = {
         'almacen': almacen,
         'estantes': estantes,
-    })
+    }
+
+    return render(request, 'detalle_almacen.html', context)

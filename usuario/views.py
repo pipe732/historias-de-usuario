@@ -79,18 +79,22 @@ def login_view(request):
                 else f"Falta completar el campo: {faltantes[0]}."
             )
             messages.error(request, mensaje)
-            return render(request, 'login.html', {
+            context = {
                 'tipo_documento': tipo_documento,
                 'documento': documento,
-            })
+            }
+
+            return render(request, 'login.html', context)
 
         error_doc = _validar_documento(tipo_documento, documento)
         if error_doc:
             messages.error(request, error_doc)
-            return render(request, 'login.html', {
+            context = {
                 'tipo_documento': tipo_documento,
                 'documento': documento,
-            })
+            }
+
+            return render(request, 'login.html', context)
 
         try:
             usuario = Usuario.objects.get(
@@ -99,17 +103,21 @@ def login_view(request):
             )
         except Usuario.DoesNotExist:
             messages.error(request, 'Documento o contraseña incorrectos.')
-            return render(request, 'login.html', {
+            context = {
                 'tipo_documento': tipo_documento,
                 'documento': documento,
-            })
+            }
+
+            return render(request, 'login.html', context)
 
         if not check_password(password, usuario.password):
             messages.error(request, 'Documento o contraseña incorrectos.')
-            return render(request, 'login.html', {
+            context = {
                 'tipo_documento': tipo_documento,
                 'documento': documento,
-            })
+            }
+
+            return render(request, 'login.html', context)
 
         request.session['usuario_documento']      = usuario.numero_documento
         request.session['usuario_nombre']         = usuario.nombre_completo
@@ -599,7 +607,7 @@ def perfil_view(request):
     cfg_notif_vencimientos = request.session.get('cfg_notif_vencimientos', True)
     cfg_notif_devoluciones = request.session.get('cfg_notif_devoluciones', True)
 
-    return render(request, 'perfil.html', {
+    context = {
         'usuario':       usuario,
         'errores':       errores,
         'accion_activa': accion_activa,
@@ -619,7 +627,10 @@ def perfil_view(request):
         'cfg_notif_prestamos':    cfg_notif_prestamos,
         'cfg_notif_vencimientos': cfg_notif_vencimientos,
         'cfg_notif_devoluciones': cfg_notif_devoluciones,
-    })
+    }
+
+
+    return render(request, 'perfil.html', context)
 
 
 def registro_qr_pdf(request):

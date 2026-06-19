@@ -86,8 +86,11 @@ def devoluciones_view(request):
         .order_by('-fecha_prestamo')
     )
 
-    return render(request, 'devoluciones.html', {
+    context = {
         'edit_id':           edit_id,
         'devoluciones':      devoluciones,
         'prestamos_activos': prestamos_activos,
-    })
+    }
+
+
+    return render(request, 'devoluciones.html', context)

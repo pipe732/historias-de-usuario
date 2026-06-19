@@ -37,7 +37,7 @@ def dashboard_view(request):
     # ── Productos recientes ──
     productos_recientes = Producto.objects.select_related('categoria').order_by('-actualizado_en')[:8]
 
-    return render(request, 'pagina_principal.html', {
+    context = {
         'total_productos':                total_productos,
         'total_categorias':               total_categorias,
         'prestamos_activos_count':        prestamos_activos_count,
@@ -48,7 +48,10 @@ def dashboard_view(request):
         'productos_recientes':            productos_recientes,
         'stock_por_categoria':            stock_por_categoria,
         'max_stock':                      max_stock,
-    })
+    }
+
+
+    return render(request, 'pagina_principal.html', context)
 
 
 def home_usuario_view(request):
@@ -85,7 +88,7 @@ def home_usuario_view(request):
     alertas_stock = list(Producto.objects.filter(stock__lt=5).values_list('nombre', 'stock'))
     hay_alertas = len(alertas_stock) > 0
 
-    return render(request, 'home_usuario.html', {
+    context = {
         'usuario':               usuario,
         'all_prestamos':         all_prestamos,
         'prestamos_activos':     prestamos_activos,
@@ -95,7 +98,10 @@ def home_usuario_view(request):
         'productos_disponibles': productos_disponibles,
         'alertas_stock':         alertas_stock,
         'hay_alertas':           hay_alertas,
-    })
+    }
+
+
+    return render(request, 'home_usuario.html', context)
 # ─────────────────────────────────────────────────────────────
 #  NOTIFICACIONES JSON — agregar a pagina_principal/views.py
 #  Importar JsonResponse si no está: from django.http import JsonResponse
