@@ -12,6 +12,7 @@ from .models import (
     TipoEstado,
     TipoMantenimiento,
     Mantenimiento,
+    DetalleMantenimiento,
     ESTADO_REGISTRO_CHOICES,
 )
 from .forms import (
@@ -19,6 +20,7 @@ from .forms import (
     TipoMantenimientoForm,
     MantenimientoForm,
     MantenimientoUpdateForm,
+    DetalleMantenimientoForm,
 )
 from inventario.models import Producto
 
@@ -337,7 +339,7 @@ class MantenimientoListView(SesionRequeridaMixin, ListView):
             qs = qs.filter(
                 Q(producto__nombre__icontains=q)
                 | Q(producto__codigo_sku__icontains=q)
-                | Q(descripcion_problema__icontains=q)
+                | Q(detalles__descripcion__icontains=q)
             )
         if tipo:
             qs = _filtrar_por_tipo_mantenimiento(qs, tipo)
@@ -364,14 +366,56 @@ class MantenimientoDetailView(SesionRequeridaMixin, DetailView):
     def get_queryset(self):
         return Mantenimiento.objects.select_related(
             "producto", "tipo_estado", "responsable", "creado_por", "actualizado_por"
-        ).prefetch_related("cambios_auditoria__editado_por")
+        ).prefetch_related("cambios_auditoria__editado_por", "detalles__registrado_por", "detalles__tipo_mantenimiento")
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["url_cancelar"] = reverse_lazy("mantenimiento:mantenimiento_lista")
         ctx["puede_editar"] = _puede_editar_mantenimiento(self.request, self.object)
         ctx["cambios_auditoria"] = self.object.cambios_auditoria.all()[:20]
+
+        detalle_form_data = self.request.session.pop("detalle_form_data", None)
+        self.request.session.pop("detalle_form_open", None)
+        if detalle_form_data:
+            detalle_form = DetalleMantenimientoForm(
+                detalle_form_data, mantenimiento=self.object
+            )
+            detalle_form.is_valid()
+        else:
+            detalle_form = DetalleMantenimientoForm(mantenimiento=self.object)
+
+        ctx["detalle_form"] = detalle_form
         return ctx
+
+
+@sesion_requerida
+def detalle_mantenimiento_crear(request, pk):
+    """Registra una nueva entrada en la bitácora de un mantenimiento."""
+    mantenimiento = get_object_or_404(Mantenimiento, pk=pk)
+
+    if request.method != "POST":
+        return redirect("mantenimiento:mantenimiento_detalle", pk=pk)
+
+    form = DetalleMantenimientoForm(
+        request.POST, request.FILES, mantenimiento=mantenimiento
+    )
+
+    if form.is_valid():
+        detalle = form.save(commit=False)
+        detalle.mantenimiento = mantenimiento
+
+        usuario = _get_usuario_sesion(request)
+        if usuario:
+            detalle.registrado_por = usuario
+
+        detalle.save()
+        messages.success(request, "Detalle de mantenimiento registrado correctamente.")
+        return redirect("mantenimiento:mantenimiento_detalle", pk=pk)
+
+    request.session["detalle_form_data"] = request.POST.dict()
+    request.session["detalle_form_open"] = "modalNuevoDetalle"
+    messages.error(request, "Revisa los errores del detalle de mantenimiento.")
+    return redirect("mantenimiento:mantenimiento_detalle", pk=pk)
 
 
 class MantenimientoUpdateView(SesionRequeridaMixin, ContextoMixin, UpdateView):
@@ -505,8 +549,7 @@ class HistorialProductoView(SesionRequeridaMixin, ListView):
 
         if q:
             qs = qs.filter(
-                Q(descripcion_problema__icontains=q)
-                | Q(acciones_realizadas__icontains=q)
+                Q(detalles__descripcion__icontains=q)
             )
         if tipo:
             qs = _filtrar_por_tipo_mantenimiento(qs, tipo)

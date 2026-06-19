@@ -78,7 +78,8 @@ class DevolucionHerramienta(models.Model):
                 fields=['detalle_prestamo', 'herramienta'],
                 name='unique_devolucion_por_detalle_herramienta',
             )
-        ]    estado = models.ForeignKey(
+        ]    
+        estado = models.ForeignKey(
                 'bitacora.BitacoraEstado',           # ← app.Modelo de tu proyecto
                 on_delete=models.PROTECT,
                 related_name='prestamos',
