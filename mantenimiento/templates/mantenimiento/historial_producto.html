@@ -71,7 +71,7 @@ Historial — {{ producto.nombre }}
             {% endwith %}
           </td>
           <td>
-            {{ m.responsable.nombre_completo|default:m.responsable.get_full_name|default:m.responsable.username|default:"—" }}
+            {{ m.responsable.nombre_completo|default:"-" }}
           </td>
           <td>
             {% include "mantenimiento/partials/_badge_estado_registro.html" with estado=m.estado_registro etiqueta=m.get_estado_registro_display %}

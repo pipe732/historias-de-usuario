@@ -98,7 +98,7 @@ Detalle de Mantenimiento
                 <div class="d-flex justify-content-between flex-wrap gap-2" style="font-size: .82rem; color: var(--text-muted);">
                   <span>Tipo mantenimiento: {{ d.tipo_mantenimiento.nombre }}</span>
                   <span>
-                    {{ d.registrado_por.nombre_completo|default:d.registrado_por.get_full_name|default:d.registrado_por.username|default:"Sistema" }}
+                    {{ d.registrado_por.nombre_completo|default:"Sistema" }}
                   </span>
                 </div>
                 {% if d.evidencia_adicional %}
@@ -197,7 +197,7 @@ Detalle de Mantenimiento
           <div class="d-flex justify-content-between align-items-center">
             <span style="color: var(--text-muted)">Responsable</span>
             <span style="font-weight: 600">
-              {{ m.responsable.nombre_completo|default:m.responsable.get_full_name|default:m.responsable.username|default:"—" }}
+              {{ m.responsable.nombre_completo|default:"-" }}
             </span>
           </div>
         </div>
@@ -259,7 +259,7 @@ Detalle de Mantenimiento
         <div class="d-flex flex-column gap-2" style="font-size: 0.82rem; color: var(--text-muted)">
           <div class="d-flex justify-content-between">
             <span>Registrado por</span>
-            <span>{{ m.creado_por.nombre_completo|default:m.creado_por.get_full_name|default:m.creado_por.username|default:"—" }}</span>
+            <span>{{ m.creado_por.nombre_completo|default:"-" }}</span>
           </div>
           <div class="d-flex justify-content-between">
             <span>Creado el</span>
@@ -271,7 +271,7 @@ Detalle de Mantenimiento
           </div>
           <div class="d-flex justify-content-between">
             <span>Última edición por</span>
-            <span>{{ m.actualizado_por.nombre_completo|default:m.actualizado_por.get_full_name|default:m.actualizado_por.username|default:"—" }}</span>
+            <span>{{ m.actualizado_por.nombre_completo|default:"-" }}</span>
           </div>
         </div>
       </div>

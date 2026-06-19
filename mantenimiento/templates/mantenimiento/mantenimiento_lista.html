@@ -70,7 +70,7 @@ Todos los Mantenimientos
             {% endif %}
           </td>
           <td>
-            {{ r.responsable.nombre_completo|default:r.responsable.get_full_name|default:r.responsable.username|default:"—" }}
+            {{ r.responsable.nombre_completo|default:"-" }}
           </td>
           <td>
             {% include "mantenimiento/partials/_badge_estado_registro.html" with estado=r.estado_registro etiqueta=r.get_estado_registro_display %}
