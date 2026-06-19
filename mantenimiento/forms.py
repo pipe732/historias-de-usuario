@@ -1,7 +1,7 @@
 # mantenimiento/forms.py
 from django import forms
 from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User
+from usuario.models import Usuario
 
 from .models import (
     TipoEstado,
@@ -290,7 +290,7 @@ class MantenimientoForm(forms.ModelForm):
 
         self.fields["prioridad"].empty_label = "-- Selecciona la prioridad --"
 
-        self.fields["responsable"].queryset = User.objects.filter(
+        self.fields["responsable"].queryset = Usuario.objects.filter(
             is_active=True
         ).order_by("first_name", "username")
         self.fields["responsable"].empty_label = "-- Selecciona un técnico --"
