@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Proveedor
-
+from .models import Proveedor, Trabajador
+admin.site.register(Trabajador)
 # Register your models here.
 @admin.register(Proveedor)
 class ProveedorAdmin(admin.ModelAdmin):

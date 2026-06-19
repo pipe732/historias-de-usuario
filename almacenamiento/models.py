@@ -1,5 +1,26 @@
 from django.db import models
-from almacenamiento.models import Estante
+from inventario.models import Categoria
+
+
+class Almacen(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)  # ← unique
+    detalles = models.TextField(blank=True, null=True)
+    capacidad = models.PositiveIntegerField(blank=True, null=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.nombre
+
+
+class Estante(models.Model):
+    almacen = models.ForeignKey(Almacen, on_delete=models.CASCADE)
+    codigo = models.CharField(max_length=50, unique=True)  # ← unique
+    detalles = models.TextField(blank=True, null=True)
+    capacidad = models.PositiveIntegerField(blank=True, null=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.codigo
 
 class Producto(models.Model):
     codigo_sku = models.CharField(max_length=50, unique=True, verbose_name="Código / SKU")
@@ -37,23 +58,3 @@ class Producto(models.Model):
     def __str__(self):
         return f"[{self.codigo_sku}] {self.nombre}"
 
-
-class Almacen(models.Model):
-    nombre = models.CharField(max_length=100, unique=True)  # ← unique
-    detalles = models.TextField(blank=True, null=True)
-    capacidad = models.PositiveIntegerField(blank=True, null=True)
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.nombre
-
-
-class Estante(models.Model):
-    almacen = models.ForeignKey(Almacen, on_delete=models.CASCADE)
-    codigo = models.CharField(max_length=50, unique=True)  # ← unique
-    detalles = models.TextField(blank=True, null=True)
-    capacidad = models.PositiveIntegerField(blank=True, null=True)
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.codigo
