@@ -8,4 +8,28 @@ admin.site.register(Inventario)
 admin.site.register(Movimientos)
 admin.site.register(Detalle_Movimientos)
 
-# Register your models here.
+from .models import Categoria, Producto
+
+
+@admin.register(Categoria)
+class CategoriaAdmin(admin.ModelAdmin):
+    list_display = ("nombre", "descripcion", "creado_en")
+    search_fields = ("nombre", "descripcion")
+    ordering = ("nombre",)
+
+
+@admin.register(Producto)
+class ProductoAdmin(admin.ModelAdmin):
+    list_display = (
+        "codigo_sku",
+        "nombre",
+        "categoria",
+        "stock",
+        "disponible",
+        "ubicacion",
+        "creado_en",
+        "actualizado_en",
+    )
+    list_filter = ("categoria", "disponible")
+    search_fields = ("codigo_sku", "nombre", "descripcion", "numero_serie", "ubicacion")
+    ordering = ("nombre",)
