@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'pagina_principal',
     'mantenimiento',
     'reportes',
-    'configuracion.apps.ConfiguracionConfig'
+    'configuracion',
     ]
 
 MIDDLEWARE = [

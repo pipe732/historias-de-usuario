@@ -272,18 +272,20 @@ def _data_devoluciones():
 
 
 def _data_mantenimiento():
-    from mantenimiento.models import EstadoHerramienta
-    qs = EstadoHerramienta.objects.all()
-    headers = ['Código', 'Herramienta', 'Descripción', 'Categoría', 'Estado']
+    from mantenimiento.models import Mantenimiento
+    qs = Mantenimiento.objects.select_related('producto', 'tipo_mantenimiento', 'tipo_estado').all()
+    headers = ['ID', 'Producto/Herramienta', 'Tipo Mantenimiento', 'Tipo Estado', 'Prioridad', 'Estado Registro', 'Fecha Reporte']
     rows = [
         (
-            h.codigo,
-            h.nombre_herramienta,
-            h.descripcion,
-            h.get_categoria_display(),
-            h.get_estado_display(),
+            m.pk,
+            m.producto.nombre,
+            m.tipo_mantenimiento.nombre if m.tipo_mantenimiento else '—',
+            m.tipo_estado.nombre if m.tipo_estado else '—',
+            m.get_prioridad_display(),
+            m.get_estado_registro_display(),
+            m.fecha_reporte.strftime('%d/%m/%Y') if m.fecha_reporte else '—',
         )
-        for h in qs
+        for m in qs
     ]
     return headers, rows, 'Mantenimiento'
 
@@ -305,7 +307,7 @@ def _data_almacenamiento():
 
 def _data_usuarios():
     from usuario.models import Usuario
-    qs = Usuario.objects.select_related('id_rol').all()
+    qs = Usuario.objects.all()
     headers = ['Documento', 'Tipo', 'Nombre completo', 'Correo', 'Teléfono', 'Rol']
     rows = [
         (
@@ -314,7 +316,7 @@ def _data_usuarios():
             u.nombre_completo,
             u.correo,
             u.telefono or '—',
-            u.id_rol.nombre if u.id_rol else '—',
+            u.get_rol_display(),
         )
         for u in qs
     ]
