@@ -20,6 +20,16 @@ IMPACTO_DISPONIBILIDAD_CHOICES = [
     ("disponible_restringido", "Disponible con restricción"),
 ]
 
+# Nivel de severidad del estado. Pedido por el MER (campo nivel_estado).
+# Sirve para ordenar/priorizar estados por gravedad real, sin depender
+# del texto libre de "categoria".
+NIVEL_ESTADO_CHOICES = [
+    (1, "Leve"),
+    (2, "Moderado"),
+    (3, "Grave"),
+    (4, "Crítico"),
+]
+
 TIPO_MANTENIMIENTO_CHOICES = [
     ("correctivo", "Correctivo"),
     ("preventivo", "Preventivo"),
@@ -48,6 +58,16 @@ MOTIVO_CAMBIO_CHOICES = [
     ("adicion_evidencia", "Adición de evidencia"),
     ("ajuste_estado", "Ajuste de estado"),
     ("otro", "Otro"),
+]
+
+# Tipo de entrada dentro de la bitácora de detalle (detalle_mantenimiento.tipo
+# en el MER). Cada fila de detalle representa UN evento en el tiempo.
+TIPO_DETALLE_CHOICES = [
+    ("diagnostico", "Diagnóstico"),
+    ("accion", "Acción realizada"),
+    ("repuesto", "Repuesto / material usado"),
+    ("nota", "Nota adicional"),
+    ("cierre", "Cierre / entrega"),
 ]
 
 # Constantes para disponibilidad
@@ -104,8 +124,8 @@ class TipoMantenimiento(models.Model):
 
 # TIPOS DE ESTADO
 class TipoEstado(models.Model):
-    # Se usan las constantes a nivel de módulo: CATEGORIA_TIPOESTADO_CHOICES
-    # e IMPACTO_DISPONIBILIDAD_CHOICES para evitar duplicación.
+    # Se usan las constantes a nivel de módulo: CATEGORIA_TIPOESTADO_CHOICES,
+    # IMPACTO_DISPONIBILIDAD_CHOICES y NIVEL_ESTADO_CHOICES para evitar duplicación.
     nombre = models.CharField(
         max_length=120, unique=True, verbose_name="Nombre del estado"
     )
@@ -118,6 +138,13 @@ class TipoEstado(models.Model):
     categoria = models.CharField(
         max_length=50, choices=CATEGORIA_TIPOESTADO_CHOICES, verbose_name="Categoría"
     )
+    # Campo pedido por el MER (bitácora_estado.nivel_estado). Permite
+    # ordenar/filtrar estados por severidad sin parsear texto de "categoria".
+    nivel_estado = models.PositiveSmallIntegerField(
+        choices=NIVEL_ESTADO_CHOICES,
+        default=1,
+        verbose_name="Nivel de severidad",
+    )
     impacto_disponibilidad = models.CharField(
         max_length=40,
         choices=IMPACTO_DISPONIBILIDAD_CHOICES,
@@ -127,7 +154,7 @@ class TipoEstado(models.Model):
     color = models.CharField(max_length=7, blank=True, verbose_name="Color asociado")
     activo = models.BooleanField(default=True, verbose_name="Activo")
     creado_por = models.ForeignKey(
-        "auth.User",
+        Usuario,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -145,8 +172,13 @@ class TipoEstado(models.Model):
         db_table = "mantenimiento_tipoestado"
 
 
-# registro de mantenimiento
+# registro de mantenimiento (cabecera — equivale a bitácora_mantenimiento del MER)
 class Mantenimiento(models.Model):
+    """
+    Cabecera del mantenimiento. Guarda QUÉ se está atendiendo, de qué tipo,
+    con qué estado y prioridad. El detalle día a día (diagnóstico, acciones,
+    repuestos, notas) vive en DetalleMantenimiento, no aquí.
+    """
 
     # Relaciones
     producto = models.ForeignKey(
@@ -168,21 +200,21 @@ class Mantenimiento(models.Model):
         verbose_name="Tipo de estado actual",
     )
     responsable = models.ForeignKey(
-        "auth.User",
+        "usuario.Usuario",
         on_delete=models.SET_NULL,
         null=True,
         related_name="mantenimientos_responsable",
         verbose_name="Responsable / Técnico",
     )
     creado_por = models.ForeignKey(
-        "auth.User",
+        "usuario.Usuario",
         on_delete=models.SET_NULL,
         null=True,
         related_name="mantenimientos_creados",
         verbose_name="Registrado por",
     )
 
-    # Campos
+    # Campos de cabecera
     estado_registro = models.CharField(
         max_length=20,
         choices=ESTADO_REGISTRO_CHOICES,
@@ -210,24 +242,6 @@ class Mantenimiento(models.Model):
         null=True,
         verbose_name="Tiempo empleado (horas)",
     )
-    descripcion_problema = models.TextField(
-        verbose_name="Descripción del problema / falla"
-    )
-    acciones_realizadas = models.TextField(
-        blank=True, null=True, verbose_name="Acciones realizadas / planificadas"
-    )
-    materiales_usados = models.TextField(
-        blank=True, null=True, verbose_name="Materiales / repuestos usados"
-    )
-    notas_adicionales = models.TextField(
-        blank=True, null=True, verbose_name="Notas adicionales"
-    )
-    evidencia_adicional = models.FileField(
-        upload_to="mantenimiento/evidencias/",
-        blank=True,
-        null=True,
-        verbose_name="Evidencia adjunta",
-    )
     ubicacion_snapshot = models.CharField(
         max_length=150,
         blank=True,
@@ -249,7 +263,7 @@ class Mantenimiento(models.Model):
         verbose_name="Costo real",
     )
     actualizado_por = models.ForeignKey(
-        "auth.User",
+        "usuario.Usuario",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -257,8 +271,7 @@ class Mantenimiento(models.Model):
         verbose_name="Última edición por",
     )
 
-
-    #Auditoría
+    # Auditoría
     creado_en = models.DateTimeField(auto_now_add=True)
     actualizado_en = models.DateTimeField(auto_now=True)
 
@@ -355,17 +368,65 @@ class Mantenimiento(models.Model):
         verbose_name = "Mantenimiento"
         verbose_name_plural = "Mantenimientos"
         ordering = ["-fecha_reporte"]
+        db_table = "mantenimiento_bitacoramantenimiento"
 
+
+# detalle_mantenimiento del MER. Historial de eventos de UN mantenimiento.
+# Antes estos campos (descripcion_problema, acciones_realizadas,
+# materiales_usados, notas_adicionales, evidencia_adicional) vivían sueltos
+# dentro de Mantenimiento. Separarlos permite VARIOS registros en el tiempo
+# por mantenimiento, en vez de un solo bloque de texto fijo.
+class DetalleMantenimiento(models.Model):
+    mantenimiento = models.ForeignKey(
+        Mantenimiento,
+        on_delete=models.CASCADE,
+        related_name="detalles",
+        verbose_name="Mantenimiento",
+    )
+    # El MER repite tipo_mantenimiento(fk) también en el detalle. Se conserva
+    # para no romper el diagrama, pero normalmente coincidirá con el de la
+    # cabecera; útil solo si un detalle puntual cambia de tipo (ej. pasa de
+    # correctivo a calibración a mitad de proceso).
+    tipo_mantenimiento = models.ForeignKey(
+        TipoMantenimiento,
+        on_delete=models.PROTECT,
+        related_name="detalles_mantenimiento",
+        verbose_name="Tipo de mantenimiento (detalle)",
+    )
+    tipo = models.CharField(
+        max_length=20,
+        choices=TIPO_DETALLE_CHOICES,
+        verbose_name="Tipo de entrada",
+    )
+    descripcion = models.TextField(verbose_name="Descripción")
+    evidencia_adicional = models.FileField(
+        upload_to="mantenimiento/evidencias/",
+        blank=True,
+        null=True,
+        verbose_name="Evidencia adjunta",
+    )
+    registrado_por = models.ForeignKey(
+        "usuario.Usuario",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="detalles_mantenimiento_creados",
+        verbose_name="Registrado por",
+    )
+    creado_en = models.DateTimeField(
+        auto_now_add=True, verbose_name="Fecha del evento"
+    )
+
+    class Meta:
+        verbose_name = "Detalle de Mantenimiento"
+        verbose_name_plural = "Detalles de Mantenimiento"
+        ordering = ["creado_en"]
+        db_table = "mantenimiento_detallemantenimiento"
+
+    def __str__(self):
+        return f"Detalle #{self.pk} ({self.get_tipo_display()}) - OT #{self.mantenimiento_id}"
 
 class MantenimientoCambio(models.Model):
-    MOTIVO_CHOICES = [
-        ("correccion_error", "Corrección de error"),
-        ("actualizacion_imprevisto", "Actualización por imprevisto"),
-        ("adicion_evidencia", "Adición de evidencia"),
-        ("ajuste_estado", "Ajuste de estado"),
-        ("otro", "Otro"),
-    ]
-
     mantenimiento = models.ForeignKey(
         Mantenimiento,
         on_delete=models.CASCADE,
@@ -373,7 +434,7 @@ class MantenimientoCambio(models.Model):
         verbose_name="Mantenimiento",
     )
     editado_por = models.ForeignKey(
-        "auth.User",
+        "usuario.Usuario",  
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -384,7 +445,7 @@ class MantenimientoCambio(models.Model):
         auto_now_add=True, verbose_name="Fecha de edición"
     )
     motivo_edicion = models.CharField(
-        max_length=40, choices=MOTIVO_CHOICES, verbose_name="Motivo de edición"
+        max_length=40, choices=MOTIVO_CAMBIO_CHOICES, verbose_name="Motivo de edición"
     )
     detalle_motivo = models.CharField(
         max_length=255, blank=True, verbose_name="Detalle del motivo"
@@ -397,6 +458,10 @@ class MantenimientoCambio(models.Model):
         ordering = ["-fecha_edicion"]
 
     def __str__(self):
-        return (
-            f"Cambio OT #{self.mantenimiento_id} - {self.fecha_edicion:%Y-%m-%d %H:%M}"
-        )
+        return f"Cambio OT #{self.mantenimiento_id} - {self.fecha_edicion:%Y-%m-%d %H:%M}"
+
+    def get_editado_por_nombre(self):
+        if not self.editado_por:
+            return "Sistema"
+        return self.editado_por.nombre_completo if hasattr(self.editado_por, 'nombre_completo') else \
+            self.editado_por.get_full_name() or self.editado_por.username

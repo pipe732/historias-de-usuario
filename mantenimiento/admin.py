@@ -41,7 +41,7 @@ class MantenimientoAdmin(admin.ModelAdmin):
     search_fields = [
         'producto__nombre',
         'producto__codigo_sku',
-        'descripcion_problema',
+        'detalles__descripcion',
     ]
     readonly_fields = [
         'creado_en',
