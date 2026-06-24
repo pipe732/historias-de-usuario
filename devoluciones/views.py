@@ -5,8 +5,9 @@ from django.utils import timezone
 from .models import Devolucion
 from prestamo.models import Prestamo, ItemPrestamo
 from common.mixins import sesion_requerida
-from .models import Proveedor, Inventario, Movimientos, Detalle_Movimientos
-from .forms import ProveedorForm, InventarioForm, MovimientosForm
+from inventario.models import Proveedor, Inventario, Movimientos, Detalle_Movimientos
+from inventario.forms import ProveedorForm, InventarioForm, MovimientosForm
+
 
 
 @sesion_requerida
