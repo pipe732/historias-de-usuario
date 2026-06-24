@@ -176,58 +176,7 @@
       
       <div class="col-12 pt-3">
         <h6 class="text-primary fw-bold mb-3">
-          <span class="badge bg-primary me-2">3</span>Descripción y Detalles
-        </h6>
-      </div>
-
-      <div class="col-12">
-        <label class="form-label fw-bold">{{ form.descripcion_problema.label }} <span class="text-danger">*</span></label>
-        {% if form.descripcion_problema.errors %}
-          {{ form.descripcion_problema|add_class:"form-control is-invalid" }}
-          {% for e in form.descripcion_problema.errors %}<div class="invalid-feedback d-block mt-1">{{ e }}</div>{% endfor %}
-        {% else %}
-          {{ form.descripcion_problema|add_class:"form-control" }}
-        {% endif %}
-        <small class="form-text text-muted">Describe en detalle qué falla presenta el equipo (mín. 10 caracteres)</small>
-      </div>
-
-      <div class="col-12">
-        <label class="form-label fw-bold">{{ form.acciones_realizadas.label }}</label>
-        {% if form.acciones_realizadas.errors %}
-          {{ form.acciones_realizadas|add_class:"form-control is-invalid" }}
-          {% for e in form.acciones_realizadas.errors %}<div class="invalid-feedback d-block mt-1">{{ e }}</div>{% endfor %}
-        {% else %}
-          {{ form.acciones_realizadas|add_class:"form-control" }}
-        {% endif %}
-        <small class="form-text text-muted">Describe las acciones que se realizaron o planifican</small>
-      </div>
-
-      <div class="col-12">
-        <label class="form-label fw-bold">{{ form.materiales_usados.label }}</label>
-        {% if form.materiales_usados.errors %}
-          {{ form.materiales_usados|add_class:"form-control is-invalid" }}
-          {% for e in form.materiales_usados.errors %}<div class="invalid-feedback d-block mt-1">{{ e }}</div>{% endfor %}
-        {% else %}
-          {{ form.materiales_usados|add_class:"form-control" }}
-        {% endif %}
-        <small class="form-text text-muted">Ej: Lubricante ISO 32 (100ml), Tornillos M6 (5 unidades)</small>
-      </div>
-
-      <div class="col-12">
-        <label class="form-label fw-bold">{{ form.notas_adicionales.label }}</label>
-        {% if form.notas_adicionales.errors %}
-          {{ form.notas_adicionales|add_class:"form-control is-invalid" }}
-          {% for e in form.notas_adicionales.errors %}<div class="invalid-feedback d-block mt-1">{{ e }}</div>{% endfor %}
-        {% else %}
-          {{ form.notas_adicionales|add_class:"form-control" }}
-        {% endif %}
-        <small class="form-text text-muted">Cualquier información adicional relevante</small>
-      </div>
-
-      
-      <div class="col-12 pt-3">
-        <h6 class="text-primary fw-bold mb-3">
-          <span class="badge bg-primary me-2">4</span>Costos y Tiempo
+          <span class="badge bg-primary me-2">3</span>Costos y Tiempo
         </h6>
       </div>
 
@@ -263,34 +212,10 @@
       </div>
 
       
-      <div class="col-12 pt-3">
-        <h6 class="text-primary fw-bold mb-3">
-          <span class="badge bg-primary me-2">5</span>Evidencia
-        </h6>
-      </div>
-
-      <div class="col-12">
-        <label class="form-label fw-bold">{{ form.evidencia_adicional.label }}</label>
-        {% if form.evidencia_adicional.errors %}
-          {{ form.evidencia_adicional|add_class:"form-control is-invalid" }}
-          {% for e in form.evidencia_adicional.errors %}<div class="invalid-feedback d-block mt-1">{{ e }}</div>{% endfor %}
-        {% else %}
-          {{ form.evidencia_adicional|add_class:"form-control" }}
-        {% endif %}
-        <small class="form-text text-muted">Foto, PDF o documento (máx. 5 MB)</small>
-        {% if mantenimiento.evidencia_adicional %}
-        <div class="mt-2">
-          <strong>📎 Evidencia actual:</strong>
-          <a href="{{ mantenimiento.evidencia_adicional.url }}" target="_blank" class="ms-2">Descargar/Ver archivo</a>
-        </div>
-        {% endif %}
-      </div>
-
-      
       {% if mantenimiento and mantenimiento.pk %}
       <div class="col-12 pt-3">
         <h6 class="text-primary fw-bold mb-3">
-          <span class="badge bg-primary me-2">6</span>Registro de Cambios
+          <span class="badge bg-primary me-2">4</span>Registro de Cambios
         </h6>
       </div>
 

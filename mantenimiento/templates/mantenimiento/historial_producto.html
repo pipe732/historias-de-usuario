@@ -1,8 +1,7 @@
 {% extends "base.html" %} 
 {% load static %} 
 {% block title %}
-Historial — 
-{{producto.nombre }}
+Historial — {{ producto.nombre }}
 {% endblock %} 
 {% block content %}
 
@@ -10,22 +9,11 @@ Historial —
 
 {% include "mantenimiento/partials/_filtros.html" with modo='historial' %}
 
- 
 <div class="card table-card">
   <div class="card-header d-flex align-items-center justify-content-between">
     <span class="card-title">
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <path
-          d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12
-                 a2 2 0 0 0 2-2V8z"
-        />
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12 a2 2 0 0 0 2-2V8z" />
         <polyline points="14 2 14 8 20 8" />
         <line x1="16" y1="13" x2="8" y2="13" />
         <line x1="16" y1="17" x2="8" y2="17" />
@@ -37,10 +25,7 @@ Historial —
   </div>
 
   <div class="table-responsive">
-    <table
-      class="table-app datatable-disabled"
-      style="width: 100%; border-collapse: collapse; font-size: 0.9rem"
-    >
+    <table class="table-app datatable-disabled" style="width: 100%; border-collapse: collapse; font-size: 0.9rem">
       <thead>
         <tr>
           <th>Fecha</th>
@@ -56,44 +41,37 @@ Historial —
         {% for m in mantenimientos %}
         <tr>
           <td>
-            <span
-              style="
-                font-family: var(--font-mono);
-                font-size: 0.78rem;
-                color: var(--text-muted);
-              "
-            >
+            <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">
               {{ m.fecha_reporte|date:"d/m/Y" }}
             </span>
           </td>
           <td>
-            {% if m.tipo_mantenimiento == 'correctivo' %}
-            <span class="badge-state badge-rechazada"
-              >{{ m.get_tipo_mantenimiento_display }}</span
-            >
-            {% elif m.tipo_mantenimiento == 'preventivo' %}
-            <span class="badge-state badge-aprobada"
-              >{{ m.get_tipo_mantenimiento_display }}</span
-            >
+            {% if m.tipo_mantenimiento %}
+              <span class="badge-state" 
+                    style="background:{{ m.tipo_mantenimiento.color|default:'#6c757d' }}; color:#fff;">
+                {{ m.tipo_mantenimiento.nombre }}
+              </span>
             {% else %}
-            <span class="badge-state badge-pendiente"
-              >{{ m.get_tipo_mantenimiento_display }}</span
-            >
+              <span class="badge-state badge-pendiente">Sin tipo</span>
             {% endif %}
           </td>
           <td style="max-width: 260px">
             <span style="font-weight: 600; font-size: 0.88rem">
-              {{ m.descripcion_problema|truncatewords:12 }}
+              {% with detalle=m.detalles.all.0 %}
+                {{ detalle.descripcion|default:"Sin detalle registrado"|truncatewords:12 }}
+              {% endwith %}
             </span>
-            {% if m.acciones_realizadas %}
-            <br />
-            <small style="color: var(--text-muted); font-size: 0.78rem">
-              {{ m.acciones_realizadas|truncatewords:8 }}
-            </small>
-            {% endif %}
+            {% with detalle=m.detalles.all.0 %}
+              {% if detalle and detalle.evidencia_adicional %}
+                <br />
+                <small style="color: var(--text-muted); font-size: 0.78rem">
+                  Tiene evidencia adjunta
+                </small>
+              {% endif %}
+            {% endwith %}
           </td>
           <td>
-            {{ m.responsable.get_full_name|default:m.responsable.username }}
+            {{ m.responsable.nombre_completo|default:"-" }}
           </td>
           <td>
             {% include "mantenimiento/partials/_badge_estado_registro.html" with estado=m.estado_registro etiqueta=m.get_estado_registro_display %}
@@ -123,12 +101,9 @@ Historial —
     </table>
   </div>
 </div>
- 
+
 <div class="mt-3">
-  <a
-    href="{% url 'mantenimiento:mantenimiento_lista' %}"
-    class="btn-outline-mine"
-  >
+  <a href="{% url 'mantenimiento:mantenimiento_lista' %}" class="btn-outline-mine">
     ← Volver a todos los mantenimientos
   </a>
 </div>
