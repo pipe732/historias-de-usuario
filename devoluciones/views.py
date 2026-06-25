@@ -5,9 +5,10 @@ from django.utils import timezone
 from .models import Devolucion
 from prestamo.models import Prestamo, ItemPrestamo
 from common.mixins import sesion_requerida
-from .models import Proveedor, Inventario, Movimientos, Detalle_Movimientos
+from .models import Inventario, Movimientos, Detalle_Movimientos
 from .forms import ProveedorForm, InventarioForm, MovimientosForm
-
+#En la linea 9 se quito ProveedorForm temporalmente
+from proveedores.models import Proveedor
 
 @sesion_requerida
 def lista_inventario_detalle(request):

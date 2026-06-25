@@ -7,8 +7,8 @@ class Proveedor(models.Model):
     descripcion = models.TextField(verbose_name="Descripción")
 
     class Meta:
-        verbose_name = "Proveedor"
-        verbose_name_plural = "Proveedores"
+        verbose_name = "proveedor"
+        verbose_name_plural = "proveedores"
 
     def __str__(self):
         return f"{self.nit_proveedor}"
