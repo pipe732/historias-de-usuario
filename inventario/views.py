@@ -4,8 +4,8 @@ from django.core.paginator import Paginator
 from django.db.models import Q, Sum, Count
 from django.db import IntegrityError
 from almacenamiento.models import Almacen, Estante
-from .models import Producto, Categoria
-from .forms import ProductoForm, CategoriaForm, FiltroInventarioForm
+from .models import Producto, Categoria, Proveedor, Inventario, Movimientos, Detalle_Movimientos
+from .forms import ProductoForm, CategoriaForm, FiltroInventarioForm, ProveedorForm, InventarioForm, MovimientosForm
 from mantenimiento.forms import MantenimientoForm
 from common.mixins import sesion_requerida    
 
@@ -201,3 +201,83 @@ def inventario(request):
     }
 
     return render(request, "inventario.html", context)
+
+
+@sesion_requerida
+def lista_inventario_detalle(request):
+    """Vista de los registros de Inventario (estantes/cantidades), separada de Producto."""
+    registros = Inventario.objects.select_related("producto").all()
+
+    if request.method == "POST":
+        form = InventarioForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Registro de inventario creado correctamente.")
+            return redirect("inventario:lista_inventario_detalle")
+        else:
+            messages.error(request, "Revisa los datos del formulario.")
+    else:
+        form = InventarioForm()
+
+    context = {
+        "registros": registros,
+        "form": form,
+    }
+    return render(request, "detallle_inventario.html", context)
+
+
+@sesion_requerida
+def lista_movimientos(request):
+    movimientos = Movimientos.objects.select_related("inventario", "proveedor").all().order_by("-fecha_movimiento")
+
+    if request.method == "POST":
+        form = MovimientosForm(request.POST)
+        if form.is_valid():
+            movimiento = form.save()
+
+            # Actualiza el stock del producto según el tipo de movimiento
+            inv = movimiento.inventario
+            if movimiento.tipo_de_movimiento == "entrada":
+                inv.cantidad += movimiento.cantidad
+            elif movimiento.tipo_de_movimiento == "salida":
+                if movimiento.cantidad > inv.cantidad:
+                    messages.error(request, "No hay suficiente stock en este inventario para esa salida.")
+                    movimiento.delete()
+                    return redirect("inventario:lista_movimientos")
+                inv.cantidad -= movimiento.cantidad
+            inv.save()
+
+            messages.success(request, "Movimiento registrado correctamente.")
+            return redirect("inventario:lista_movimientos")
+        else:
+            messages.error(request, "Revisa los datos del formulario.")
+    else:
+        form = MovimientosForm()
+
+    context = {
+        "movimientos": movimientos,
+        "form": form,
+    }
+    return render(request, "movimiento.html", context)
+
+
+@sesion_requerida
+def lista_proveedores(request):
+    proveedores = Proveedor.objects.all()
+
+    if request.method == "POST":
+        form = ProveedorForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Proveedor registrado correctamente.")
+            return redirect("inventario:lista_proveedores")
+        else:
+            messages.error(request, "Revisa los datos del formulario.")
+    else:
+        form = ProveedorForm()
+
+    context = {
+        "proveedores": proveedores,
+        "form": form,
+    }
+    return render(request, "proveedores.html", context)

@@ -1,6 +1,5 @@
 from django import forms
-from .models import Estante, Almacen
-from almacenamiento.models import Estante
+from .models import Estante, Almacen, Producto
 
 class ProductoForm(forms.ModelForm):
     class Meta:
