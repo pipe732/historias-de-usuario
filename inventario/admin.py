@@ -7,6 +7,3 @@ admin.site.register(Proveedor)
 admin.site.register(Inventario)
 admin.site.register(Movimientos)
 admin.site.register(Detalle_Movimientos)
-
-
-
