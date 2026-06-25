@@ -465,3 +465,8 @@ class MantenimientoCambio(models.Model):
             return "Sistema"
         return self.editado_por.nombre_completo if hasattr(self.editado_por, 'nombre_completo') else \
             self.editado_por.get_full_name() or self.editado_por.username
+"""            
+class Empresa(models.Model):
+    proveedor = models.OneToOneField = ()
+"""
+
