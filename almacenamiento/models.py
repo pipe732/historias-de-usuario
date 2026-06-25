@@ -30,7 +30,7 @@ class Producto(models.Model):
 
     categoria = models.ForeignKey(
         Categoria, on_delete=models.SET_NULL, null=True, blank=True,
-        related_name="productos", verbose_name="Categoría"
+        related_name="almacenamiento_productos", verbose_name="Categoría"
     )
 
     numero_serie = models.CharField(max_length=100, blank=True, null=True, verbose_name="Número de serie")
