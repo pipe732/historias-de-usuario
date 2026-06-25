@@ -1,265 +1,86 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+{% endblock css %}
 
 {% block content %}
-<style>
-  /* ── Variables modo claro ── */
-  :root {
-    --card-bg:        #f5f0eb;
-    --card-border:    #e0d8cf;
-    --card-radius:    14px;
-    --header-bg:      #ece6df;
-    --header-color:   #3a3530;
-    --badge-bg:       #f5f0eb;
-    --badge-border:   #c8a98a;
-    --badge-color:    #7a4f2e;
-    --th-color:       #8a7f74;
-    --td-color:       #3a3530;
-    --td-muted:       #a09080;
-    --row-hover:      #ede7e0;
-    --row-border:     #e0d8cf;
-    --stock-bg:       #e8f5e9;
-    --stock-color:    #2e7d32;
-    --stock-dot:      #43a047;
-  }
 
-  /* ── Variables modo oscuro ── */
-  [data-bs-theme="dark"],
-  .dark-mode {
-    --card-bg:        #1e2230;
-    --card-border:    #2a3045;
-    --header-bg:      #191d2a;
-    --header-color:   #d0cfc8;
-    --badge-bg:       #1e2230;
-    --badge-border:   #c0392b;
-    --badge-color:    #e07060;
-    --th-color:       #6b7280;
-    --td-color:       #c8c5bc;
-    --td-muted:       #6b7280;
-    --row-hover:      #232840;
-    --row-border:     #2a3045;
-    --stock-bg:       #1e2230;
-    --stock-color:    #6b7280;
-    --stock-dot:      #6b7280;
-  }
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-dismissible fade show d-flex align-items-center gap-2 alert-custom" role="alert">
+  {% if message.tags == 'error' %}
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2.2">
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+    <line x1="12" y1="9" x2="12" y2="13" />
+    <line x1="12" y1="17" x2="12.01" y2="17" />
+  </svg>
+  {% else %}
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2.2">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+    <polyline points="22 4 12 14.01 9 11.01" />
+  </svg>
+  {% endif %}
+  <span>{{ message }}</span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
 
-  /* ── Tarjeta tabla ── */
-  .reg-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--card-radius);
-    overflow: hidden;
-    margin-bottom: 1.5rem;
-  }
-  .reg-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 20px;
-    background: var(--header-bg);
-    border-bottom: 1px solid var(--card-border);
-  }
-  .reg-header-left {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--header-color);
-  }
-  .reg-header-left svg {
-    width: 18px; height: 18px;
-    stroke: var(--header-color);
-    fill: none;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  .reg-badge {
-    font-size: 12px;
-    font-weight: 500;
-    padding: 4px 12px;
-    border-radius: 20px;
-    background: var(--badge-bg);
-    border: 1px solid var(--badge-border);
-    color: var(--badge-color);
-  }
-
-  /* ── Tabla ── */
-  .reg-table { width: 100%; border-collapse: collapse; }
-  .reg-table thead th {
-    padding: 10px 20px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--th-color);
-    border-bottom: 1px solid var(--row-border);
-    background: transparent;
-  }
-  .reg-table tbody td {
-    padding: 13px 20px;
-    font-size: 13px;
-    color: var(--td-color);
-    border-bottom: 1px solid var(--row-border);
-    vertical-align: middle;
-  }
-  .reg-table tbody tr:last-child td { border-bottom: none; }
-  .reg-table tbody tr:hover td     { background: var(--row-hover); }
-  .td-muted { color: var(--td-muted) !important; font-style: italic; }
-  .td-bold  { font-weight: 600; }
-
-  /* ── Stock badge ── */
-  .stock-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--stock-bg);
-    color: var(--stock-color);
-    border-radius: 20px;
-    padding: 3px 10px;
-    font-size: 12px;
-    font-weight: 600;
-    border: 1px solid var(--row-border);
-  }
-  .stock-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--stock-dot);
-  }
-
-  /* ── Botones acción (ícono + texto) ── */
-  .btn-reg-action {
-    display: inline-flex !important;
-    align-items: center;
-    gap: 5px;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 4px 11px;
-  }
-  .btn-reg-action svg {
-    width: 13px; height: 13px;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    flex-shrink: 0;
-  }
-
-  .reg-empty {
-    text-align: center;
-    padding: 48px 20px;
-    color: var(--td-muted);
-    font-size: 13px;
-  }
-
-  /* ── Modal detalles ── */
-  #modalDetallesAlmacen .modal-content { border-radius: 14px; overflow: hidden; }
-  .detalle-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--row-border);
-    gap: 16px;
-  }
-  .detalle-row:last-child { border-bottom: none; }
-  .detalle-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--td-muted);
-    min-width: 110px;
-    padding-top: 2px;
-  }
-  .detalle-val {
-    font-size: 13px;
-    color: var(--td-color);
-    text-align: right;
-    word-break: break-word;
-    flex: 1;
-  }
-
-  /* ── KPI cards ── */
-  .kpi-card {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    position: relative !important;
-    overflow: hidden !important;
-  }
-  .kpi-card.kpi-visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .kpi-card:hover {
-    transform: translateY(-3px) !important;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-    transition: opacity 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
-  }
-  .kpi-accent-bar {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    border-radius: 4px 4px 0 0;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.65s ease 0.2s;
-  }
-  .kpi-card.kpi-visible .kpi-accent-bar { transform: scaleX(1); }
-</style>
-
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-      <h4 class="mb-0">Almacenes</h4>
-      <small class="text-muted">Gestión de almacenes</small>
-    </div>
-    <button class="btn" style="background-color:var(--rust); border-color:var(--rust); color:#fff;" data-bs-toggle="modal" data-bs-target="#modalAlmacen">
-      <i class="bi bi-plus-lg"></i> Nuevo Almacén
-    </button>
-  </div>
-
-  <!-- ══ TARJETAS KPI ══ -->
-  <div class="row g-3 mb-3">
-    <div class="col-6 col-md-6">
-      <div class="card h-100 kpi-card" style="padding:.9rem 1.1rem;" data-kpi-delay="0">
-        <div class="kpi-accent-bar" style="background:#378ADD;"></div>
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:.45rem;">
-          <span style="font-family:var(--font-mono); font-size:.6rem; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted);">Almacenes</span>
+<!-- ══ TARJETAS KPI ══ -->
+<div class="row g-3 mb-4">
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="card p-3 border-0 shadow-sm bg-white h-100">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h6 class="text-muted fw-normal mb-1">Total Almacenes</h6>
+          <h3 class="fw-bold mb-0">{{ total_almacenes }}</h3>
         </div>
-        <div class="kpi-number" data-target="{{ total_almacenes }}" style="font-family:var(--font-mono); font-size:1.55rem; font-weight:700; color:var(--text-main); line-height:1;">0</div>
-        <div style="font-family:var(--font-ui); font-size:.72rem; color:var(--text-muted); margin-top:.3rem;">registro{{ total_almacenes|pluralize }}</div>
-      </div>
-    </div>
-    <div class="col-6 col-md-6">
-      <div class="card h-100 kpi-card" style="padding:.9rem 1.1rem;" data-kpi-delay="130">
-        <div class="kpi-accent-bar" style="background:#1D9E75;"></div>
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:.45rem;">
-          <span style="font-family:var(--font-mono); font-size:.6rem; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted);">Estantes</span>
+        <div class="icon-shape bg-light-primary text-primary rounded-circle p-3">
+          <i class="bi bi-building fs-4"></i>
         </div>
-        <div class="kpi-number" data-target="{{ total_estantes }}" style="font-family:var(--font-mono); font-size:1.55rem; font-weight:700; color:var(--text-main); line-height:1;">0</div>
-        <div style="font-family:var(--font-ui); font-size:.72rem; color:var(--text-muted); margin-top:.3rem;">registro{{ total_estantes|pluralize }}</div>
       </div>
     </div>
   </div>
 
-  <!-- ══ TABLA ══ -->
-  <div class="reg-card">
-    <div class="reg-header">
-      <div class="reg-header-left">
-        <svg viewBox="0 0 24 24">
-          <rect x="2" y="3" width="20" height="14" rx="2"/>
-          <line x1="8" y1="21" x2="16" y2="21"/>
-          <line x1="12" y1="17" x2="12" y2="21"/>
-        </svg>
-        Almacenes registrados
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="card p-3 border-0 shadow-sm bg-white h-100">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h6 class="text-muted fw-normal mb-1">Total Estantes</h6>
+          <h3 class="fw-bold mb-0">{{ total_estantes }}</h3>
+        </div>
+        <div class="icon-shape bg-light-success text-success rounded-circle p-3">
+          <i class="bi bi-layout-three-columns fs-4"></i>
+        </div>
       </div>
-      <span class="reg-badge">{{ almacenes|length }} registro{{ almacenes|length|pluralize }}</span>
     </div>
+  </div>
+</div>
 
-    <table class="reg-table datatable-custom" id="almacenes-table">
+<div class="card table-card p-3">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <span class="card-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+        <line x1="12" y1="17" x2="12" y2="21" />
+      </svg>
+      Almacenes registrados
+    </span>
+
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge-count">
+        {{ almacenes|length }} registro{{ almacenes|length|pluralize }}
+      </span>
+      <button type="button" class="btn btn-success btn-sm d-flex align-items-center gap-1 has-tooltip" data-bs-toggle="modal" data-bs-target="#modalAlmacen" data-bs-placement="bottom" title="Registrar un nuevo almacén">
+        <i class="bi bi-plus-lg"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table-app datatable-custom" id="almacenes-table">
       <thead>
         <tr>
           <th>ID</th>
@@ -267,7 +88,7 @@
           <th>Detalles</th>
           <th>Capacidad</th>
           <th>Fecha Creación</th>
-          <th>Acciones</th>
+          <th class="text-center">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -279,10 +100,9 @@
           data-alm-capacidad="{{ almacen.capacidad|default:'' }}"
           data-alm-fecha="{{ almacen.fecha_creacion|date:'d/m/Y H:i' }}"
         >
-          <td>{{ almacen.id }}</td>
-          <td class="td-bold">
-            <a href="{% url 'detalle_almacen' almacen.pk %}"
-               style="color:inherit; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+          <td><span class="sku-text">{{ almacen.id }}</span></td>
+          <td class="fw-semibold">
+            <a href="{% url 'detalle_almacen' almacen.pk %}" class="text-decoration-none text-reset d-inline-flex align-items-center gap-2">
               {{ almacen.nombre }}
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:.4;">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -291,58 +111,38 @@
               </svg>
             </a>
           </td>
-          <td>
+          <td class="description-col">
             {% if almacen.detalles %}
-              <button class="btn btn-outline-secondary btn-sm btn-reg-action btn-ver-detalle" title="Ver detalles">
-                <svg viewBox="0 0 24 24">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                  <circle cx="12" cy="12" r="3"/>
-                </svg>
-                Ver
-              </button>
+            <button type="button" class="btn btn-outline-secondary btn-sm btn-action-small btn-ver-detalle" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles del almacén">
+              <i class="bi bi-eye"></i>
+            </button>
             {% else %}
-              <span class="td-muted">—</span>
+            <span class="text-muted-small">—</span>
             {% endif %}
           </td>
           <td>
             {% if almacen.capacidad %}
-              <span class="stock-badge">
-                <span class="stock-dot"></span>
-                {{ almacen.capacidad }}
-              </span>
+            <span class="badge-state badge-aprobada">{{ almacen.capacidad }}</span>
             {% else %}
-              <span class="td-muted">—</span>
+            <span class="text-muted-small">—</span>
             {% endif %}
           </td>
           <td>{{ almacen.fecha_creacion|date:"d/m/Y H:i" }}</td>
           <td>
-            <div class="d-flex gap-2 flex-wrap">
-              <button class="btn btn-outline-secondary btn-sm btn-reg-action"
-                      onclick="abrirEditarAlmacen('{{ almacen.pk }}','{{ almacen.nombre|escapejs }}','{{ almacen.detalles|default:''|escapejs }}','{{ almacen.capacidad|default:'' }}')">
-                <svg viewBox="0 0 24 24">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                </svg>
-                Editar
+            <div class="d-flex gap-1 justify-content-center align-items-center">
+              <button type="button" class="btn btn-sm btn-light border btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditarAlmacen('{{ almacen.pk }}','{{ almacen.nombre|escapejs }}','{{ almacen.detalles|default:''|escapejs }}','{{ almacen.capacidad|default:'' }}')">
+                <i class="bi bi-pencil"></i>
               </button>
-              <button class="btn btn-outline-danger btn-sm btn-reg-action"
-                      onclick="abrirEliminarAlmacen('{{ almacen.pk }}','{{ almacen.nombre|escapejs }}')">
-                <svg viewBox="0 0 24 24">
-                  <polyline points="3 6 5 6 21 6"/>
-                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                  <path d="M10 11v6"/><path d="M14 11v6"/>
-                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                </svg>
-                Eliminar
+              <button type="button" class="btn btn-sm btn-light border text-danger btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar almacén" onclick="abrirEliminarAlmacen('{{ almacen.pk }}','{{ almacen.nombre|escapejs }}')">
+                <i class="bi bi-trash"></i>
               </button>
             </div>
           </td>
         </tr>
         {% empty %}
         <tr>
-          <td colspan="6" class="reg-empty">
-            No hay almacenes registrados aún.<br>
-            <small>Usa <strong>Nuevo Almacén</strong> para agregar uno.</small>
+          <td colspan="6" class="text-center py-4 text-muted">
+            <i class="bi bi-building display-6 d-block mb-2"></i> No hay almacenes registrados aún.
           </td>
         </tr>
         {% endfor %}
@@ -353,38 +153,32 @@
 
 <!-- ══ Modal Ver Detalles ══ -->
 <div class="modal fade" id="modalDetallesAlmacen" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-md">
-    <div class="modal-content">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
       <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title d-flex align-items-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-            <circle cx="12" cy="12" r="3"/>
-          </svg>
-          Detalles del Almacén
-        </h5>
+        <h5 class="modal-title fw-bold d-flex align-items-center gap-2"><i class="bi bi-eye me-1"></i>Detalles del Almacén</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body" style="padding: 1.25rem 1.5rem;">
+      <div class="modal-body modal-body-padded">
         <div class="detalle-row">
-          <span class="detalle-label">ID</span>
-          <span class="detalle-val" id="det_id">—</span>
+          <span class="label-caps">ID</span>
+          <span class="value-text" id="det_id">—</span>
         </div>
         <div class="detalle-row">
-          <span class="detalle-label">Nombre</span>
-          <span class="detalle-val" id="det_nombre">—</span>
+          <span class="label-caps">Nombre</span>
+          <span class="value-text" id="det_nombre">—</span>
         </div>
         <div class="detalle-row">
-          <span class="detalle-label">Descripción</span>
-          <span class="detalle-val" id="det_detalles">—</span>
+          <span class="label-caps">Descripción</span>
+          <span class="value-text" id="det_detalles">—</span>
         </div>
         <div class="detalle-row">
-          <span class="detalle-label">Capacidad</span>
-          <span class="detalle-val" id="det_capacidad">—</span>
+          <span class="label-caps">Capacidad</span>
+          <span class="value-text" id="det_capacidad">—</span>
         </div>
-        <div class="detalle-row">
-          <span class="detalle-label">Fecha creación</span>
-          <span class="detalle-val" id="det_fecha">—</span>
+        <div class="detalle-row border-bottom-0">
+          <span class="label-caps">Fecha creación</span>
+          <span class="value-text font-monospace" id="det_fecha">—</span>
         </div>
       </div>
       <div class="modal-footer">
@@ -394,116 +188,130 @@
   </div>
 </div>
 
-<!-- ── Modal Crear ── -->
-<div class="modal fade" id="modalAlmacen" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title">➕ Nuevo Almacén</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+<!-- ══ Modal Crear ══ -->
+<div class="modal fade" id="modalAlmacen" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2"></i>Registrar Nuevo Almacén</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form method="POST" action="{% url 'almacenes' %}">
         {% csrf_token %}
         <input type="hidden" name="accion" value="crear">
-        <div class="modal-body">
-          <div class="mb-3">
-            <label class="form-label fw-semibold small">NOMBRE *</label>
-            {{ form.nombre }}
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-semibold small">DETALLES</label>
-            {{ form.detalles }}
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-semibold small">CAPACIDAD</label>
-            {{ form.capacidad }}
-          </div>
+        <div class="modal-body p-4">
+
           {% if form.errors %}
-            <div class="alert alert-danger py-2 small mb-0">
-              {% for field, errors in form.errors.items %}
-                {% for error in errors %}<div>⚠️ {{ error }}</div>{% endfor %}
-              {% endfor %}
-            </div>
+          <div class="alert alert-danger py-2 fs-7 mb-3">
+            {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            <div><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}</div>
+            {% endfor %}
+            {% endfor %}
+          </div>
           {% endif %}
+
+          <div class="modal-section-title">Datos del almacén</div>
+
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Nombre *</label>
+              {{ form.nombre }}
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Detalles</label>
+              {{ form.detalles }}
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Capacidad</label>
+              {{ form.capacidad }}
+            </div>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn" style="background-color:var(--rust); border-color:var(--rust); color:#fff;">💾 Guardar Almacén</button>
+        <div class="modal-footer bg-light border-0 px-4 py-3">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success px-4">Guardar Almacén</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
-<!-- ── Modal Editar ── -->
-<div class="modal fade" id="modalEditarAlmacen" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title"> Editar Almacén</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+<!-- ══ Modal Editar ══ -->
+<div class="modal fade" id="modalEditarAlmacen" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>Modificar Almacén</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form method="POST" action="{% url 'almacenes' %}">
         {% csrf_token %}
         <input type="hidden" name="accion" value="editar">
         <input type="hidden" name="almacen_id" id="edit_almacen_id">
-        <div class="modal-body">
+        <div class="modal-body p-4">
+
           {% if form_editar.errors %}
-            <div class="alert alert-danger py-2 small mb-3">
-              {% for field, errors in form_editar.errors.items %}
-                {% for error in errors %}<div>⚠️ {{ error }}</div>{% endfor %}
-              {% endfor %}
-            </div>
+          <div class="alert alert-danger py-2 fs-7 mb-3">
+            {% for field, errors in form_editar.errors.items %}
+            {% for error in errors %}
+            <div><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}</div>
+            {% endfor %}
+            {% endfor %}
+          </div>
           {% endif %}
-          <div class="mb-3">
-            <label class="form-label fw-semibold small">NOMBRE *</label>
-            <input type="text" name="nombre" id="edit_almacen_nombre" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-semibold small">DETALLES</label>
-            <textarea name="detalles" id="edit_almacen_detalles" class="form-control" rows="3"></textarea>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-semibold small">CAPACIDAD</label>
-            <input type="number" name="capacidad" id="edit_almacen_capacidad" class="form-control" min="0">
+
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Nombre *</label>
+              <input type="text" name="nombre" id="edit_almacen_nombre" class="form-control" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Detalles</label>
+              <textarea name="detalles" id="edit_almacen_detalles" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Capacidad</label>
+              <input type="number" name="capacidad" id="edit_almacen_capacidad" class="form-control" min="0">
+            </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn" style="background-color:var(--rust); border-color:var(--rust); color:#fff;">💾 Guardar Cambios</button>
+        <div class="modal-footer bg-light border-0 px-4 py-3">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-primary px-4">Actualizar Datos</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
-<!-- ── Modal Eliminar ── -->
-<div class="modal fade" id="modalEliminarAlmacen" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title">🗑️ Eliminar Almacén</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+<!-- ══ Modal Eliminar ══ -->
+<div class="modal fade" id="modalEliminarAlmacen" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title fw-bold"><i class="bi bi-trash me-2"></i>Eliminar Almacén</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body text-center">
-        <p>¿Estás seguro de eliminar</p>
-        <p id="eliminar_almacen_nombre" class="fw-bold text-danger"></p>
-        <p class="text-muted small">Esta acción no se puede deshacer.</p>
+      <div class="modal-body p-4 text-center">
+        <p class="mb-2">¿Estás seguro de eliminar el almacén</p>
+        <p id="eliminar_almacen_nombre" class="fw-bold text-danger fs-5"></p>
+        <p class="text-muted small mb-0">Esta acción no se puede deshacer.</p>
       </div>
-      <div class="modal-footer">
-        <form method="POST" action="{% url 'almacenes' %}">
+      <div class="modal-footer bg-light border-0 px-4 py-3">
+        <form method="POST" action="{% url 'almacenes' %}" class="d-flex gap-2">
           {% csrf_token %}
           <input type="hidden" name="accion" value="eliminar">
           <input type="hidden" name="almacen_id" id="eliminar_almacen_id">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn" style="background-color:var(--rust); border-color:var(--rust); color:#fff;"> Si, eliminar</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-warning text-dark fw-bold px-4">Sí, eliminar</button>
         </form>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── Scripts ── -->
+<!-- ══ Scripts ══ -->
 {% if show_modal %}
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -525,7 +333,7 @@
 {% endif %}
 
 <script>
-  /* ── Modal detalles (ojito) ── */
+  /* ── Modal detalles ── */
   document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.btn-ver-detalle').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -555,33 +363,8 @@
   }
 </script>
 
-<script>
-  /* ── KPI animación ── */
-  document.addEventListener('DOMContentLoaded', function () {
-    function animarContador(el, target, duracion) {
-      var inicio = performance.now();
-      function paso(ahora) {
-        var p = Math.min((ahora - inicio) / duracion, 1);
-        var ease = 1 - Math.pow(1 - p, 3);
-        el.textContent = Math.round(ease * target);
-        if (p < 1) requestAnimationFrame(paso);
-        else el.textContent = target;
-      }
-      requestAnimationFrame(paso);
-    }
-    document.querySelectorAll('.kpi-card').forEach(function (card) {
-      var delay = parseInt(card.getAttribute('data-kpi-delay')) || 0;
-      setTimeout(function () {
-        card.classList.add('kpi-visible');
-        card.querySelectorAll('.kpi-number').forEach(function (num) {
-          animarContador(num, parseInt(num.getAttribute('data-target')) || 0, 950);
-        });
-      }, delay + 150);
-    });
-  });
-</script>
+{% endblock %}
 
 {% block js %}
 <script src="{% static 'js/tables/almacenamiento_table.js' %}"></script>
 {% endblock js %}
-{% endblock %}
