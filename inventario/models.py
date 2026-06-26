@@ -124,3 +124,20 @@ class Detalle_Movimientos(models.Model):
 
     def __str__(self):
         return f"Detalle #{self.id} de Movimiento #{self.movimiento_id}"
+    
+class Edicion_limitada(models.Model):
+    ESTADO = [
+        ('V', 'Vigente'),
+        ('D', 'Descontinuado'),
+    ]
+    producto = models.OneToOneField(Producto,on_delete=models.CASCADE,)      
+    nombre = models.CharField(max_length=100)
+    estado = models.CharField(max_length=20,choices=ESTADO)
+    observaciones = models.TextField(blank=True, null=True)
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateTimeField()
+
+
+    def __str__(self):
+        return f"{self.producto.codigo_sku}  {self.nombre}  {self.estado}"
+    

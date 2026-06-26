@@ -270,3 +270,13 @@ def lista_proveedores(request):
         form = ProveedorForm()
 
     return render(request, "proveedores.html", {"proveedores": proveedores, "form": form})
+
+from django.http import HttpResponse
+from .models import Edicion_limitada
+
+def mostrar_producto(request):
+    producto = Edicion_limitada.objects.get(
+        producto__codigo_sku=1
+    )
+
+    return HttpResponse(producto.nombre)
