@@ -1,20 +1,18 @@
 from datetime import date
-from django.contrib.auth import get_user_model
 from django.test import TestCase
 from inventario.models import Producto
-from usuario.models import Usuario
 from .forms import MantenimientoUpdateForm
 from .models import Mantenimiento, MantenimientoCambio, TipoEstado, TipoMantenimiento
+from usuario.models import Usuario
 
 
 class MantenimientoDisponibilidadTests(TestCase):
     def setUp(self):
         self.user = Usuario.objects.create(
-            numero_documento="tester",
+            numero_documento="100000001",
             nombre_completo="Tester",
-            correo="tester@tester.com",
-            rol="Administrador",
-            password="testpassword",
+            correo="tester@example.com",
+            password="test1234",
         )
         self.producto = Producto.objects.create(
             codigo_sku="SKU-001",

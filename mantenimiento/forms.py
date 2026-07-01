@@ -292,7 +292,9 @@ class MantenimientoForm(forms.ModelForm):
         
         self.fields["responsable"].queryset = Usuario.objects.all().order_by("nombre_completo", "numero_documento")
         
-        #self.fields["responsable"].queryset = Usuario.objects.all().order_by("nombre_completo", "numero_documento")
+        #self.fields["responsable"].queryset = Usuario.objects.filter(
+        #    is_active=True
+        #).order_by("nombre_completo", "numero_documento")
         
         self.fields["responsable"].empty_label = "-- Selecciona un técnico --"
         self.fields["responsable"].label_from_instance = (
