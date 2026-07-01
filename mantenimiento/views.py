@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponseForbidden
 from django.urls import reverse_lazy
-from django.contrib.auth.models import User
+from usuario.models import Usuario
 
 from common.mixins import SesionRequeridaMixin, ContextoMixin, sesion_requerida
 from .models import (
@@ -33,8 +33,8 @@ def _get_usuario_sesion(request):
     if not documento:
         return None
     try:
-        return User.objects.get(username=documento)
-    except User.DoesNotExist:
+        return Usuario.objects.get(numero_documento=documento)
+    except Usuario.DoesNotExist:
         return None
 
 
@@ -75,7 +75,7 @@ def _puede_editar_mantenimiento(request, mantenimiento):
     if _es_rol_tecnico(rol):
         if not mantenimiento.responsable_id:
             return False
-        return mantenimiento.responsable.username == documento
+        return mantenimiento.responsable_id == documento
 
     return False
 
@@ -607,10 +607,10 @@ def registrar_desde_inventario(request):
         doc = request.session.get("usuario_documento")
         if doc:
             try:
-                usuario = User.objects.get(username=doc)
+                usuario = Usuario.objects.get(numero_documento=doc)
                 mantenimiento.creado_por = usuario
                 mantenimiento.actualizado_por = usuario
-            except User.DoesNotExist:
+            except Usuario.DoesNotExist:
                 pass
 
         mantenimiento.save()
