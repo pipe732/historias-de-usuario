@@ -2,15 +2,19 @@ from datetime import date
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from inventario.models import Producto
+from usuario.models import Usuario
 from .forms import MantenimientoUpdateForm
 from .models import Mantenimiento, MantenimientoCambio, TipoEstado, TipoMantenimiento
 
 
 class MantenimientoDisponibilidadTests(TestCase):
     def setUp(self):
-        self.user = get_user_model().objects.create_user(
-            username="tester",
-            password="test1234",
+        self.user = Usuario.objects.create(
+            numero_documento="tester",
+            nombre_completo="Tester",
+            correo="tester@tester.com",
+            rol="Administrador",
+            password="testpassword",
         )
         self.producto = Producto.objects.create(
             codigo_sku="SKU-001",
@@ -137,7 +141,7 @@ class MantenimientoDisponibilidadTests(TestCase):
             },
             instance=m,
             rol_usuario="supervisor",
-            usuario_documento=self.user.username,
+            usuario_documento=self.user.numero_documento,
         )
 
         self.assertTrue(form.is_valid(), form.errors.as_json())
@@ -149,7 +153,7 @@ class MantenimientoDisponibilidadTests(TestCase):
         form = MantenimientoUpdateForm(
             instance=m,
             rol_usuario="supervisor",
-            usuario_documento=self.user.username,
+            usuario_documento=self.user.numero_documento,
         )
 
         self.assertIn('value="2026-04-10"', form["fecha_reporte"].as_widget())
