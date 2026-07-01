@@ -89,6 +89,9 @@ def lista_proveedores(request):
     }
     return render(request, "proveedores.html", context)   
 
+from common.mixins import sesion_requerida   
+
+
 
 @sesion_requerida 
 def devoluciones_view(request):

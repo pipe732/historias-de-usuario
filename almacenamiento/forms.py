@@ -16,6 +16,7 @@ class ProductoForm(forms.ModelForm):
         }
 
 
+
 class AlmacenForm(forms.ModelForm):
     class Meta:
         model = Almacen
