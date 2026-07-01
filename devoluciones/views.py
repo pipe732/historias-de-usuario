@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.utils import timezone
 from .models import Devolucion
 from prestamo.models import Prestamo, ItemPrestamo
-from common.mixins import sesion_requerida
+from common.mixins import sesion_requerida   
 
 
 @sesion_requerida 

@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q, Sum, Count
 from django.db import IntegrityError
 from almacenamiento.models import Almacen, Estante
-from .models import Producto, Categoria, Proveedor, Inventario, Movimientos, Detalle_Movimientos
+from .models import Producto, Categoria, Proveedor, Inventario, Movimientos
 from .forms import ProductoForm, CategoriaForm, FiltroInventarioForm, ProveedorForm, InventarioForm, MovimientosForm
 from mantenimiento.forms import MantenimientoForm
 from common.mixins import sesion_requerida    
@@ -223,7 +223,7 @@ def lista_inventario_detalle(request):
         "registros": registros,
         "form": form,
     }
-    return render(request, "detallle_inventario.html", context)
+    return render(request, "inventario_detalle.html", context)
 
 
 @sesion_requerida
@@ -258,7 +258,7 @@ def lista_movimientos(request):
         "movimientos": movimientos,
         "form": form,
     }
-    return render(request, "movimiento.html", context)
+    return render(request, "movimientos.html", context)
 
 
 @sesion_requerida
