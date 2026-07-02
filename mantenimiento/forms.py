@@ -137,6 +137,7 @@ class MantenimientoForm(forms.ModelForm):
             "producto",
             "tipo_mantenimiento",
             "tipo_estado",
+            "estado_registro",
             "fecha_reporte",
             "fecha_inicio",
             "fecha_fin_estimada",
@@ -146,6 +147,7 @@ class MantenimientoForm(forms.ModelForm):
             "responsable",
             "costo_estimado",
             "costo_real",
+            "estado_registro"
         ]
         widgets = {
             "producto": forms.HiddenInput(),
