@@ -73,6 +73,119 @@
   </div>
 </div>
 
-<!-- El modal y el script se mantienen igual (están bien) -->
+<div class="modal fade" id="modalNuevoEstado" tabindex="-1" aria-labelledby="modalNuevoEstadoLabel" aria-hidden="true" data-has-errors="{{ tipo_estado_form.errors|yesno:'true,false' }}">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h5 class="modal-title mb-1" id="modalNuevoEstadoLabel">Nuevo Tipo de Estado</h5>
+          <p class="mb-0 text-muted" style="font-size: 0.85rem;">Registra un estado sin salir de la lista.</p>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <form id="formNuevoEstado" method="post" action="{% url 'mantenimiento:tipo_estado_nuevo' %}" novalidate>
+        {% csrf_token %}
+        <div class="modal-body">
+          {% if tipo_estado_form.non_field_errors %}
+            <div class="alert alert-danger mb-4">
+              {% for error in tipo_estado_form.non_field_errors %}
+                <div>{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="row g-3">
+            {% for field in tipo_estado_form.visible_fields %}
+              {% if field.name == 'nombre' or field.name == 'codigo' %}
+                <div class="col-md-6">
+                  <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  {% if field.errors %}
+                    {{ field|add_class:"is-invalid" }}
+                  {% else %}
+                    {{ field }}
+                  {% endif %}
+                  {% for error in field.errors %}
+                    <div class="invalid-feedback d-block mt-1">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% elif field.name == 'categoria' or field.name == 'nivel_estado' or field.name == 'impacto_disponibilidad' %}
+                <div class="col-md-4">
+                  <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  {% if field.errors %}
+                    {{ field|add_class:"is-invalid" }}
+                  {% else %}
+                    {{ field }}
+                  {% endif %}
+                  {% for error in field.errors %}
+                    <div class="invalid-feedback d-block mt-1">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% elif field.name == 'descripcion' %}
+                <div class="col-12">
+                  <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  {% if field.errors %}
+                    {{ field|add_class:"is-invalid" }}
+                  {% else %}
+                    {{ field }}
+                  {% endif %}
+                  {% for error in field.errors %}
+                    <div class="invalid-feedback d-block mt-1">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% elif field.name == 'color' %}
+                <div class="col-md-4">
+                  <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  {% if field.errors %}
+                    {{ field|add_class:"is-invalid" }}
+                  {% else %}
+                    {{ field }}
+                  {% endif %}
+                  {% for error in field.errors %}
+                    <div class="invalid-feedback d-block mt-1">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="col-12">
+                  <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  {% if field.errors %}
+                    {{ field|add_class:"is-invalid" }}
+                  {% else %}
+                    {{ field }}
+                  {% endif %}
+                  {% for error in field.errors %}
+                    <div class="invalid-feedback d-block mt-1">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn-primary-mine">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11 a2 2 0 0 1-2 2z" />
+              <polyline points="17 21 17 13 7 13 7 21" />
+              <polyline points="7 3 7 8 15 8" />
+            </svg>
+            Guardar Tipo de Estado
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var modal = document.getElementById('modalNuevoEstado');
+    if (modal && modal.dataset.hasErrors === 'true' && window.bootstrap && bootstrap.Modal) {
+      bootstrap.Modal.getOrCreateInstance(modal).show();
+    }
+  });
+</script>
+<script src="{% static 'js/modals.js' %}"></script>
 
 {% endblock %}
