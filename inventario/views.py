@@ -202,10 +202,18 @@ def inventario(request):
 
     return render(request, "inventario.html", context)
 
+# Al final de inventario/views.py
+
+from .models import Inventario, Movimientos
+from .models import Proveedor
+from .forms import InventarioForm, MovimientosForm, ProveedorForm
+
 
 @sesion_requerida
 def lista_inventario_detalle(request):
+
     """Vista de los registros de Inventario (estantes/cantidades), separada de Producto."""
+
     registros = Inventario.objects.select_related("producto").all()
 
     if request.method == "POST":
@@ -219,11 +227,15 @@ def lista_inventario_detalle(request):
     else:
         form = InventarioForm()
 
+
+    return render(request, "inventario_detalle.html", {"registros": registros, "form": form})
+
     context = {
         "registros": registros,
         "form": form,
     }
     return render(request, "inventario_detalle.html", context)
+
 
 
 @sesion_requerida
@@ -235,17 +247,21 @@ def lista_movimientos(request):
         if form.is_valid():
             movimiento = form.save()
 
-            # Actualiza el stock del producto según el tipo de movimiento
             inv = movimiento.inventario
             if movimiento.tipo_de_movimiento == "entrada":
                 inv.cantidad += movimiento.cantidad
             elif movimiento.tipo_de_movimiento == "salida":
                 if movimiento.cantidad > inv.cantidad:
+
+                    messages.error(request, "No hay suficiente stock.")
+
                     messages.error(request, "No hay suficiente stock en este inventario para esa salida.")
+
                     movimiento.delete()
                     return redirect("inventario:lista_movimientos")
                 inv.cantidad -= movimiento.cantidad
             inv.save()
+
 
             messages.success(request, "Movimiento registrado correctamente.")
             return redirect("inventario:lista_movimientos")
@@ -254,11 +270,15 @@ def lista_movimientos(request):
     else:
         form = MovimientosForm()
 
+
+    return render(request, "movimientos.html", {"movimientos": movimientos, "form": form})
+
     context = {
         "movimientos": movimientos,
         "form": form,
     }
     return render(request, "movimientos.html", context)
+
 
 
 @sesion_requerida
@@ -276,8 +296,22 @@ def lista_proveedores(request):
     else:
         form = ProveedorForm()
 
+
+    return render(request, "proveedores.html", {"proveedores": proveedores, "form": form})
+
+from django.http import HttpResponse
+from .models import Edicion_limitada
+
+def mostrar_producto(request):
+    producto = Edicion_limitada.objects.get(
+        producto__codigo_sku=1
+    )
+
+    return HttpResponse(producto.nombre)
+
     context = {
         "proveedores": proveedores,
         "form": form,
     }
     return render(request, "proveedores.html", context)
+

@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100, unique=True, verbose_name="Nombre")
     descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
@@ -13,57 +14,25 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre
 
+
 class Producto(models.Model):
-    codigo_sku = models.CharField(
-        max_length=50, unique=True, verbose_name="Código / SKU"
-    )
+    codigo_sku = models.CharField(max_length=50, unique=True, verbose_name="Código / SKU")
     nombre = models.CharField(max_length=200, verbose_name="Nombre")
     descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
     stock = models.PositiveIntegerField(default=0, verbose_name="Stock / Cantidad")
-    
-    # =========================================================================
-    # UBICACIÓN DE LA LLAVE FORÁNEA (RELACIÓN MUCHOS A UNO)
-    # =========================================================================
-    # Un Producto pertenece a una Categoría; una Categoría tiene muchos Productos.
+
     categoria = models.ForeignKey(
-        # 1. 'Categoria' (String): Evita NameError e importaciones circulares.
         'Categoria',
-        
-        # 2. on_delete=models.SET_NULL: Si borras la categoría, el producto NO se borra;
-        # su columna "categoria_id" simplemente queda vacía (NULL) en la base de datos.
         on_delete=models.SET_NULL,
-        
-        # 3. Requisito para SET_NULL: Permite que el campo acepte valores vacíos.
         null=True,
         blank=True,
-        
-        # 4. related_name="productos": Te permite consultar desde el objeto categoría 
-        # todos sus productos vinculados usando: mi_categoria.productos.all()
         related_name="productos",
-        
         verbose_name="Categoría"
     )
-    # =========================================================================
-    
-    numero_serie = models.CharField(
-        max_length=100, 
-        blank=True, 
-        null=True, 
-        verbose_name="Número de serie"
-    )
 
-    disponible = models.BooleanField(
-        default=True, 
-        verbose_name="Disponible para préstamo"
-    )
-
-    ubicacion = models.CharField(
-        max_length=150, 
-        blank=True, 
-        null=True, 
-        verbose_name="Almacén / Estante"
-    )
-
+    numero_serie = models.CharField(max_length=100, blank=True, null=True, verbose_name="Número de serie")
+    disponible = models.BooleanField(default=True, verbose_name="Disponible para préstamo")
+    ubicacion = models.CharField(max_length=150, blank=True, null=True, verbose_name="Almacén / Estante")
     creado_en = models.DateTimeField(auto_now_add=True)
     actualizado_en = models.DateTimeField(auto_now=True)
 
@@ -71,7 +40,6 @@ class Producto(models.Model):
         verbose_name = "Producto"
         verbose_name_plural = "Productos"
         ordering = ["nombre"]
-        # NUEVO: Índices optimizados para búsquedas rápidas en la base de datos
         indexes = [
             models.Index(fields=['codigo_sku']),
             models.Index(fields=['nombre']),
@@ -80,6 +48,7 @@ class Producto(models.Model):
 
     def __str__(self):
         return f"[{self.codigo_sku}] {self.nombre}"
+
 
 class Proveedor(models.Model):
     nit_proveedor = models.CharField(max_length=50, unique=True, verbose_name="NIT")
@@ -112,9 +81,7 @@ class Inventario(models.Model):
         verbose_name = "Inventario"
         verbose_name_plural = "Inventarios"
         ordering = ["id_estante"]
-        indexes = [
-            models.Index(fields=['id_estante']),
-        ]
+        indexes = [models.Index(fields=['id_estante'])]
 
     def __str__(self):
         return f"Inventario #{self.id} - {self.producto.nombre}"
@@ -127,26 +94,10 @@ class Movimientos(models.Model):
         ("ajuste", "Ajuste"),
     ]
 
-    inventario = models.ForeignKey(
-        Inventario,
-        on_delete=models.CASCADE,
-        related_name="movimientos",
-        verbose_name="Inventario"
-    )
-    proveedor = models.ForeignKey(
-        Proveedor,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="movimientos",
-        verbose_name="Proveedor"
-    )
+    inventario = models.ForeignKey(Inventario, on_delete=models.CASCADE, related_name="movimientos", verbose_name="Inventario")
+    proveedor = models.ForeignKey(Proveedor, on_delete=models.SET_NULL, null=True, blank=True, related_name="movimientos", verbose_name="Proveedor")
     cantidad = models.PositiveIntegerField(verbose_name="Cantidad")
-    tipo_de_movimiento = models.CharField(
-        max_length=20,
-        choices=TIPO_MOVIMIENTO_CHOICES,
-        verbose_name="Tipo de movimiento"
-    )
+    tipo_de_movimiento = models.CharField(max_length=20, choices=TIPO_MOVIMIENTO_CHOICES, verbose_name="Tipo de movimiento")
     fecha_movimiento = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de movimiento")
 
     class Meta:
@@ -163,18 +114,8 @@ class Movimientos(models.Model):
 
 
 class Detalle_Movimientos(models.Model):
-    movimiento = models.ForeignKey(
-        Movimientos,
-        on_delete=models.CASCADE,
-        related_name="detalles",
-        verbose_name="Movimiento"
-    )
-    inventario = models.ForeignKey(
-        Inventario,
-        on_delete=models.CASCADE,
-        related_name="detalles",
-        verbose_name="Inventario"
-    )
+    movimiento = models.ForeignKey(Movimientos, on_delete=models.CASCADE, related_name="detalles", verbose_name="Movimiento")
+    inventario = models.ForeignKey(Inventario, on_delete=models.CASCADE, related_name="detalles", verbose_name="Inventario")
     descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
 
     class Meta:
@@ -183,3 +124,20 @@ class Detalle_Movimientos(models.Model):
 
     def __str__(self):
         return f"Detalle #{self.id} de Movimiento #{self.movimiento_id}"
+    
+class Edicion_limitada(models.Model):
+    ESTADO = [
+        ('V', 'Vigente'),
+        ('D', 'Descontinuado'),
+    ]
+    producto = models.OneToOneField(Producto,on_delete=models.CASCADE,)      
+    nombre = models.CharField(max_length=100)
+    estado = models.CharField(max_length=20,choices=ESTADO)
+    observaciones = models.TextField(blank=True, null=True)
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateTimeField()
+
+
+    def __str__(self):
+        return f"{self.producto.codigo_sku}  {self.nombre}  {self.estado}"
+    
