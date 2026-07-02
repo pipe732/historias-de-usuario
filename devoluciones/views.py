@@ -5,7 +5,6 @@ from django.utils import timezone
 from .models import Devolucion
 from prestamo.models import Prestamo, ItemPrestamo
 from common.mixins import sesion_requerida
-<<<<<<< HEAD
 from inventario.models import Proveedor, Inventario, Movimientos, Detalle_Movimientos
 from inventario.forms import ProveedorForm, InventarioForm, MovimientosForm
 
@@ -95,11 +94,10 @@ from common.mixins import sesion_requerida
 
 
 @sesion_requerida 
-=======
 
 
 @sesion_requerida
->>>>>>> main
+
 def devoluciones_view(request):
     edit_id = None
 
