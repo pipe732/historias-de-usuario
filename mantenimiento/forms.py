@@ -146,6 +146,7 @@ class MantenimientoForm(forms.ModelForm):
             "responsable",
             "costo_estimado",
             "costo_real",
+            "estado_registro"
         ]
         widgets = {
             "producto": forms.HiddenInput(),
