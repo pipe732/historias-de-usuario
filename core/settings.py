@@ -2,6 +2,7 @@
 Django settings for core project.
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -76,14 +77,15 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neondb',
-        'USER': 'neondb_owner',
-        'PASSWORD': 'npg_P4mVbJ6ckRad',
-        'HOST': 'ep-snowy-hall-ap8oi5l1-pooler.c-7.us-east-1.aws.neon.tech',
-        'PORT': '5432',
-        'CONN_MAX_AGE': 300, #cambiamos el valor de 0  a 300 para reutilizar conexiones cada 5 minutos y mejorar el rendimiento   
+        'NAME': os.getenv('DB_NAME', 'neondb'),
+        'USER': os.getenv('DB_USER', 'neondb_owner'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'npg_3SWYcRrA5aTz'),
+        'HOST': os.getenv('DB_HOST', 'ep-crimson-glitter-at1wc2qg-pooler.c-9.us-east-1.aws.neon.tech'),
+        'PORT': os.getenv('DB_PORT', '5432'),
+        'CONN_MAX_AGE': 300,
         'OPTIONS': {
-        'sslmode': 'require',
+            'sslmode': os.getenv('DB_SSLMODE', 'require'),
+            'channel_binding': os.getenv('DB_CHANNEL_BINDING', 'require'),
         },
     }
 }
