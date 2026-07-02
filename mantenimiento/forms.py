@@ -61,9 +61,6 @@ class TipoMantenimientoForm(forms.ModelForm):
                 raise ValidationError("Ya existe un tipo de mantenimiento con este nombre.")
         return nombre
 
-
-# ==================== TIPO ESTADO ====================
-
 class TipoEstadoForm(forms.ModelForm):
 
     class Meta:
@@ -112,10 +109,6 @@ class TipoEstadoForm(forms.ModelForm):
             if qs.exists():
                 raise ValidationError("Este código ya está en uso.")
         return codigo
-
-
-# ==================== MANTENIMIENTO ====================
-
 class MantenimientoForm(forms.ModelForm):
     producto_busqueda = forms.CharField(
         required=False,
@@ -254,10 +247,6 @@ class MantenimientoForm(forms.ModelForm):
             self.add_error("fecha_fin_estimada", "La fecha estimada no puede ser anterior a la de inicio.")
 
         return cleaned
-
-
-# ==================== MANTENIMIENTO UPDATE ====================
-
 class MantenimientoUpdateForm(MantenimientoForm):
     MOTIVOS = MOTIVO_CAMBIO_CHOICES
     CAMPOS_TECNICO_EDITABLES = {"tiempo_empleado_horas"}
@@ -294,10 +283,6 @@ class MantenimientoUpdateForm(MantenimientoForm):
         if not cleaned.get("confirmar_cambios"):
             self.add_error("confirmar_cambios", "Debes confirmar los cambios.")
         return cleaned
-
-
-# ==================== DETALLE MANTENIMIENTO ====================
-
 class DetalleMantenimientoForm(forms.ModelForm):
 
     class Meta:
