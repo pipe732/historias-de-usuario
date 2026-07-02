@@ -1,0 +1,63 @@
+<div class="col-md-3">
+  <label class="form-label">Buscar</label>
+  <input
+    type="text"
+    name="q"
+    class="form-control"
+    placeholder="Buscar en descripcion..."
+    value="{{ q }}"
+  />
+</div>
+
+<div class="col-md-2">
+  <label class="form-label">Tipo</label>
+  <select name="tipo" class="form-control form-select">
+    <option value="">Todos los tipos</option>
+    {% for value, label in tipo_choices %}
+    <option value="{{ value }}" {% if tipo_filtro == value %}selected{% endif %}>
+      {{ label }}
+    </option>
+    {% endfor %}
+  </select>
+</div>
+
+<div class="col-md-2">
+  <label class="form-label">Estado registro</label>
+  <select name="estado_registro" class="form-control form-select">
+    <option value="">Todos</option>
+    {% for value, label in estado_choices %}
+    <option value="{{ value }}" {% if estado_filtro == value %}selected{% endif %}>
+      {{ label }}
+    </option>
+    {% endfor %}
+  </select>
+</div>
+
+<div class="col-md-2">
+  <label class="form-label">Desde</label>
+  <input
+    type="date"
+    name="fecha_desde"
+    class="form-control"
+    value="{{ fecha_desde }}"
+  />
+</div>
+
+<div class="col-md-2">
+  <label class="form-label">Hasta</label>
+  <input
+    type="date"
+    name="fecha_hasta"
+    class="form-control"
+    value="{{ fecha_hasta }}"
+  />
+</div>
+
+<div class="col-md-1 d-flex gap-2">
+  <button type="submit" class="btn-primary-mine flex-grow-1">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  </button>
+</div>
