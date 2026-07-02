@@ -6,30 +6,39 @@ from prestamo.models import Prestamo, ItemPrestamo
 class Devolucion(models.Model):
     ESTADO_CHOICES = [
         ('pendiente', 'Pendiente'),
-        ('aprobada',  'Aprobada'),
+        ('aprobada', 'Aprobada'),
         ('rechazada', 'Rechazada'),
     ]
 
-    prestamo         = models.ForeignKey(
-                           Prestamo,
-                           on_delete=models.PROTECT,
-                           related_name='devoluciones',
-                           verbose_name='Préstamo'
-                       )
-    items            = models.ManyToManyField(
-                           ItemPrestamo,
-                           related_name='devoluciones',
-                           verbose_name='Ítems devueltos',
-                           blank=True,
-                       )
+    prestamo = models.ForeignKey(
+        Prestamo,
+        on_delete=models.PROTECT,
+        related_name='devoluciones',
+        verbose_name='Préstamo',
+    )
+    items = models.ManyToManyField(
+        ItemPrestamo,
+        related_name='devoluciones',
+        verbose_name='Ítems devueltos',
+        blank=True,
+    )
     devolucion_total = models.BooleanField(
-                           default=True,
-                           help_text='True = todas las herramientas; False = devolución parcial'
-                       )
-    motivo           = models.TextField()
-    estado           = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
-    fecha_creacion      = models.DateTimeField(auto_now_add=True)
+        default=True,
+        help_text='True = todas las herramientas; False = devolución parcial',
+    )
+    motivo = models.TextField()
+    estado = models.CharField(
+        max_length=20,
+        choices=ESTADO_CHOICES,
+        default='pendiente',
+    )
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Devolución'
+        verbose_name_plural = 'Devoluciones'
+        ordering = ['-fecha_creacion']
 
     def __str__(self):
         tipo = "total" if self.devolucion_total else "parcial"
@@ -44,12 +53,9 @@ class Devolucion(models.Model):
             item.devuelto = True
             item.save(update_fields=['devuelto'])
             # Restaurar stock al inventario
-            cant = cantidades.get(item.pk, item.cantidad) if (cantidades and item.pk in cantidades) else item.cantidad
+            cant = item.cantidad
+            if cantidades and item.pk in cantidades:
+                cant = cantidades[item.pk]
             item.producto.stock += cant
             item.producto.save(update_fields=['stock', 'actualizado_en'])
         self.prestamo.actualizar_estado()
-
-    class Meta:
-        verbose_name        = 'Devolución'
-        verbose_name_plural = 'Devoluciones'
-        ordering            = ['-fecha_creacion']

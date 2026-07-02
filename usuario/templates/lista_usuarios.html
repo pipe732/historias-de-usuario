@@ -1,8 +1,8 @@
 {% extends "base.html" %}
+{% load static %}    
 {% block title %}Gestión de Usuarios{% endblock %}
-
+{% load static %}
 {% block content %}
-
 {% if messages %}
   {% for message in messages %}
   <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 mb-3"
@@ -834,7 +834,8 @@ document.getElementById('edit_ficha').addEventListener('input', function() {
 });
 </script>
 
-{% block js %}
+{% endblock %}  {# ← cierra el block content AQUÍ #}
+
+{% block js %}  {# ← DESPUÉS del endblock content #}
 <script src="{% static 'js/tables/usuarios_table.js' %}"></script>
 {% endblock js %}
-{% endblock %}
