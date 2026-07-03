@@ -18,7 +18,7 @@
     <!-- Principal → Mis Préstamos (es la página principal del usuario) -->
     <a href="{% url 'home_usuario' %}"
       class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium
-              {% if request.resolver_match.url_name ==  extracted-style-229"home_usuario' %}active{% else %}text-white-50{% endif %}">
+              {% if request.resolver_match.url_name == 'home_usuario' %}active{% else %}text-white-50{% endif %}">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <rect x="3" y="3" width="7" height="7" />
         <rect x="14" y="3" width="7" height="7" />
@@ -31,7 +31,7 @@
     <!-- Mis Préstamos -->
     <a href="{% url 'prestamo_usuario' %}"
       class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium
-              {% if request.resolver_match.url_name ==  extracted-style-229"prestamo_usuario' %}active{% else %}text-white-50{% endif %}">
+              {% if request.resolver_match.url_name == 'prestamo_usuario' %}active{% else %}text-white-50{% endif %}">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <polyline points="9 10 4 15 9 20" />
         <path d="M20 4v7a4 4 0 0 1-4 4H4" />
@@ -50,7 +50,7 @@
 
     <a href="{% url 'login' %}"
       class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium
-              {% if request.resolver_match.url_name ==  extracted-style-229"login' %}active{% else %}text-white-50{% endif %}">
+              {% if request.resolver_match.url_name == 'login' %}active{% else %}text-white-50{% endif %}">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
         <polyline points="10 17 15 12 10 7" />

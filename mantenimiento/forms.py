@@ -8,13 +8,12 @@ from .models import (
     TipoMantenimiento,
     Mantenimiento,
     DetalleMantenimiento,
-    MantenimientoCambio,
     MOTIVO_CAMBIO_CHOICES,
 )
-from inventario.models import Producto
 
 
 # ==================== TIPO MANTENIMIENTO ====================
+
 
 class TipoMantenimientoForm(forms.ModelForm):
     """Formulario para crear y editar tipos de mantenimiento."""
@@ -58,11 +57,14 @@ class TipoMantenimientoForm(forms.ModelForm):
             if self.instance.pk:
                 qs = qs.exclude(pk=self.instance.pk)
             if qs.exists():
-                raise ValidationError("Ya existe un tipo de mantenimiento con este nombre.")
+                raise ValidationError(
+                    "Ya existe un tipo de mantenimiento con este nombre."
+                )
         return nombre
 
 
 # ==================== TIPO ESTADO ====================
+
 
 class TipoEstadoForm(forms.ModelForm):
 
@@ -116,6 +118,7 @@ class TipoEstadoForm(forms.ModelForm):
 
 # ==================== MANTENIMIENTO ====================
 
+
 class MantenimientoForm(forms.ModelForm):
     producto_busqueda = forms.CharField(
         required=False,
@@ -146,6 +149,7 @@ class MantenimientoForm(forms.ModelForm):
             "responsable",
             "costo_estimado",
             "costo_real",
+            "estado_registro",
         ]
         widgets = {
             "producto": forms.HiddenInput(),
@@ -153,13 +157,28 @@ class MantenimientoForm(forms.ModelForm):
             "tipo_estado": forms.Select(attrs={"class": "form-select"}),
             "prioridad": forms.Select(attrs={"class": "form-select"}),
             "responsable": forms.Select(attrs={"class": "form-select"}),
-            "fecha_reporte": forms.DateInput(format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}),
-            "fecha_inicio": forms.DateInput(format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}),
-            "fecha_fin_estimada": forms.DateInput(format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}),
-            "fecha_fin_real": forms.DateInput(format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}),
-            "tiempo_empleado_horas": forms.NumberInput(attrs={"class": "form-control", "step": "0.25", "min": "0"}),
-            "costo_estimado": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": "0"}),
-            "costo_real": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": "0"}),
+            "fecha_reporte": forms.DateInput(
+                format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}
+            ),
+            "fecha_inicio": forms.DateInput(
+                format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}
+            ),
+            "fecha_fin_estimada": forms.DateInput(
+                format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}
+            ),
+            "fecha_fin_real": forms.DateInput(
+                format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}
+            ),
+            "tiempo_empleado_horas": forms.NumberInput(
+                attrs={"class": "form-control", "step": "0.25", "min": "0"}
+            ),
+            "costo_estimado": forms.NumberInput(
+                attrs={"class": "form-control", "step": "0.01", "min": "0"}
+            ),
+            "costo_real": forms.NumberInput(
+                attrs={"class": "form-control", "step": "0.01", "min": "0"}
+            ),
+            "estado_registro": forms.Select(attrs={"class": "form-select"}),
         }
         labels = {
             "tipo_mantenimiento": "Tipo de mantenimiento *",
@@ -179,7 +198,9 @@ class MantenimientoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields["tipo_mantenimiento"].queryset = TipoMantenimiento.objects.filter(activo=True).order_by("nombre")
+        self.fields["tipo_mantenimiento"].queryset = TipoMantenimiento.objects.filter(
+            activo=True
+        ).order_by("nombre")
         self.fields["tipo_mantenimiento"].empty_label = "-- Selecciona un tipo --"
 
         self.fields["tipo_estado"].queryset = TipoEstado.objects.filter(activo=True)
@@ -187,7 +208,9 @@ class MantenimientoForm(forms.ModelForm):
 
         self.fields["estado_registro"].empty_label = "-- Selecciona el estado --"
         self.fields["prioridad"].empty_label = "-- Selecciona la prioridad --"
-        self.fields["responsable"].queryset = Usuario.objects.all().order_by("nombre_completo", "numero_documento")
+        self.fields["responsable"].queryset = Usuario.objects.all().order_by(
+            "nombre_completo", "numero_documento"
+        )
         self.fields["responsable"].empty_label = "-- Selecciona un técnico --"
         self.fields["responsable"].label_from_instance = (
             lambda u: f"{u.nombre_completo} ({u.numero_documento})"
@@ -221,6 +244,7 @@ class MantenimientoForm(forms.ModelForm):
         if not fecha:
             raise ValidationError("La fecha de reporte es obligatoria.")
         from datetime import date
+
         if fecha > date.today():
             raise ValidationError("La fecha de reporte no puede ser en el futuro.")
         return fecha
@@ -243,18 +267,24 @@ class MantenimientoForm(forms.ModelForm):
         fecha_reporte = cleaned.get("fecha_reporte")
         fecha_inicio = cleaned.get("fecha_inicio")
         fecha_fin_estimada = cleaned.get("fecha_fin_estimada")
-        fecha_fin_real = cleaned.get("fecha_fin_real")
 
         if fecha_reporte and fecha_inicio and fecha_inicio < fecha_reporte:
-            self.add_error("fecha_inicio", "La fecha de inicio no puede ser anterior a la de reporte.")
+            self.add_error(
+                "fecha_inicio",
+                "La fecha de inicio no puede ser anterior a la de reporte.",
+            )
 
         if fecha_inicio and fecha_fin_estimada and fecha_fin_estimada < fecha_inicio:
-            self.add_error("fecha_fin_estimada", "La fecha estimada no puede ser anterior a la de inicio.")
+            self.add_error(
+                "fecha_fin_estimada",
+                "La fecha estimada no puede ser anterior a la de inicio.",
+            )
 
         return cleaned
 
 
 # ==================== MANTENIMIENTO UPDATE ====================
+
 
 class MantenimientoUpdateForm(MantenimientoForm):
     MOTIVOS = MOTIVO_CAMBIO_CHOICES
@@ -283,7 +313,11 @@ class MantenimientoUpdateForm(MantenimientoForm):
 
         if "tecnico" in self.rol_usuario:
             for field_name, field in self.fields.items():
-                if field_name not in {"motivo_edicion", "detalle_motivo", "confirmar_cambios"}:
+                if field_name not in {
+                    "motivo_edicion",
+                    "detalle_motivo",
+                    "confirmar_cambios",
+                }:
                     if field_name not in self.CAMPOS_TECNICO_EDITABLES:
                         field.disabled = True
 
@@ -295,6 +329,7 @@ class MantenimientoUpdateForm(MantenimientoForm):
 
 
 # ==================== DETALLE MANTENIMIENTO ====================
+
 
 class DetalleMantenimientoForm(forms.ModelForm):
 
@@ -312,7 +347,9 @@ class DetalleMantenimientoForm(forms.ModelForm):
         mantenimiento = kwargs.pop("mantenimiento", None)
         super().__init__(*args, **kwargs)
 
-        self.fields["tipo_mantenimiento"].queryset = TipoMantenimiento.objects.filter(activo=True).order_by("nombre")
+        self.fields["tipo_mantenimiento"].queryset = TipoMantenimiento.objects.filter(
+            activo=True
+        ).order_by("nombre")
         self.fields["tipo_mantenimiento"].empty_label = "-- Selecciona un tipo --"
         self.fields["tipo"].empty_label = "-- Selecciona una entrada --"
 
@@ -322,5 +359,7 @@ class DetalleMantenimientoForm(forms.ModelForm):
     def clean_descripcion(self):
         desc = self.cleaned_data.get("descripcion")
         if not desc or len(desc.strip()) < 10:
-            raise ValidationError("La descripción es obligatoria y debe tener al menos 10 caracteres.")
+            raise ValidationError(
+                "La descripción es obligatoria y debe tener al menos 10 caracteres."
+            )
         return desc
