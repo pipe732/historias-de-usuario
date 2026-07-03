@@ -13,7 +13,7 @@
     </div>
 
     <a href="{% url 'home' %}"
-      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'home' %}bg-white bg-opacity-10 text-white border-start border-danger border-3{% else %}text-white-50{% endif %}"
+      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'home' %}active{% else %}text-white-50{% endif %}"
       style="font-size: 0.88rem">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <rect x="3" y="3" width="7" height="7" />
@@ -25,7 +25,7 @@
     </a>
 
     <a href="{% url 'inventario:inventario' %}"
-      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'inventario' %}bg-white bg-opacity-10 text-white border-start border-danger border-3{% else %}text-white-50{% endif %}"
+      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'inventario' %}active{% else %}text-white-50{% endif %}"
       style="font-size: 0.88rem">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
@@ -34,7 +34,7 @@
     </a>
 
     <a href="{% url 'prestamo' %}"
-      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'prestamo' %}bg-white bg-opacity-10 text-white border-start border-danger border-3{% else %}text-white-50{% endif %}"
+      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'prestamo' %}active{% else %}text-white-50{% endif %}"
       style="font-size: 0.88rem">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <polyline points="9 10 4 15 9 20" />
@@ -50,7 +50,7 @@
     </div>
 
     <a href="{% url 'reportes' %}"
-      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'reportes' %}bg-white bg-opacity-10 text-white border-start border-danger border-3{% else %}text-white-50{% endif %}"
+      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'reportes' %}active{% else %}text-white-50{% endif %}"
       style="font-size: 0.88rem">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <line x1="18" y1="20" x2="18" y2="10" />
@@ -67,7 +67,7 @@
     </div>
 
     <a href="{% url 'devoluciones' %}"
-      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'devoluciones' %}bg-white bg-opacity-10 text-white border-start border-danger border-3{% else %}text-white-50{% endif %}"
+      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'devoluciones' %}active{% else %}text-white-50{% endif %}"
       style="font-size: 0.88rem">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <polyline points="1 4 1 10 7 10" />
@@ -83,7 +83,7 @@
     </div>
 
     <a href="{% url 'lista_usuarios' %}"
-      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'lista_usuarios' %}bg-white bg-opacity-10 text-white border-start border-danger border-3{% else %}text-white-50{% endif %}"
+      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'lista_usuarios' %}active{% else %}text-white-50{% endif %}"
       style="font-size: .88rem;">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
@@ -101,7 +101,7 @@
     </div>
 
     <a href="{% url 'login' %}"
-      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'login' %}bg-white bg-opacity-10 text-white border-start border-danger border-3{% else %}text-white-50{% endif %}"
+      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'login' %}active{% else %}text-white-50{% endif %}"
       style="font-size: 0.88rem">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
@@ -134,7 +134,7 @@
       <div class="collapse" id="menuAlmacen">
         <ul class="list-unstyled ps-4 mb-0">
           <li>
-            <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'almacenes' %}text-white bg-white bg-opacity-10{% else %}text-white-50{% endif %}"
+            <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'almacenes' %}active{% else %}text-white-50{% endif %}"
               style="font-size: 0.85rem" href="{% url 'almacenes' %}">
               <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <rect x="2" y="7" width="20" height="14" rx="2" />
@@ -144,7 +144,7 @@
             </a>
           </li>
           <li>
-            <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'estantes' %}text-white bg-white bg-opacity-10{% else %}text-white-50{% endif %}"
+            <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'estantes' %}active{% else %}text-white-50{% endif %}"
               style="font-size: 0.85rem" href="{% url 'estantes' %}">
               <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <line x1="3" y1="6" x2="21" y2="6" />
@@ -177,7 +177,7 @@
         <ul class="list-unstyled ps-4 mb-0">
           <li class="mb-1">
             <a href="{% url 'mantenimiento:estado_actual_lista' %}"
-              class="d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'estado_actual_lista' %}text-white bg-white bg-opacity-10{% else %}text-white-50{% endif %}"
+              class="d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'estado_actual_lista' %}active{% else %}text-white-50{% endif %}"
               style="font-size: 0.85rem">
               <i class="bi bi-clipboard-check"></i>
               Estado Actual de Herramientas
@@ -185,7 +185,7 @@
           </li>
           <li class="mb-1">
             <a href="{% url 'mantenimiento:tipo_estado_lista' %}"
-              class="d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'tipo_estado_lista' %}text-white bg-white bg-opacity-10{% else %}text-white-50{% endif %}"
+              class="d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'tipo_estado_lista' %}active{% else %}text-white-50{% endif %}"
               style="font-size: 0.85rem">
               <i class="bi bi-tags"></i>
               Tipos de Estado
@@ -193,7 +193,7 @@
           </li>
           <li class="mb-1">
             <a href="{% url 'mantenimiento:tipo_mantenimiento_lista' %}"
-              class="d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'tipo_mantenimiento_lista' or request.resolver_match.url_name == 'tipo_mantenimiento_crear' or request.resolver_match.url_name == 'tipo_mantenimiento_editar' %}text-white bg-white bg-opacity-10{% else %}text-white-50{% endif %}"
+              class="d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'tipo_mantenimiento_lista' or request.resolver_match.url_name == 'tipo_mantenimiento_crear' or request.resolver_match.url_name == 'tipo_mantenimiento_editar' %}active{% else %}text-white-50{% endif %}"
               style="font-size: 0.85rem">
               <i class="bi bi-tag"></i>
               Tipos de Mantenimiento
@@ -201,7 +201,7 @@
           </li>
           <li class="mb-1">
             <a href="{% url 'mantenimiento:mantenimiento_lista' %}"
-              class="d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'mantenimiento_lista' %}text-white bg-white bg-opacity-10{% else %}text-white-50{% endif %}"
+              class="d-flex align-items-center gap-2 px-3 py-2 rounded fw-medium {% if request.resolver_match.url_name == 'mantenimiento_lista' %}active{% else %}text-white-50{% endif %}"
               style="font-size: 0.85rem">
               <i class="bi bi-tools"></i>
               Todos los Mantenimientos
@@ -218,7 +218,7 @@
     </div>
 
     <a href="{% url 'configuracion' %}"
-      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'configuracion' %}bg-white bg-opacity-10 text-white border-start border-danger border-3{% else %}text-white-50{% endif %}"
+      class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium {% if request.resolver_match.url_name == 'configuracion' %}active{% else %}text-white-50{% endif %}"
       style="font-size: 0.88rem">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <circle cx="12" cy="12" r="3"/>
