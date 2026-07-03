@@ -11,7 +11,7 @@
 
  
 {% if form.non_field_errors %}
-<div class="container-fluid mb-3" style="max-width: 980px">
+<div class="container-fluid mb-3 extracted-style-105">
   <div class="alert alert-danger d-flex align-items-start" role="alert">
     <strong class="me-3">Error en el formulario:</strong>
     <div>
@@ -23,14 +23,14 @@
 </div>
 {% endif %}
 
-<div class="card" style="max-width: 980px">
-  <div class="card-body" style="padding: 1.5rem">
+<div class="card extracted-style-105">
+  <div class="card-body extracted-style-106">
     {% if not mantenimiento %}
-      <div style="font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.13em; text-transform: uppercase; color: var(--navy); border-bottom: 1px solid rgba(9, 77, 146, 0.18); padding-bottom: 0.4rem; margin-bottom: 1.25rem;">
+      <div class="extracted-style-107">
         Nuevo Registro de Mantenimiento
       </div>
     {% else %}
-      <div style="font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.13em; text-transform: uppercase; color: var(--navy); border-bottom: 1px solid rgba(9, 77, 146, 0.18); padding-bottom: 0.4rem; margin-bottom: 1.25rem;">
+      <div class="extracted-style-107">
         Formulario prellenado para edición con trazabilidad
       </div>
     {% endif %}
@@ -240,13 +240,13 @@
       </div>
 
       <div class="col-12">
-        <div class="form-check" style="display: flex; align-items: center; gap: .5rem;">
+        <divalign class="form-check d-flex"-items: center; gap: .5rem;">
           {% if form.confirmar_cambios.errors %}
             {{ form.confirmar_cambios|add_class:"form-check-input is-invalid" }}
           {% else %}
             {{ form.confirmar_cambios|add_class:"form-check-input" }}
           {% endif %}
-          <label class="form-check-label" for="{{ form.confirmar_cambios.id_for_label }}" style="font-family: var(--font-ui); font-size: .88rem;">
+          <label class="form-check-label extracted-style-108" for="{{ form.confirmar_cambios.id_for_label }}">
             {{ form.confirmar_cambios.label }}
           </label>
         </div>
@@ -263,7 +263,7 @@
       {% endif %}
 
       
-      <div class="col-12 pt-4 border-top" style="display:flex; gap:.6rem; flex-wrap: wrap;">
+      <divgap class="col-12 pt-4 border-top d-flex":.6rem; flex-wrap: wrap;">
         <button type="submit" id="btnGuardar" class="btn-primary-mine">
           <span>{{ boton_texto }}</span>
         </button>
@@ -286,5 +286,5 @@
 {% endblock %}
 
 {% block js %}
-<script src="{% static 'js/mantenimiento.js' %}?v=3"></script>
+<script defer src="{% static 'js/mantenimiento.js' %}?v=3"></script>
 {% endblock %}

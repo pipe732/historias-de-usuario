@@ -137,7 +137,6 @@ class MantenimientoForm(forms.ModelForm):
             "producto",
             "tipo_mantenimiento",
             "tipo_estado",
-            "estado_registro",
             "fecha_reporte",
             "fecha_inicio",
             "fecha_fin_estimada",
@@ -147,13 +146,11 @@ class MantenimientoForm(forms.ModelForm):
             "responsable",
             "costo_estimado",
             "costo_real",
-            "estado_registro"
         ]
         widgets = {
             "producto": forms.HiddenInput(),
             "tipo_mantenimiento": forms.Select(attrs={"class": "form-select"}),
             "tipo_estado": forms.Select(attrs={"class": "form-select"}),
-            "estado_registro": forms.Select(attrs={"class": "form-select"}),
             "prioridad": forms.Select(attrs={"class": "form-select"}),
             "responsable": forms.Select(attrs={"class": "form-select"}),
             "fecha_reporte": forms.DateInput(format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}),

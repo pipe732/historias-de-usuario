@@ -9,15 +9,10 @@
 
  
 <div class="d-flex gap-3 mb-4">
-  <span
-    style="
-      font-family: var(--font-ui);
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    "
+  <span class="extracted-style-77"
   >
     Total:
-    <strong style="color: var(--text-main)">{{ productos|length }}</strong>
+    <strong class="extracted-style-78">{{ productos|length }}</strong>
   </span>
   <span class="badge-state badge-aprobada"
     >Disponibles: {{ total_disponibles }}</span
@@ -51,40 +46,33 @@
   </div>
 
   <div class="table-responsive">
-    <table
-      class="table-app datatable-disabled"
-      style="width: 100%; border-collapse: collapse; font-size: 0.9rem"
+    <tableborder class="table-app datatable-disabled w-100"-collapse: collapse; font-size: 0.9rem"
     >
       <thead>
         <tr>
           <th>Código</th>
           <th>Nombre</th>
           <th>Ubicación</th>
-          <th style="text-align: center">Disponible</th>
+          <th class="text-center">Disponible</th>
           <th>Último mantenimiento</th>
           <th>Estado actual</th>
-          <th style="text-align: center">Acciones</th>
+          <th class="text-center">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for p in productos %}
         <tr>
           <td>
-            <span
-              style="
-                font-family: var(--font-mono);
-                font-size: 0.78rem;
-                color: var(--text-muted);
-              "
+            <span class="extracted-style-79"
             >
               {{ p.codigo_sku }}
             </span>
           </td>
-          <td style="font-weight: 600">{{ p.nombre }}</td>
-          <td style="color: var(--text-muted); font-size: 0.85rem">
+          <td class="extracted-style-80">{{ p.nombre }}</td>
+          <td class="extracted-style-81">
             {{ p.ubicacion|default:"—" }}
           </td>
-          <td style="text-align: center">
+          <td class="text-center">
             {% if p.disponible %}
             <span class="badge-state badge-aprobada">Disponible</span>
             {% else %}
@@ -94,14 +82,14 @@
           <td>
             {% with ultimo=p.mantenimientos.all|first %}
               {% if ultimo %}
-                <span style="font-family: var(--font-mono); font-size: 0.78rem">
+                <span class="extracted-style-82">
                   {{ ultimo.fecha_reporte|date:"d/m/Y" }}
                 </span>
-                <small style="color: var(--text-muted)">
+                <small class="extracted-style-83">
                   ({{ ultimo.get_tipo_mantenimiento_display }})
                 </small>
               {% else %}
-                <span style="color: var(--text-muted)">Sin mantenimiento</span>
+                <span class="extracted-style-83">Sin mantenimiento</span>
               {% endif %}
             {% endwith %}
           </td>
@@ -110,9 +98,8 @@
             {% with ultimo=p.mantenimientos.all|first %}
               {% if ultimo and ultimo.tipo_estado %}
                 <span
-                  class="badge-state"
+                  class="badge-state extracted-style-84"
                   data-dynamic-bg="{{ ultimo.tipo_estado.color|default:'#6c757d' }}"
-                  style="color:#fff; border:none;"
                 >
                   {{ ultimo.tipo_estado.nombre }}
                 </span>
@@ -123,7 +110,7 @@
           </td>
           
           {% url 'mantenimiento:historial_producto' p.pk as historial_url %}
-          <td style="text-align: center">
+          <td class="text-center">
             {% include "mantenimiento/partials/_action_icon_button.html" with href=historial_url title="Ver historial" icon="history" %}
           </td>
         </tr>

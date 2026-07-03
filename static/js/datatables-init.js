@@ -9,6 +9,18 @@ window.registrarExportacion = function (modulo, formato, totalRegistros) {
     if (match) csrfToken = match[1];
   }
 
+  // Mostrar estado de carga usando SweetAlert2
+  if (typeof Swal !== 'undefined') {
+    Swal.fire({
+      title: 'Procesando...',
+      text: 'Registrando exportación',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+  }
+
   $.ajax({
     url: '/reportes/registrar-exportacion/',
     type: 'POST',
@@ -19,9 +31,13 @@ window.registrarExportacion = function (modulo, formato, totalRegistros) {
       csrfmiddlewaretoken: csrfToken
     },
     success: function (response) {
+      if (typeof Swal !== 'undefined') Swal.close();
       console.log('Exportación registrada en historial:', response);
     },
     error: function (xhr, status, error) {
+      if (typeof Swal !== 'undefined') {
+        Swal.fire('Error', 'No se pudo registrar la exportación', 'error');
+      }
       console.error('Error al registrar exportación:', error);
     }
   });

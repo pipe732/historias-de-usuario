@@ -5,8 +5,7 @@
 {% block content %}
 {% if messages %}
   {% for message in messages %}
-  <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 mb-3"
-       style="background:{% if message.tags == 'error' %}rgba(152,71,62,.1){% else %}rgba(58,122,66,.1){% endif %};
+  <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 mb-3 extracted-style-389"error' %}rgba(152,71,62,.1){% else %}rgba(58,122,66,.1){% endif %};
               border:1px solid {% if message.tags == 'error' %}rgba(152,71,62,.25){% else %}rgba(58,122,66,.25){% endif %};
               border-radius:var(--radius-md);color:var(--text-main);font-family:var(--font-ui);" role="alert">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
@@ -19,50 +18,43 @@
       {% endif %}
     </svg>
     {{ message }}
-    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" style="filter:opacity(.4);"></button>
+    <button type="button" class="btn-close ms-auto extracted-style-11" data-bs-dismiss="alert"></button>
   </div>
   {% endfor %}
 {% endif %}
 
 <div class="d-flex align-items-center justify-content-between mb-4">
   <div>
-    <h5 style="font-family:var(--font-ui);font-weight:700;font-size:1rem;
-               color:var(--text-main);letter-spacing:.03em;margin:0;">
+    <h5 class="extracted-style-390">
       Gestión de Usuarios
     </h5>
-    <p style="font-family:var(--font-ui);font-size:.8rem;color:var(--text-muted);margin:0;">
+    <p class="extracted-style-391">
       SENA · Centro Minero · Regional Boyacá
     </p>
   </div>
-  <div style="display:flex;gap:.6rem;align-items:center;">
-    <span style="font-family:var(--font-mono);font-size:.72rem;
-                 background:rgba(9,77,146,.08);color:var(--navy);
-                 padding:.22rem .75rem;border-radius:20px;
-                 border:1px solid rgba(9,77,146,.18);">
+  <div class="d-flex"gap:.6rem;align-items:center;">
+    <span class="extracted-style-392">
       {{ total }} usuario{{ total|pluralize:",s" }}
     </span>
   </div>
 </div>
 
 <div class="card mb-3">
-  <div class="card-body" style="padding:.85rem 1.2rem;">
+  <div class="card-body extracted-style-245">
     <form method="get" id="filtroForm" class="d-flex flex-wrap gap-3 align-items-end">
 
-      <div style="flex:2;min-width:200px;">
+      <div class="extracted-style-393">
         <label class="form-label">Buscar</label>
-        <div style="position:relative;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-               style="position:absolute;left:10px;top:50%;transform:translateY(-50%);
-                      color:var(--text-muted);pointer-events:none;">
+        <div class="extracted-style-394">
+          <svg class="extracted-style-395" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
-          <input type="text" name="q" id="qInput" value="{{ q }}" class="form-control"
-                 placeholder="Nombre, documento, correo…"
-                 style="padding-left:32px;">
+          <input type="text" name="q" id="qInput" value="{{ q }}" class="form-control extracted-style-396"
+                 placeholder="Nombre, documento, correo…">
         </div>
       </div>
 
-      <div style="flex:1;min-width:150px;">
+      <div class="extracted-style-397">
         <label class="form-label">Rol</label>
         <select name="rol" class="form-select" onchange="this.form.submit()">
           <option value="">Todos los roles</option>
@@ -74,7 +66,7 @@
         </select>
       </div>
 
-      <div style="flex:1;min-width:160px;">
+      <div class="extracted-style-398">
         <label class="form-label">Tipo de documento</label>
         <select name="tipo_doc" class="form-select" onchange="this.form.submit()">
           <option value="">Todos los tipos</option>
@@ -84,7 +76,7 @@
         </select>
       </div>
 
-      <div style="display:flex;gap:.4rem;">
+      <div class="d-flex"gap:.4rem;">
         <button type="submit" class="btn-primary-mine">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -96,9 +88,8 @@
         {% endif %}
       </div>
 
-      <div style="margin-left:auto;display:flex;gap:.3rem;">
-        <button type="button" id="btnLista" class="btn-primary-mine" onclick="setVista('lista')"
-                style="padding:.4rem .7rem;" title="Vista lista">
+      <div class="extracted-style-399">
+        <button type="button" id="btnLista" class="btn-primary-mine extracted-style-400" onclick="setVista('lista')" title="Vista lista">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
             <line x1="8" y1="18" x2="21" y2="18"/>
@@ -106,8 +97,7 @@
             <line x1="3" y1="18" x2="3.01" y2="18"/>
           </svg>
         </button>
-        <button type="button" id="btnFichas" class="btn-outline-mine" onclick="setVista('fichas')"
-                style="padding:.4rem .7rem;" title="Vista fichas">
+        <button type="button" id="btnFichas" class="btn-outline-mine extracted-style-400" onclick="setVista('fichas')" title="Vista fichas">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
             <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
@@ -133,16 +123,13 @@
         </svg>
         Usuarios registrados
       </span>
-      <span style="font-family:var(--font-mono);font-size:.72rem;
-                   background:rgba(152,71,62,.08);color:var(--rust);
-                   padding:.18rem .6rem;border-radius:20px;
-                   border:1px solid rgba(152,71,62,.18);">
+      <span class="extracted-style-401">
         {{ total }} registro{{ total|pluralize:"s" }}
       </span>
     </div>
 
     <div class="table-responsive">
-      <table class="table-app datatable-custom" id="usuarios-table" style="width:100%;border-collapse:collapse;font-size:.9rem;">
+      <table class="table-app datatable-custom w-100" id="usuarios-table"border-collapse:collapse;font-size:.9rem;">
         <thead>
           <tr>
             <th>Nombre</th>
@@ -151,41 +138,34 @@
             <th class="d-none d-md-table-cell">Teléfono</th>
             <th>Tipo</th>
             <th>Rol</th>
-            <th style="text-align:center;">Acciones</th>
+            <th class="text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {% for u in usuarios %}
           <tr>
             <td>
-              <div style="display:flex;align-items:center;gap:.65rem;">
-                <div style="width:32px;height:32px;min-width:32px;border-radius:50%;
-                             background:rgba(9,77,146,.1);color:var(--navy);
-                             display:flex;align-items:center;justify-content:center;
-                             font-family:var(--font-ui);font-weight:700;font-size:.68rem;
-                             letter-spacing:.03em;flex-shrink:0;">
+              <div class="d-flex"align-items:center;gap:.65rem;">
+                <div class="extracted-style-402">
                   {{ u.nombre_completo|slice:":2"|upper }}
                 </div>
-                <span style="font-weight:600;">{{ u.nombre_completo }}</span>
+                <span class="extracted-style-25">{{ u.nombre_completo }}</span>
               </div>
             </td>
-            <td style="font-family:var(--font-mono);font-size:.8rem;color:var(--text-muted);">
+            <td class="extracted-style-403">
               {{ u.numero_documento }}
             </td>
-            <td style="color:var(--navy);font-size:.85rem;">{{ u.correo }}</td>
-            <td class="d-none d-md-table-cell" style="color:var(--text-muted);font-size:.85rem;">
+            <td class="extracted-style-404">{{ u.correo }}</td>
+            <td class="d-none d-md-table-cell extracted-style-405">
               {{ u.telefono|default:"—" }}
             </td>
             <td>
-              <span style="background:rgba(9,77,146,.08);color:var(--navy);
-                           font-family:var(--font-mono);font-size:.7rem;font-weight:600;
-                           padding:.15rem .55rem;border-radius:20px;
-                           border:1px solid rgba(9,77,146,.15);">
+              <span class="extracted-style-406">
                 {{ u.get_tipo_documento_display }}
               </span>
             </td>
             <td>
-              <span style="background:{% if u.rol == 'Administrador' %}rgba(152,71,62,.1){% else %}rgba(113,129,109,.1){% endif %};
+              <spanAdministrador class="extracted-style-407"' %}rgba(152,71,62,.1){% else %}rgba(113,129,109,.1){% endif %};
                            color:{% if u.rol == 'Administrador' %}var(--rust){% else %}var(--sage){% endif %};
                            font-family:var(--font-ui);font-size:.78rem;font-weight:700;
                            padding:.15rem .55rem;border-radius:20px;
@@ -193,9 +173,9 @@
                 {{ u.rol }}
               </span>
             </td>
-            <td style="text-align:center;">
-              <div style="display:flex;align-items:center;justify-content:center;gap:.35rem;">
-                <button type="button" class="btn-ghost" style="font-size:.78rem;"
+            <td class="text-center">
+              <div class="d-flex"align-items:center;justify-content:center;gap:.35rem;">
+                <button type="button" class="btn-ghost extracted-style-262"
                         onclick="verUsuario('{{ u.numero_documento }}')">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -203,7 +183,7 @@
                   </svg>
                   Ver
                 </button>
-                <button type="button" class="btn-ghost" style="font-size:.78rem;"
+                <button type="button" class="btn-ghost extracted-style-262"
                         onclick="abrirEditar(
                           '{{ u.numero_documento }}',
                           '{{ u.nombre_completo|escapejs }}',
@@ -232,26 +212,24 @@
   <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3">
     {% for u in usuarios %}
     <div class="col">
-      <div class="card h-100" style="transition:box-shadow .2s;"
+      <div class="card h-100 extracted-style-408"
            onmouseover="this.style.boxShadow='0 6px 24px rgba(27,32,33,.12)'"
            onmouseout="this.style.boxShadow=''">
-        <div style="height:3px;background:{% if u.rol == 'Administrador' %}var(--rust){% else %}var(--navy){% endif %};"></div>
-        <div class="card-body" style="padding:1.1rem;">
-          <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem;">
-            <div style="width:44px;height:44px;border-radius:50%;flex-shrink:0;
-                         background:{% if u.rol == 'Administrador' %}rgba(152,71,62,.12){% else %}rgba(9,77,146,.1){% endif %};
+        <divAdministrador class="extracted-style-409"' %}var(--rust){% else %}var(--navy){% endif %};"></div>
+        <div class="card-body extracted-style-410">
+          <div class="d-flex"align-items:center;gap:.75rem;margin-bottom:.85rem;">
+            <divAdministrador class="extracted-style-411"' %}rgba(152,71,62,.12){% else %}rgba(9,77,146,.1){% endif %};
                          color:{% if u.rol == 'Administrador' %}var(--rust){% else %}var(--navy){% endif %};
                          display:flex;align-items:center;justify-content:center;
                          font-family:var(--font-ui);font-weight:700;font-size:.9rem;
                          letter-spacing:.04em;border:2px solid {% if u.rol == 'Administrador' %}rgba(152,71,62,.2){% else %}rgba(9,77,146,.15){% endif %};">
               {{ u.nombre_completo|slice:":2"|upper }}
             </div>
-            <div style="min-width:0;">
-              <div style="font-family:var(--font-ui);font-weight:700;font-size:.92rem;
-                           color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+            <div class="extracted-style-228">
+              <div class="extracted-style-412">
                 {{ u.nombre_completo }}
               </div>
-              <span style="background:{% if u.rol == 'Administrador' %}rgba(152,71,62,.1){% else %}rgba(113,129,109,.1){% endif %};
+              <spanAdministrador class="extracted-style-407"' %}rgba(152,71,62,.1){% else %}rgba(113,129,109,.1){% endif %};
                            color:{% if u.rol == 'Administrador' %}var(--rust){% else %}var(--sage){% endif %};
                            font-size:.7rem;font-weight:700;padding:.1rem .45rem;border-radius:10px;
                            font-family:var(--font-ui);">
@@ -259,48 +237,47 @@
               </span>
             </div>
           </div>
-          <hr style="border-color:var(--border-color);margin:.5rem 0 .75rem;">
-          <div style="display:flex;flex-direction:column;gap:.38rem;font-size:.8rem;">
-            <div style="display:flex;align-items:center;gap:.45rem;">
+          <hr class="extracted-style-413">
+          <div class="d-flex"flex-direction:column;gap:.38rem;font-size:.8rem;">
+            <div class="d-flex"align-items:center;gap:.45rem;">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                 <polyline points="22,6 12,13 2,6"/>
               </svg>
-              <span style="color:var(--navy);word-break:break-all;">{{ u.correo }}</span>
+              <span class="extracted-style-414">{{ u.correo }}</span>
             </div>
-            <div style="display:flex;align-items:center;gap:.45rem;">
+            <div class="d-flex"align-items:center;gap:.45rem;">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2">
                 <rect x="2" y="3" width="20" height="4"/><rect x="2" y="10" width="20" height="4"/>
                 <rect x="2" y="17" width="20" height="4"/>
               </svg>
-              <span style="font-family:var(--font-mono);color:var(--text-muted);font-size:.75rem;">
+              <span class="extracted-style-415">
                 {{ u.get_tipo_documento_display }} · {{ u.numero_documento }}
               </span>
             </div>
             {% if u.numero_ficha %}
-            <div style="display:flex;align-items:center;gap:.45rem;">
+            <div class="d-flex"align-items:center;gap:.45rem;">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                 <polyline points="14 2 14 8 20 8"/>
               </svg>
-              <span style="color:var(--text-muted);">Ficha {{ u.numero_ficha }}{% if u.nombre_programa %} · {{ u.nombre_programa }}{% endif %}</span>
+              <span class="extracted-style-226">Ficha {{ u.numero_ficha }}{% if u.nombre_programa %} · {{ u.nombre_programa }}{% endif %}</span>
             </div>
             {% endif %}
             {% if u.telefono %}
-            <div style="display:flex;align-items:center;gap:.45rem;">
+            <div class="d-flex"align-items:center;gap:.45rem;">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.38 2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.06 6.06l.93-.93a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.72 17z"/>
               </svg>
-              <span style="color:var(--text-muted);">{{ u.telefono }}</span>
+              <span class="extracted-style-226">{{ u.telefono }}</span>
             </div>
             {% endif %}
           </div>
         </div>
-        <div class="card-footer" style="background:#f9f7f3;border-top:1px solid var(--border-color);
-                                         padding:.6rem .9rem;display:flex;gap:.4rem;justify-content:flex-end;">
-          <button type="button" class="btn-ghost" style="font-size:.76rem;"
+        <div class="card-footer extracted-style-416">
+          <button type="button" class="btn-ghost extracted-style-417"
                   onclick="verUsuario('{{ u.numero_documento }}')">Ver</button>
-          <button type="button" class="btn-primary-mine" style="font-size:.76rem;padding:.3rem .7rem;"
+          <button type="button" class="btn-primary-mine extracted-style-418"
                   onclick="abrirEditar(
                     '{{ u.numero_documento }}',
                     '{{ u.nombre_completo|escapejs }}',
@@ -324,13 +301,13 @@
 
 {% else %}
 <div class="card">
-  <div class="card-body" style="text-align:center;padding:4rem 1rem;">
+  <divpadding class="card-body text-center":4rem 1rem;">
     <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)"
-         stroke-width="1.3" style="opacity:.3;display:block;margin:0 auto .75rem;">
+         stroke-width="1.3" class="empty-state-icon">
       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
       <circle cx="9" cy="7" r="4"/>
     </svg>
-    <p style="font-family:var(--font-ui);color:var(--text-muted);font-size:.88rem;margin:0 0 .75rem;">
+    <p class="extracted-style-419">
       No se encontraron usuarios con los filtros aplicados.
     </p>
     {% if q or rol_id or tipo_doc %}
@@ -346,25 +323,19 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
 
-      <div class="modal-header" style="padding:.9rem 1.35rem;">
-        <div style="display:flex;align-items:center;gap:.85rem;">
-          <div id="modalAvatar"
-               style="width:38px;height:38px;border-radius:50%;
-                      background:rgba(152,71,62,.25);color:var(--cream);
-                      display:flex;align-items:center;justify-content:center;
-                      font-family:var(--font-ui);font-weight:700;font-size:.78rem;flex-shrink:0;">
+      <div class="modal-header extracted-style-53">
+        <div class="d-flex"align-items:center;gap:.85rem;">
+          <div class="extracted-style-420" id="modalAvatar">
           </div>
           <div>
             <h5 class="modal-title" id="modalUsuarioLabel"></h5>
-            <span class="badge ms-0" id="modalRol"
-                  style="font-size:.7rem;padding:.2rem .55rem;border-radius:20px;
-                         font-family:var(--font-ui);font-weight:700;"></span>
+            <span class="badge ms-0 extracted-style-421" id="modalRol"></span>
           </div>
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <div class="modal-body" style="padding:1.5rem;" id="modalCuerpo">
+      <div class="modal-body extracted-style-60" id="modalCuerpo">
         <div id="modalSkeleton">
           <div class="placeholder-glow mb-3">
             <span class="placeholder col-4 me-2"></span><span class="placeholder col-6"></span>
@@ -378,95 +349,76 @@
         </div>
 
         <div id="modalDatos" class="d-none">
-          <div style="font-family:var(--font-mono);font-size:.62rem;letter-spacing:.12em;
-                      text-transform:uppercase;color:var(--navy);
-                      border-bottom:1px solid rgba(9,77,146,.15);
-                      padding-bottom:.35rem;margin-bottom:.9rem;">
+          <div class="extracted-style-422">
             Datos personales
           </div>
           <div class="row g-3 mb-4">
             <div class="col-6">
-              <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;
-                          color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Tipo</div>
-              <span id="mTipoDoc" style="background:rgba(9,77,146,.08);color:var(--navy);
-                                          font-family:var(--font-mono);font-size:.75rem;
-                                          padding:.15rem .55rem;border-radius:20px;
-                                          border:1px solid rgba(9,77,146,.15);"></span>
+              <div class="extracted-style-423">Tipo</div>
+              <span class="extracted-style-424" id="mTipoDoc"></span>
             </div>
             <div class="col-6">
-              <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;
-                          color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Documento</div>
-              <span id="mNumDoc" style="font-family:var(--font-mono);font-weight:700;
-                                         font-size:.88rem;color:var(--text-main);"></span>
+              <div class="extracted-style-423">Documento</div>
+              <span class="extracted-style-425" id="mNumDoc"></span>
             </div>
             <div class="col-12">
-              <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;
-                          color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Correo electrónico</div>
-              <span id="mCorreo" style="color:var(--navy);font-size:.88rem;word-break:break-all;"></span>
+              <div class="extracted-style-423">Correo electrónico</div>
+              <span class="extracted-style-426" id="mCorreo"></span>
             </div>
             <div class="col-6">
-              <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;
-                          color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Teléfono</div>
-              <span id="mTelefono" style="color:var(--text-muted);font-size:.85rem;"></span>
+              <div class="extracted-style-423">Teléfono</div>
+              <span class="extracted-style-405" id="mTelefono"></span>
             </div>
             <div class="col-6">
-              <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;
-                          color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Número de ficha</div>
-              <span id="mNumFicha" style="font-family:var(--font-mono);font-size:.85rem;color:var(--text-main);"></span>
+              <div class="extracted-style-423">Número de ficha</div>
+              <span class="extracted-style-427" id="mNumFicha"></span>
             </div>
             <div class="col-6">
-              <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;
-                          color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Programa</div>
-              <span id="mPrograma" style="font-size:.85rem;color:var(--text-main);"></span>
+              <div class="extracted-style-423">Programa</div>
+              <span class="extracted-style-428" id="mPrograma"></span>
             </div>
           </div>
 
-          <div style="font-family:var(--font-mono);font-size:.62rem;letter-spacing:.12em;
-                      text-transform:uppercase;color:var(--navy);
-                      border-bottom:1px solid rgba(9,77,146,.15);
-                      padding-bottom:.35rem;margin-bottom:.9rem;">
+          <div class="extracted-style-422">
             Préstamos
           </div>
           <div class="row g-2 mb-4">
             <div class="col-6 col-md-3">
-              <div style="padding:.75rem;border:1px solid rgba(9,77,146,.12);border-radius:14px;">
-                <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:.25rem;">Total</div>
-                <div id="mPrestamosTotal" style="font-size:1.05rem;font-weight:700;color:var(--text-main);">0</div>
+              <div class="extracted-style-429">
+                <div class="extracted-style-430">Total</div>
+                <div class="extracted-style-431" id="mPrestamosTotal">0</div>
               </div>
             </div>
             <div class="col-6 col-md-3">
-              <div style="padding:.75rem;border:1px solid rgba(22,101,52,.15);border-radius:14px;">
-                <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:.25rem;">Activos</div>
-                <div id="mPrestamosActivos" style="font-size:1.05rem;font-weight:700;color:#166534;">0</div>
+              <div class="extracted-style-432">
+                <div class="extracted-style-430">Activos</div>
+                <div class="extracted-style-433" id="mPrestamosActivos">0</div>
               </div>
             </div>
             <div class="col-6 col-md-3">
-              <div style="padding:.75rem;border:1px solid rgba(196,144,10,.2);border-radius:14px;">
-                <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:.25rem;">Parciales</div>
-                <div id="mPrestamosPendientes" style="font-size:1.05rem;font-weight:700;color:#92400e;">0</div>
+              <div class="extracted-style-434">
+                <div class="extracted-style-430">Parciales</div>
+                <div class="extracted-style-435" id="mPrestamosPendientes">0</div>
               </div>
             </div>
             <div class="col-6 col-md-3">
-              <div style="padding:.75rem;border:1px solid rgba(185,28,28,.15);border-radius:14px;">
-                <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:.25rem;">Vencidos</div>
-                <div id="mPrestamosVencidos" style="font-size:1.05rem;font-weight:700;color:#b91c1c;">0</div>
+              <div class="extracted-style-436">
+                <div class="extracted-style-430">Vencidos</div>
+                <div class="extracted-style-437" id="mPrestamosVencidos">0</div>
               </div>
             </div>
           </div>
           <div id="mPrestamosList" class="mb-4"></div>
 
-          <div style="font-family:var(--font-mono);font-size:.62rem;letter-spacing:.12em;
-                      text-transform:uppercase;color:var(--navy);
-                      border-bottom:1px solid rgba(9,77,146,.15);
-                      padding-bottom:.35rem;margin-bottom:.9rem;">
+          <div class="extracted-style-422">
             Relaciones
           </div>
           <div class="row g-3" id="mRelaciones"></div>
         </div>
       </div>
 
-      <div class="modal-footer" style="background:#f9f7f3;border-top:1px solid var(--border-color);">
-        <small id="mIdDoc" class="text-muted font-monospace me-auto" style="font-size:.72rem;"></small>
+      <div class="modal-footer extracted-style-438">
+        <small id="mIdDoc" class="text-muted font-monospace me-auto extracted-style-317"></small>
         <button type="button" class="btn-outline-mine" data-bs-dismiss="modal">Cerrar</button>
         <button type="button" class="btn-primary-mine" id="btnEditarDesdeModal">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -486,17 +438,13 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
 
-      <div class="modal-header" style="padding:.9rem 1.35rem;">
-        <div style="display:flex;align-items:center;gap:.85rem;">
-          <div id="editAvatar"
-               style="width:36px;height:36px;border-radius:50%;
-                      background:rgba(152,71,62,.3);color:var(--cream);
-                      display:flex;align-items:center;justify-content:center;
-                      font-family:var(--font-ui);font-weight:700;font-size:.75rem;flex-shrink:0;">
+      <div class="modal-header extracted-style-53">
+        <div class="d-flex"align-items:center;gap:.85rem;">
+          <div class="extracted-style-439" id="editAvatar">
           </div>
           <div>
             <h5 class="modal-title">Editar usuario</h5>
-            <span style="font-family:var(--font-mono);font-size:.7rem;color:rgba(239,236,202,.5);"
+            <span class="extracted-style-440"
                   id="editDocLabel"></span>
           </div>
         </div>
@@ -508,12 +456,9 @@
         <input type="hidden" name="accion" value="editar_usuario">
         <input type="hidden" name="numero_documento" id="edit_doc_hidden">
 
-        <div class="modal-body" style="padding:1.5rem;">
+        <div class="modal-body extracted-style-60">
 
-          <div style="font-family:var(--font-mono);font-size:.65rem;letter-spacing:.13em;
-                      text-transform:uppercase;color:var(--navy);
-                      border-bottom:1px solid rgba(9,77,146,.18);
-                      padding-bottom:.4rem;margin-bottom:1.1rem;">
+          <div class="extracted-style-441">
             Información personal
           </div>
 
@@ -521,14 +466,14 @@
 
             <div class="col-md-4">
               <label class="form-label">Tipo de documento</label>
-              <input type="text" id="edit_tipo_doc_display" class="form-control"
-                     disabled style="background:rgba(0,0,0,.03);cursor:not-allowed;">
+              <input type="text" id="edit_tipo_doc_display" class="form-control extracted-style-442"
+                     disabled>
             </div>
             <div class="col-md-8">
               <label class="form-label">Número de documento</label>
-              <input type="text" id="edit_num_doc_display" class="form-control"
-                     disabled style="background:rgba(0,0,0,.03);cursor:not-allowed;">
-              <div style="font-size:.7rem;color:var(--text-muted);margin-top:.2rem;">
+              <input type="text" id="edit_num_doc_display" class="form-control extracted-style-442"
+                     disabled>
+              <div class="extracted-style-443">
                 El documento no puede modificarse.
               </div>
             </div>
@@ -563,11 +508,8 @@
                      class="form-control" placeholder="Ej. ADSO">
             </div>
 
-            <div class="col-12" style="padding-top:.25rem;">
-              <div style="font-family:var(--font-mono);font-size:.65rem;letter-spacing:.13em;
-                          text-transform:uppercase;color:var(--navy);
-                          border-bottom:1px solid rgba(9,77,146,.18);
-                          padding-bottom:.4rem;margin-top:.35rem;">
+            <div class="col-12 extracted-style-444">
+              <div class="extracted-style-445">
                 Acceso y permisos
               </div>
             </div>
@@ -584,21 +526,19 @@
             <div class="col-md-6">
               <label class="form-label">
                 Nueva contraseña
-                <span style="font-size:.7rem;color:var(--text-muted);font-weight:400;">(dejar vacío para no cambiar)</span>
+                <span class="extracted-style-446">(dejar vacío para no cambiar)</span>
               </label>
-              <div style="position:relative;">
+              <div class="extracted-style-394">
                 <input type="password" name="nueva_password" id="edit_password"
                        class="form-control" placeholder="Mínimo 8 caracteres" minlength="8">
-                <button type="button" id="toggleEditPw"
-                        style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
-                               background:none;border:none;cursor:pointer;color:var(--text-muted);padding:0;">
+                <button class="extracted-style-447" type="button" id="toggleEditPw">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                     <circle cx="12" cy="12" r="3"/>
                   </svg>
                 </button>
               </div>
-              <div style="font-size:.7rem;color:var(--text-muted);margin-top:.2rem;">
+              <div class="extracted-style-443">
                 Solo si deseas cambiar la contraseña del usuario.
               </div>
             </div>
@@ -606,7 +546,7 @@
           </div>
         </div>
 
-        <div class="modal-footer" style="background:#f9f7f3;border-top:1px solid var(--border-color);">
+        <div class="modal-footer extracted-style-438">
           <button type="button" class="btn-outline-mine" data-bs-dismiss="modal">Cancelar</button>
           <button type="submit" class="btn-primary-mine">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -697,18 +637,18 @@ function verUsuario(doc) {
       var rel = '';
       if (d.destinado) {
         rel += '<div class="col-6">'
-          + '<div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Destinado a</div>'
-          + '<button class="btn-ghost p-0" style="font-size:.82rem;font-weight:600;color:var(--navy);background:none;border:none;cursor:pointer;" onclick="verUsuario(\'' + d.destinado_doc + '\')">' + d.destinado + '</button>'
+          + '<div class="extracted-style-448">Destinado a</div>'
+          + '<button class="btn-ghost p-0 extracted-style-449" onclick="verUsuario(\'' + d.destinado_doc + '\')">' + d.destinado + '</button>'
           + '</div>';
       }
       if (d.solicitado) {
         rel += '<div class="col-6">'
-          + '<div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:600;margin-bottom:.2rem;">Solicitado por</div>'
-          + '<button class="btn-ghost p-0" style="font-size:.82rem;font-weight:600;color:var(--navy);background:none;border:none;cursor:pointer;" onclick="verUsuario(\'' + d.solicitado_doc + '\')">' + d.solicitado + '</button>'
+          + '<div class="extracted-style-448">Solicitado por</div>'
+          + '<button class="btn-ghost p-0 extracted-style-449" onclick="verUsuario(\'' + d.solicitado_doc + '\')">' + d.solicitado + '</button>'
           + '</div>';
       }
       document.getElementById('mRelaciones').innerHTML =
-        rel || '<div class="col-12"><small style="color:var(--text-muted);">Sin relaciones asignadas.</small></div>';
+        rel || '<div class="col-12"><small class="extracted-style-226">Sin relaciones asignadas.</small></div>';
 
       document.getElementById('btnEditarDesdeModal').onclick = function() {
         _modalVerUsuario.hide();
@@ -722,7 +662,7 @@ function verUsuario(doc) {
     })
     .catch(function() {
       document.getElementById('modalSkeleton').innerHTML =
-        '<p style="color:var(--rust);font-size:.85rem;">Error al cargar los datos del usuario.</p>';
+        '<p class="extracted-style-450">Error al cargar los datos del usuario.</p>';
     });
 }
 
@@ -734,7 +674,7 @@ function escapeHtml(value) {
 
 function renderPrestamosUsuario(prestamos) {
   if (!prestamos || prestamos.length === 0) {
-    return '<div style="font-size:.88rem;color:var(--text-muted);">No tiene préstamos registrados.</div>';
+    return '<div class="extracted-style-451">No tiene préstamos registrados.</div>';
   }
   return prestamos.map(function(p) {
     var estadoColor = '#0f766e', estadoBg = 'rgba(22,101,52,.08)';
@@ -743,25 +683,25 @@ function renderPrestamosUsuario(prestamos) {
     else if (p.estado === 'pendiente'){ estadoColor = '#164e63'; estadoBg = 'rgba(14,165,233,.08)'; }
 
     var itemsHtml = p.items.map(function(item) {
-      return '<div style="display:flex;justify-content:space-between;gap:.6rem;padding:.5rem .65rem;border-bottom:1px solid rgba(9,77,146,.08);">'
-        + '<div style="font-size:.82rem;color:var(--text-main);">' + escapeHtml(item.nombre) + '</div>'
-        + '<div style="font-family:var(--font-mono);color:' + (item.devuelto ? '#15803d' : '#1d4ed8') + ';font-weight:700;">×' + item.cantidad + '</div>'
+      return '<div class="d-flex"justify-content:space-between;gap:.6rem;padding:.5rem .65rem;border-bottom:1px solid rgba(9,77,146,.08);">'
+        + '<div class="extracted-style-452">' + escapeHtml(item.nombre) + '</div>'
+        + '<div class="extracted-style-453" + (item.devuelto ? '#15803d' : '#1d4ed8') + ';font-weight:700;">×' + item.cantidad + '</div>'
         + '</div>';
     }).join('');
 
-    return '<div style="border:1px solid rgba(9,77,146,.12);border-radius:16px;margin-bottom:.9rem;overflow:hidden;">'
-      + '<div style="padding:.95rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;background:' + estadoBg + ';">'
-      + '<div><div style="font-size:.85rem;font-weight:700;color:var(--text-main);">Préstamo #' + p.pk + '</div>'
-      + '<div style="font-size:.75rem;color:var(--text-muted);">' + escapeHtml(p.fecha_prestamo) + '</div></div>'
-      + '<span style="color:' + estadoColor + ';font-size:.72rem;font-weight:700;padding:.3rem .65rem;border-radius:999px;background:' + estadoBg + ';">' + escapeHtml(p.estado_display) + '</span>'
+    return '<div class="extracted-style-454">'
+      + '<div class="extracted-style-455" + estadoBg + ';">'
+      + '<div><div class="extracted-style-456">Préstamo #' + p.pk + '</div>'
+      + '<div class="extracted-style-457">' + escapeHtml(p.fecha_prestamo) + '</div></div>'
+      + '<span class="extracted-style-458" + estadoColor + ';font-size:.72rem;font-weight:700;padding:.3rem .65rem;border-radius:999px;background:' + estadoBg + ';">' + escapeHtml(p.estado_display) + '</span>'
       + '</div>'
-      + '<div style="padding:1rem;">'
-      + '<div style="font-size:.75rem;color:var(--text-muted);margin-bottom:.25rem;">Vencimiento</div>'
-      + '<div style="font-size:.9rem;color:var(--text-main);margin-bottom:.7rem;">' + escapeHtml(p.fecha_vencimiento) + '</div>'
-      + '<div style="font-size:.75rem;color:var(--text-muted);margin-bottom:.25rem;">Observaciones</div>'
-      + '<textarea id="obs_prestamo_' + p.pk + '" rows="3" style="width:100%;padding:.65rem;border:1px solid rgba(9,77,146,.12);border-radius:12px;font-size:.88rem;margin-bottom:.65rem;">' + escapeHtml(p.observaciones) + '</textarea>'
-      + '<button type="button" id="obs_btn_' + p.pk + '" onclick="guardarObservacionPrestamo(' + p.pk + ')" style="border:none;background:var(--navy);color:white;padding:.55rem .75rem;border-radius:12px;font-size:.85rem;cursor:pointer;">Guardar observación</button>'
-      + '<div style="margin-top:.85rem;font-size:.75rem;color:var(--text-muted);">Ítems del préstamo</div>'
+      + '<div class="extracted-style-459">'
+      + '<div class="extracted-style-460">Vencimiento</div>'
+      + '<div class="extracted-style-461">' + escapeHtml(p.fecha_vencimiento) + '</div>'
+      + '<div class="extracted-style-460">Observaciones</div>'
+      + '<textarea id="obs_prestamo_' + p.pk + '" rows="3" class="w-100"padding:.65rem;border:1px solid rgba(9,77,146,.12);border-radius:12px;font-size:.88rem;margin-bottom:.65rem;">' + escapeHtml(p.observaciones) + '</textarea>'
+      + '<button class="extracted-style-462" type="button" id="obs_btn_' + p.pk + '" onclick="guardarObservacionPrestamo(' + p.pk + ')">Guardar observación</button>'
+      + '<div class="extracted-style-463">Ítems del préstamo</div>'
       + itemsHtml + '</div></div>';
   }).join('');
 }
@@ -837,5 +777,5 @@ document.getElementById('edit_ficha').addEventListener('input', function() {
 {% endblock %}  {# ← cierra el block content AQUÍ #}
 
 {% block js %}  {# ← DESPUÉS del endblock content #}
-<script src="{% static 'js/tables/usuarios_table.js' %}?v=3"></script>
+<script defer src="{% static 'js/tables/usuarios_table.js' %}?v=3"></script>
 {% endblock js %}

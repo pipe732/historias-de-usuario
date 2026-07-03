@@ -12,10 +12,9 @@
   </div>
   <button
     type="button"
-    class="btn-primary-mine"
+    class="btn-primary-mine extracted-style-114"
     data-bs-toggle="modal"
     data-bs-target="#modalNuevoTipoMantenimiento"
-    style="white-space: nowrap"
   >
     <svg
       width="13"
@@ -56,23 +55,22 @@
   </div>
 
   
-  <div class="card-search-filters" style="padding: 1rem; border-bottom: 1px solid rgba(0,0,0,.08);">
+  <div class="card-search-filters extracted-style-123">
     <form method="get" class="row g-2 align-items-end">
       <div class="col-auto">
-        <label class="form-label" style="font-size: 0.85rem; margin-bottom: 0.3rem">Búsqueda</label>
+        <label class="form-label extracted-style-124">Búsqueda</label>
         <input 
           type="text" 
           name="q" 
-          class="form-control" 
+          class="form-control extracted-style-125" 
           placeholder="Nombre o descripción..." 
           value="{{ q }}"
-          style="font-size: 0.9rem; width: 220px;"
         />
       </div>
 
       <div class="col-auto">
-        <label class="form-label" style="font-size: 0.85rem; margin-bottom: 0.3rem">Estado</label>
-        <select name="activo" class="form-select" style="font-size: 0.9rem; width: 140px;">
+        <label class="form-label extracted-style-124">Estado</label>
+        <select name="activo" class="form-select extracted-style-126">
           <option value="">Todos</option>
           <option value="si" {% if activo_filtro == 'si' %}selected{% endif %}>Activos</option>
           <option value="no" {% if activo_filtro == 'no' %}selected{% endif %}>Inactivos</option>
@@ -97,50 +95,44 @@
   </div>
 
   <div class="table-responsive">
-    <table
-      class="table-app datatable-disabled"
-      style="width: 100%; border-collapse: collapse; font-size: 0.9rem"
+    <tableborder class="table-app datatable-disabled w-100"-collapse: collapse; font-size: 0.9rem"
     >
       <thead>
         <tr>
           <th>Nombre</th>
           <th>Descripción</th>
-          <th style="text-align: center; width: 100px">Color</th>
-          <th style="text-align: center; width: 80px">Usado en</th>
-          <th style="text-align: center; width: 80px">Activo</th>
-          <th style="text-align: center; width: 120px">Acciones</th>
+          <th class="text-center"width: 100px">Color</th>
+          <th class="text-center"width: 80px">Usado en</th>
+          <th class="text-center"width: 80px">Activo</th>
+          <th class="text-center"width: 120px">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for tipo in tipos %}
         <tr>
-          <td style="font-weight: 600">{{ tipo.nombre }}</td>
-          <td style="color: var(--text-muted); font-size: 0.85rem">
+          <td class="extracted-style-80">{{ tipo.nombre }}</td>
+          <td class="extracted-style-81">
             {{ tipo.descripcion|default:"—" }}
           </td>
-          <td style="text-align: center">
+          <td class="text-center">
             {% if tipo.color %}
-            <span
+            <span class="extracted-style-127"
               data-dynamic-bg="{{ tipo.color }}"
-              style="display:inline-block; width:24px; height:24px;
-                           border-radius:4px;
-                           border:1px solid rgba(0,0,0,.12);
-                           vertical-align:middle;"
               title="{{ tipo.color }}"
             ></span>
             {% else %}—{% endif %}
           </td>
-          <td style="text-align: center; font-family: var(--font-mono); font-size: 0.85rem">
+          <td class="text-center"font-family: var(--font-mono); font-size: 0.85rem">
             {{ tipo.mantenimientos.count }}
           </td>
-          <td style="text-align: center">
+          <td class="text-center">
             {% if tipo.activo %}
             <span class="badge-state badge-aprobada">Activo</span>
             {% else %}
             <span class="badge-state badge-rechazada">Inactivo</span>
             {% endif %}
           </td>
-          <td style="text-align: center; display: flex; gap: 0.4rem; justify-content: center; align-items: center;">
+          <td class="text-center"display: flex; gap: 0.4rem; justify-content: center; align-items: center;">
             {% url 'mantenimiento:tipo_mantenimiento_editar' tipo.pk as editar_url %}
             {% include "mantenimiento/partials/_action_icon_button.html" with href=editar_url title="Editar" icon="edit" %}
             
@@ -148,9 +140,8 @@
               {% url 'mantenimiento:tipo_mantenimiento_inactivar' tipo.pk as inactivar_url %}
               <a 
                 href="{{ inactivar_url }}" 
-                class="icon-button"
+                class="icon-button extracted-style-128"
                 title="Inactivar"
-                style="color: var(--warning); transition: all 0.2s ease;"
                 onmouseover="this.style.color='var(--warning)'; this.style.opacity='0.7'"
                 onmouseout="this.style.color='var(--warning)'; this.style.opacity='1'"
               >
@@ -165,9 +156,8 @@
               {% url 'mantenimiento:tipo_mantenimiento_eliminar' tipo.pk as eliminar_url %}
               <a 
                 href="{{ eliminar_url }}" 
-                class="icon-button"
+                class="icon-button extracted-style-129"
                 title="Eliminar"
-                style="color: var(--danger); transition: all 0.2s ease;"
                 onmouseover="this.style.color='var(--danger)'; this.style.opacity='0.7'"
                 onmouseout="this.style.color='var(--danger)'; this.style.opacity='1'"
               >
@@ -188,13 +178,13 @@
 
   
   {% if is_paginated %}
-  <div class="pagination" style="padding: 1rem; border-top: 1px solid rgba(0,0,0,.08); display: flex; justify-content: center; gap: 0.5rem;">
+  <div class="pagination extracted-style-130">
     {% if page_obj.has_previous %}
     <a href="?page=1" class="btn btn-sm btn-outline-secondary">Primera</a>
     <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-outline-secondary">Anterior</a>
     {% endif %}
 
-    <span style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+    <span class="d-flex"align-items: center; gap: 0.5rem; font-size: 0.9rem;">
       Página <strong>{{ page_obj.number }}</strong> de <strong>{{ page_obj.paginator.num_pages }}</strong>
     </span>
 
@@ -212,7 +202,7 @@
       <div class="modal-header">
         <div>
           <h5 class="modal-title mb-1" id="modalNuevoTipoMantenimientoLabel">Nuevo Tipo de Mantenimiento</h5>
-          <p class="mb-0 text-muted" style="font-size: 0.85rem;">Registra un tipo de mantenimiento sin salir de la lista.</p>
+          <p class="mb-0 text-muted extracted-style-102">Registra un tipo de mantenimiento sin salir de la lista.</p>
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
@@ -318,6 +308,6 @@
     }
   });
 </script>
-<script src="{% static 'js/modals.js' %}?v=3"></script>
+<script defer src="{% static 'js/modals.js' %}?v=3"></script>
 
 {% endblock %}

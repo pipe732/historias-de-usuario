@@ -19,7 +19,7 @@
     </div>
 
     <div class="left-content img-container-center">
-      <img src="{% static 'img/fondo.png' %}" alt="Campus SENA Centro Minero" />
+      <img loading="lazy" src="{% static 'img/fondo.png' %}" alt="Campus SENA Centro Minero" />
     </div>
 
     <div class="left-content">
@@ -31,7 +31,7 @@
 
     <div class="logo-row">
       <div class="logo-box">
-        <img src="{% static 'img/Logo-del-sena-Verde-150x150-removebg-preview.png' %}" alt="SENA" />
+        <img loading="lazy" src="{% static 'img/Logo-del-sena-Verde-150x150-removebg-preview.png' %}" alt="SENA" />
       </div>
       <div>
         <div class="logo-sup">Centro Minero · SENA</div>
@@ -41,8 +41,8 @@
 
     <div class="icon-badge">🗝</div>
 
-    <div class="page-title" style="text-align:center;">Nueva contraseña</div>
-    <div class="page-sub" style="text-align:center;">
+    <div class="page-title text-center">Nueva contraseña</div>
+    <div class="page-sub text-center">
       Escribe tu nueva contraseña. Debe tener al menos 8 caracteres.
     </div>
 
@@ -82,7 +82,7 @@
     <div class="version-text">MINE Inventory </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="{% static 'js/usuario.js' %}?v=3"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script defer src="{% static 'js/usuario.js' %}?v=3"></script>
 </body>
 </html>

@@ -10,10 +10,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # ─────────────────────────────────────────────────────────────
+#  LEER .ENV PARA VARIABLES DE ENTORNO
+# ─────────────────────────────────────────────────────────────
+env_path = BASE_DIR / ".env"
+env_vars = {}
+if env_path.exists():
+    contenido = env_path.read_text(encoding="utf-8")
+    for match in re.finditer(r"^([A-Z_]+)\s*=\s*(.+)$", contenido, re.MULTILINE):
+        env_vars[match.group(1)] = match.group(2).strip()
+
+# ─────────────────────────────────────────────────────────────
 #  SEGURIDAD
 # ─────────────────────────────────────────────────────────────
-# ADVERTENCIA: cambia esta clave en producción y nunca la publiques
-SECRET_KEY = "django-insecure-)1t4q$yd=#qejd0tu*58*n89e8i^(=)&*=5()7it#l0b997(w^"
+SECRET_KEY = env_vars.get(
+    "SECRET_KEY", "django-insecure-)1t4q$yd=#qejd0tu*58*n89e8i^(=)&*=5()7it#l0b997(w^"
+)
+EMAIL_HOST_PASSWORD = env_vars.get("EMAIL_HOST_PASSWORD", "")
 
 DEBUG = True
 
@@ -72,19 +84,9 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 
 # ─────────────────────────────────────────────────────────────
-#  LEER .ENV PARA BASE DE DATOS
-# ─────────────────────────────────────────────────────────────
-env_path = BASE_DIR / ".env"
-db_engine = "nube"
-if env_path.exists():
-    contenido = env_path.read_text(encoding="utf-8")
-    match = re.search(r"^DB_ENGINE\s*=\s*(.+)$", contenido, re.MULTILINE)
-    if match:
-        db_engine = match.group(1).strip()
-
-# ─────────────────────────────────────────────────────────────
 #  BASE DE DATOS
 # ─────────────────────────────────────────────────────────────
+db_engine = env_vars.get("DB_ENGINE", "nube")
 DATABASES = {
     "neon_db": {
         "ENGINE": "django.db.backends.postgresql",

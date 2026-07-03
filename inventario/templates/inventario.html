@@ -569,8 +569,8 @@
 {% endblock %}
 
 {% block js %}
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="{% static 'js/datatables.min.js' %}?v=3"></script>
+<script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
 <!-- Custom Table JS -->
-<script src="{% static 'js/tables/inventario_table.js' %}?v=3"></script>
+<script defer src="{% static 'js/tables/inventario_table.js' %}?v=3"></script>
 {% endblock %}

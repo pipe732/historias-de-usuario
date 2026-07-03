@@ -1,6 +1,6 @@
 <aside>
   <div class="aside-header">
-    <i class="bi bi-cloud-haze2-fill" style="font-size: 1rem; opacity: 0.6"></i>
+    <i class="bi bi-cloud-haze2-fill extracted-style-353"></i>
     <span class="aside-brand-name">Mine</span>
     <span class="aside-brand-sub">inventory</span>
   </div>
@@ -9,8 +9,7 @@
 
     <!-- GENERAL -->
     <div class="d-flex align-items-center gap-2 px-3 pt-3 pb-1">
-      <span class="text-uppercase fw-semibold"
-        style="font-size:.6rem; letter-spacing:.13em; color:rgba(255,255,255,.25);">
+      <span class="text-uppercase fw-semibold extracted-style-361">
         General
       </span>
       <hr class="flex-grow-1 my-0 opacity-10" />
@@ -19,8 +18,7 @@
     <!-- Principal → Mis Préstamos (es la página principal del usuario) -->
     <a href="{% url 'home_usuario' %}"
       class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium
-              {% if request.resolver_match.url_name == 'home_usuario' %}active{% else %}text-white-50{% endif %}"
-      style="font-size:.88rem;">
+              {% if request.resolver_match.url_name ==  extracted-style-229"home_usuario' %}active{% else %}text-white-50{% endif %}">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <rect x="3" y="3" width="7" height="7" />
         <rect x="14" y="3" width="7" height="7" />
@@ -33,8 +31,7 @@
     <!-- Mis Préstamos -->
     <a href="{% url 'prestamo_usuario' %}"
       class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium
-              {% if request.resolver_match.url_name == 'prestamo_usuario' %}active{% else %}text-white-50{% endif %}"
-      style="font-size:.88rem;">
+              {% if request.resolver_match.url_name ==  extracted-style-229"prestamo_usuario' %}active{% else %}text-white-50{% endif %}">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <polyline points="9 10 4 15 9 20" />
         <path d="M20 4v7a4 4 0 0 1-4 4H4" />
@@ -45,8 +42,7 @@
     <!-- SESIÓN — solo visible si NO hay sesión activa -->
     {% if not request.session.usuario_nombre %}
     <div class="d-flex align-items-center gap-2 px-3 pt-3 pb-1">
-      <span class="text-uppercase fw-semibold"
-        style="font-size:.6rem; letter-spacing:.13em; color:rgba(255,255,255,.25);">
+      <span class="text-uppercase fw-semibold extracted-style-361">
         Sesión
       </span>
       <hr class="flex-grow-1 my-0 opacity-10" />
@@ -54,8 +50,7 @@
 
     <a href="{% url 'login' %}"
       class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded mx-2 fw-medium
-              {% if request.resolver_match.url_name == 'login' %}active{% else %}text-white-50{% endif %}"
-      style="font-size:.88rem;">
+              {% if request.resolver_match.url_name ==  extracted-style-229"login' %}active{% else %}text-white-50{% endif %}">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
         <polyline points="10 17 15 12 10 7" />
@@ -74,14 +69,12 @@
     {# Incluir en nav-bottom de aside_admin.html y aside_usuario.html, ANTES del dropup #}
     {% include "partials/_notif_row.html" %}
     <div class="dropup px-2 pb-2">
-      <button type="button" class="btn w-100 d-flex align-items-center gap-2 px-3 py-2 dropdown-toggle" style="background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.07);
-                     border-radius:.5rem; color:rgba(239,236,202,.85); font-size:.88rem;" data-bs-toggle="dropdown"
+      <button type="button" class="btn w-100 d-flex align-items-center gap-2 px-3 py-2 dropdown-toggle extracted-style-362" data-bs-toggle="dropdown"
         data-bs-display="static" aria-expanded="false">
 
         {% with nombre=request.session.usuario_nombre|default:"Invitado" %}
         <div
-          class="d-flex align-items-center justify-content-center rounded-circle bg-danger flex-shrink-0 fw-bold text-white"
-          style="width:28px; height:28px; font-size:.65rem; letter-spacing:.03em;">
+          class="d-flex align-items-center justify-content-center rounded-circle bg-danger flex-shrink-0 fw-bold text-white extracted-style-359">
           {{ nombre|slice:":2"|upper }}
         </div>
         {% with partes=nombre.split %}
@@ -89,10 +82,10 @@
         {% endwith %}
         {% endwith %}
 
-        <i class="bi bi-chevron-down opacity-25" style="font-size:.7rem;"></i>
+        <i class="bi bi-chevron-down opacity-25 extracted-style-321"></i>
       </button>
 
-      <ul class="dropdown-menu dropdown-menu-end shadow" style="min-width:190px;">
+      <ul class="dropdown-menu dropdown-menu-end shadow extracted-style-360">
         <li>
           <span class="dropdown-item-text small text-muted">
             <i class="bi bi-shield-check me-1"></i>

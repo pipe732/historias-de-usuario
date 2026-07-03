@@ -70,11 +70,10 @@
 {# ══ CABECERA ══ #}
 <div class="d-flex align-items-center justify-content-between mb-4">
   <div>
-    <h5 style="font-family:var(--font-ui); font-weight:700; font-size:1rem;
-               color:var(--text-main); letter-spacing:.03em; margin:0;">
+    <h5 class="extracted-style-13">
       Préstamos
     </h5>
-    <p style="font-family:var(--font-ui); font-size:.8rem; color:var(--text-muted); margin:0;">
+    <p class="extracted-style-14">
       Gestión de préstamos de herramientas e inventario
     </p>
   </div>
@@ -90,24 +89,18 @@
 {# ══ KPI CARDS ══ #}
 <div class="row g-3 mb-4">
   <div class="col-6 col-md-2">
-    <div class="card h-100 kpi-card" style="padding:.9rem 1rem;" data-kpi-delay="0">
-      <div class="kpi-accent-bar" style="background:var(--text-muted);"></div>
-      <div style="font-family:var(--font-mono); font-size:.58rem; letter-spacing:.12em;
-                  text-transform:uppercase; color:var(--text-muted); margin-bottom:.3rem;">Total</div>
-      <div class="kpi-number" data-target="{{ total_prestamos }}"
-           style="font-family:var(--font-mono); font-size:1.55rem; font-weight:700;
-                  color:var(--text-main); line-height:1;">0</div>
+    <div class="card h-100 kpi-card extracted-style-141" data-kpi-delay="0">
+      <div class="kpi-accent-bar extracted-style-240"></div>
+      <div class="extracted-style-143">Total</div>
+      <div class="kpi-number extracted-style-144" data-target="{{ total_prestamos }}">0</div>
       <div class="kpi-label">registros</div>
     </div>
   </div>
   <div class="col-6 col-md-2">
-    <div class="card h-100 kpi-card" style="padding:.9rem 1rem;" data-kpi-delay="80">
-      <div class="kpi-accent-bar" style="background:var(--navy);"></div>
-      <div style="font-family:var(--font-mono); font-size:.58rem; letter-spacing:.12em;
-                  text-transform:uppercase; color:var(--text-muted); margin-bottom:.3rem;">Activos</div>
-      <div class="kpi-number" data-target="{{ prestamos_activos }}"
-           style="font-family:var(--font-mono); font-size:1.55rem; font-weight:700;
-                  color:var(--navy); line-height:1;">0</div>
+    <div class="card h-100 kpi-card extracted-style-141" data-kpi-delay="80">
+      <div class="kpi-accent-bar extracted-style-142"></div>
+      <div class="extracted-style-143">Activos</div>
+      <div class="kpi-number extracted-style-149" data-target="{{ prestamos_activos }}">0</div>
       <div class="kpi-label">en curso</div>
     </div>
   </div>
@@ -115,7 +108,7 @@
     <div class="card h-100 kpi-card {% if prestamos_pendientes > 0 %}border-pending{% endif %}"
          style="padding:.9rem 1rem;"
          data-kpi-delay="160">
-      <div class="kpi-accent-bar" style="background:#c4900a;"></div>
+      <div class="kpi-accent-bar extracted-style-152"></div>
       {% if prestamos_pendientes > 0 %}
       <span class="kpi-trend warn">⏳ pendientes</span>
       {% endif %}
@@ -129,13 +122,10 @@
     </div>
   </div>
   <div class="col-6 col-md-2">
-    <div class="card h-100 kpi-card" style="padding:.9rem 1rem;" data-kpi-delay="240">
-      <div class="kpi-accent-bar" style="background:var(--sage);"></div>
-      <div style="font-family:var(--font-mono); font-size:.58rem; letter-spacing:.12em;
-                  text-transform:uppercase; color:var(--text-muted); margin-bottom:.3rem;">Devueltos</div>
-      <div class="kpi-number" data-target="{{ prestamos_devueltos }}"
-           style="font-family:var(--font-mono); font-size:1.55rem; font-weight:700;
-                  color:var(--sage); line-height:1;">0</div>
+    <div class="card h-100 kpi-card extracted-style-141" data-kpi-delay="240">
+      <div class="kpi-accent-bar extracted-style-241"></div>
+      <div class="extracted-style-143">Devueltos</div>
+      <div class="kpi-number extracted-style-147" data-target="{{ prestamos_devueltos }}">0</div>
       <div class="kpi-label">completados</div>
     </div>
   </div>
@@ -143,7 +133,7 @@
     <div class="card h-100 kpi-card {% if prestamos_vencidos > 0 %}border-rust{% endif %}"
          style="padding:.9rem 1rem;"
          data-kpi-delay="320">
-      <div class="kpi-accent-bar" style="background:var(--rust);"></div>
+      <div class="kpi-accent-bar extracted-style-76"></div>
       {% if prestamos_vencidos > 0 %}
       <span class="kpi-trend down">↑ vencidos</span>
       {% endif %}
@@ -160,7 +150,7 @@
     <div class="card h-100 kpi-card {% if proximos_vencer > 0 %}border-warn-light{% endif %}"
          style="padding:.9rem 1rem;"
          data-kpi-delay="400">
-      <div class="kpi-accent-bar" style="background:rgba(196,144,10,.7);"></div>
+      <div class="kpi-accent-bar extracted-style-242"></div>
       {% if proximos_vencer > 0 %}
       <span class="kpi-trend warn">⚡ urgente</span>
       {% endif %}
@@ -177,14 +167,12 @@
 
 {# ══ ALERTA PENDIENTES ══ #}
 {% if prestamos_pendientes > 0 %}
-<div class="d-flex align-items-center gap-3 mb-3 px-4 py-3"
-     style="background:rgba(196,144,10,.07); border:1px solid rgba(196,144,10,.3);
-            border-radius:var(--radius-md); font-family:var(--font-ui);">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4900a" stroke-width="2.2" style="flex-shrink:0;">
+<div class="d-flex align-items-center gap-3 mb-3 px-4 py-3 extracted-style-243">
+  <svg class="extracted-style-74" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4900a" stroke-width="2.2">
     <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
     <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
   </svg>
-  <span style="font-size:.88rem; color:#7a5500;">
+  <span class="extracted-style-244">
     Hay <strong>{{ prestamos_pendientes }} solicitud{{ prestamos_pendientes|pluralize:"es" }}</strong>
     pendiente{{ prestamos_pendientes|pluralize:"s" }} de aprobación.
     Haz clic en <strong>Aprobar</strong> en la fila correspondiente para revisarla.
@@ -194,14 +182,14 @@
 
 {# ══ FILTROS ══ #}
 <div class="card mb-3">
-  <div class="card-body" style="padding:.85rem 1.2rem;">
+  <div class="card-body extracted-style-245">
     <form method="get" class="d-flex gap-3 align-items-end flex-wrap">
-      <div style="flex:2; min-width:180px;">
+      <div class="extracted-style-246">
         <label class="form-label">Buscar</label>
         <input type="text" name="q" class="form-control" value="{{ filtro_q }}"
                placeholder="Usuario, nombre, producto…">
       </div>
-      <div style="flex:1; min-width:140px;">
+      <div class="extracted-style-247">
         <label class="form-label">Estado</label>
         <select name="estado" class="form-select">
           <option value="">Todos</option>
@@ -213,14 +201,14 @@
           <option value="rechazado"  {% if filtro_estado == 'rechazado'  %}selected{% endif %}>Rechazado</option>
         </select>
       </div>
-      <div style="flex:1; min-width:130px;">
+      <div class="extracted-style-248">
         <label class="form-label">Vencidos</label>
         <select name="vencidos" class="form-select">
           <option value="">Todos</option>
           <option value="1" {% if filtro_vencidos == '1' %}selected{% endif %}>Solo vencidos</option>
         </select>
       </div>
-      <div style="display:flex; gap:.4rem;">
+      <div class="d-flex"gap:.4rem;">
         <button type="submit" class="btn-primary-mine">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -242,54 +230,49 @@
       </svg>
       Registro de préstamos
     </span>
-    <span style="font-family:var(--font-mono); font-size:.72rem; background:rgba(9,77,146,.08);
-                 color:var(--navy); padding:.18rem .6rem; border-radius:20px;
-                 border:1px solid rgba(9,77,146,.18);">
+    <span class="extracted-style-249">
       {{ prestamos|length }} registro{{ prestamos|length|pluralize:",s" }}
     </span>
   </div>
 
   <div class="table-responsive">
-    <table class="table-app datatable-custom" id="prestamo-table" style="width:100%; border-collapse:collapse; font-size:.88rem;">
+    <table class="table-app datatable-custom w-100" id="prestamo-table"border-collapse:collapse; font-size:.88rem;">
       <thead>
         <tr>
-          <th style="width:36px;"></th>
+          <th class="extracted-style-250"></th>
           <th>#</th>
           <th>Usuario</th>
           <th>Herramientas</th>
           <th>Estado</th>
           <th>Fecha</th>
           <th>Vencimiento</th>
-          <th style="text-align:center;">Acciones</th>
+          <th class="text-center">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for p in prestamos %}
         <tr class="{% if p.estado == 'pendiente' %}row-pending-bg{% endif %}">
-          <td style="padding:.5rem .5rem .5rem 1rem;">
+          <td class="extracted-style-251">
             <button type="button"
-                    class="btn-toggle-details"
-                    data-target-detail="detail-p-{{ p.pk }}"
-                    style="background:none; border:none; cursor:pointer; padding:0; color:var(--text-muted);">
-              <svg class="row-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none"
-                   stroke="currentColor" stroke-width="2.5" style="transition:transform .2s;">
+                    class="btn-toggle-details extracted-style-252"
+                    data-target-detail="detail-p-{{ p.pk }}">
+              <svg class="row-chevron extracted-style-20" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5">
                 <polyline points="9 18 15 12 9 6"/>
               </svg>
             </button>
           </td>
           <td>
-            <span style="font-family:var(--font-mono); font-size:.78rem; color:var(--text-muted);">#{{ p.pk }}</span>
+            <span class="extracted-style-21">#{{ p.pk }}</span>
           </td>
           <td>
-            <div style="font-weight:600; font-size:.88rem;">{{ p.nombre_usuario|default:p.usuario }}</div>
-            <div style="font-family:var(--font-mono); font-size:.72rem; color:var(--text-muted);">{{ p.usuario }}</div>
+            <div class="extracted-style-253">{{ p.nombre_usuario|default:p.usuario }}</div>
+            <div class="extracted-style-208">{{ p.usuario }}</div>
           </td>
           <td>
-            <div style="display:flex; flex-wrap:wrap; gap:.25rem;">
+            <div class="d-flex"flex-wrap:wrap; gap:.25rem;">
               {% for item in p.items.all %}
-              <span style="font-size:.72rem; padding:.1rem .45rem; border-radius:12px;
-                           background:rgba(9,77,146,.08); color:var(--navy);
-                           font-family:var(--font-ui); font-weight:600;">
+              <span class="extracted-style-254">
                 {{ item.producto.nombre }} ×{{ item.cantidad }}
               </span>
               {% endfor %}
@@ -297,8 +280,8 @@
           </td>
           <td>
             {% if p.estado == 'pendiente' %}
-              <span class="badge-state" style="background:rgba(196,144,10,.12); color:#7a5500;">
-                <span style="width:5px; height:5px; border-radius:50%; background:#c4900a; display:inline-block;"></span>
+              <span class="badge-state extracted-style-255">
+                <span class="extracted-style-256"></span>
                 Pendiente
               </span>
             {% elif p.estado == 'activo' %}
@@ -306,8 +289,8 @@
             {% elif p.estado == 'parcial' %}
               <span class="badge-state badge-pendiente">Parcial</span>
             {% elif p.estado == 'devuelto' %}
-              <span class="badge-state" style="background:rgba(9,77,146,.08); color:var(--navy);">
-                <span style="width:5px; height:5px; border-radius:50%; background:var(--navy); display:inline-block;"></span>
+              <span class="badge-state extracted-style-257">
+                <span class="extracted-style-258"></span>
                 Devuelto
               </span>
             {% elif p.estado == 'vencido' %}
@@ -316,28 +299,25 @@
               <span class="badge-state badge-rechazada">Rechazado</span>
             {% endif %}
           </td>
-          <td style="font-family:var(--font-mono); font-size:.78rem; color:var(--text-muted);">
+          <td class="extracted-style-21">
             {{ p.fecha_prestamo|date:"d/m/Y" }}
           </td>
           <td>
             {% if p.fecha_vencimiento %}
-              <span class="{% if p.urgencia == 'vencido' %}urgencia-vencido{% elif p.urgencia == 'proximo' %}urgencia-proximo{% else %}urgencia-normal{% endif %}"
-                    style="font-family:var(--font-mono); font-size:.78rem;">
+              <span class="{% if p.urgencia ==  extracted-style-259"vencido' %}urgencia-vencido{% elif p.urgencia == 'proximo' %}urgencia-proximo{% else %}urgencia-normal{% endif %}">
                 {{ p.fecha_vencimiento|date:"d/m/Y" }}
                 {% if p.dias_restantes is not None and p.dias_restantes >= 0 %}
-                  <span style="font-size:.68rem;">({{ p.dias_restantes }}d)</span>
+                  <span class="extracted-style-260">({{ p.dias_restantes }}d)</span>
                 {% endif %}
               </span>
             {% else %}
-              <span style="color:var(--text-muted); font-size:.8rem;">—</span>
+              <span class="extracted-style-188">—</span>
             {% endif %}
           </td>
-          <td style="text-align:center;">
-            <div style="display:flex; align-items:center; justify-content:center; gap:.3rem; flex-wrap:wrap;">
+          <td class="text-center">
+            <div class="d-flex"align-items:center; justify-content:center; gap:.3rem; flex-wrap:wrap;">
               {% if p.estado == 'pendiente' %}
-              <button type="button" class="btn-ghost btn-aprobar-solicitud"
-                      style="background:rgba(196,144,10,.1); color:#7a5500;
-                             border-color:rgba(196,144,10,.3); font-size:.78rem;"
+              <button type="button" class="btn-ghost btn-aprobar-solicitud extracted-style-261"
                       data-pk="{{ p.pk }}"
                       data-nombre="{{ p.nombre_usuario|default:p.usuario|escapejs }}"
                       data-usuario="{{ p.usuario|escapejs }}"
@@ -363,7 +343,7 @@
               </button>
               {% endif %}
               {% if p.estado in 'activo,parcial' %}
-              <button type="button" class="btn-ghost btn-devolver-prestamo" style="font-size:.78rem;"
+              <button type="button" class="btn-ghost btn-devolver-prestamo extracted-style-262"
                       data-pk="{{ p.pk }}"
                       data-usuario="{{ p.nombre_usuario|default:p.usuario|escapejs }}">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -373,7 +353,7 @@
                 Devolver
               </button>
               {% endif %}
-              <button type="button" class="btn-ghost" style="font-size:.78rem;"
+              <button type="button" class="btn-ghost extracted-style-262"
                       data-bs-toggle="modal" data-bs-target="#modalEditarPrestamo"
                       data-pk="{{ p.pk }}"
                       data-observaciones="{{ p.observaciones|escapejs }}">
@@ -388,77 +368,69 @@
 
         {# ── Fila de detalle colapsable ── #}
         <tr class="detail-row d-none" id="detail-p-{{ p.pk }}">
-          <td colspan="8" style="padding:0; border-bottom:2px solid rgba(9,77,146,.1);">
-            <div style="padding:1rem 1.4rem; background:rgba(9,77,146,.03);">
+          <td class="extracted-style-263" colspan="8">
+            <div class="extracted-style-264">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <div style="font-family:var(--font-mono); font-size:.62rem; letter-spacing:.1em;
-                               text-transform:uppercase; color:var(--text-muted); margin-bottom:.5rem;">
+                  <div class="extracted-style-265">
                     Herramientas
                   </div>
                   {% for item in p.items.all %}
-                  <div class="{% if item.devuelto %}item-row-bg-devuelto{% else %}item-row-bg-pendiente{% endif %}"
-                       style="display:flex; align-items:center; gap:.65rem; margin-bottom:.4rem;
+                  <divalign class="{% if item.devuelto %}item-row-bg-devuelto{% else %}item-row-bg-pendiente{% endif %} d-flex"-items:center; gap:.65rem; margin-bottom:.4rem;
                                padding:.45rem .75rem; border-radius:var(--radius-sm);">
-                    <div style="flex:1;">
-                      <div style="font-weight:600; font-size:.85rem;">{{ item.producto.nombre }}</div>
-                      <div style="font-family:var(--font-mono); font-size:.7rem; color:var(--text-muted);">
+                    <div class="extracted-style-43">
+                      <div class="extracted-style-266">{{ item.producto.nombre }}</div>
+                      <div class="extracted-style-194">
                         {{ item.producto.codigo_sku }}
                         {% if item.serial_entregado %}· Serial: <strong>{{ item.serial_entregado }}</strong>{% endif %}
                       </div>
                     </div>
-                    <div class="{% if item.devuelto %}item-color-sage{% else %}item-color-navy{% endif %}"
-                         style="font-family:var(--font-mono); font-size:.85rem; font-weight:700;">
+                    <div class="{% if item.devuelto %}item-color-sage{% else %}item-color-navy{% endif %} extracted-style-267">
                       ×{{ item.cantidad }}
                     </div>
-                    <span class="{% if item.devuelto %}badge-devuelto{% else %}badge-pendiente{% endif %}"
-                          style="font-size:.7rem; padding:.1rem .4rem; border-radius:10px; font-weight:700;">
+                    <span class="{% if item.devuelto %}badge-devuelto{% else %}badge-pendiente{% endif %} extracted-style-268">
                       {% if item.devuelto %}✓ Devuelto{% else %}En préstamo{% endif %}
                     </span>
                   </div>
                   {% endfor %}
                 </div>
                 <div class="col-md-3">
-                  <div style="font-family:var(--font-mono); font-size:.62rem; letter-spacing:.1em;
-                               text-transform:uppercase; color:var(--text-muted); margin-bottom:.5rem;">
+                  <div class="extracted-style-265">
                     Detalles
                   </div>
                   {% if p.observaciones %}
-                  <div style="font-size:.82rem; color:var(--text-main); margin-bottom:.35rem;">
-                    <span style="color:var(--text-muted);">Obs:</span> {{ p.observaciones }}
+                  <div class="extracted-style-269">
+                    <span class="extracted-style-226">Obs:</span> {{ p.observaciones }}
                   </div>
                   {% endif %}
                   {% if p.motivo_solicitud %}
-                  <div style="font-size:.82rem; color:var(--text-main); margin-bottom:.35rem;">
-                    <span style="color:var(--text-muted);">Motivo:</span> {{ p.motivo_solicitud }}
+                  <div class="extracted-style-269">
+                    <span class="extracted-style-226">Motivo:</span> {{ p.motivo_solicitud }}
                   </div>
                   {% endif %}
                   {% if p.motivo_rechazo %}
-                  <div style="font-size:.82rem; color:var(--rust);">
-                    <span style="color:var(--text-muted);">Rechazo:</span> {{ p.motivo_rechazo }}
+                  <div class="extracted-style-270">
+                    <span class="extracted-style-226">Rechazo:</span> {{ p.motivo_rechazo }}
                   </div>
                   {% endif %}
                   {% if not p.observaciones and not p.motivo_solicitud and not p.motivo_rechazo %}
-                  <div style="font-size:.8rem; color:var(--text-muted);">Sin observaciones.</div>
+                  <div class="extracted-style-271">Sin observaciones.</div>
                   {% endif %}
                 </div>
                 {% if p.estado in 'activo,parcial' %}
                 <div class="col-md-3">
-                  <div style="font-family:var(--font-mono); font-size:.62rem; letter-spacing:.1em;
-                               text-transform:uppercase; color:var(--text-muted); margin-bottom:.5rem;">
+                  <div class="extracted-style-265">
                     Devolver ítem
                   </div>
                   {% for item in p.items.all %}
                   {% if not item.devuelto %}
                   <form method="post" action="{% url 'prestamo' %}"
-                        style="display:flex; align-items:center; gap:.4rem; margin-bottom:.4rem;">
+                        class="d-flex"align-items:center; gap:.4rem; margin-bottom:.4rem;">
                     {% csrf_token %}
                     <input type="hidden" name="accion" value="devolver_item">
                     <input type="hidden" name="item_pk" value="{{ item.pk }}">
-                    <span style="font-size:.8rem; flex:1; overflow:hidden; text-overflow:ellipsis;
-                                  white-space:nowrap;">{{ item.producto.nombre }}</span>
-                    <button type="submit" class="btn-ghost"
-                            style="font-size:.72rem; padding:.18rem .5rem; white-space:nowrap;"
+                    <span class="extracted-style-272">{{ item.producto.nombre }}</span>
+                    <button type="submit" class="btn-ghost extracted-style-273"
                             onclick="return confirm('¿Confirmas la devolución de {{ item.producto.nombre|escapejs }}?')">
                       Devolver
                     </button>
@@ -473,12 +445,12 @@
         </tr>
         {% empty %}
         <tr>
-          <td colspan="8" style="text-align:center; padding:4rem 1rem;">
+          <td colspan="8" class="text-center"padding:4rem 1rem;">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)"
-                 stroke-width="1.3" style="opacity:.3; display:block; margin:0 auto .75rem;">
+                 stroke-width="1.3" class="empty-state-icon">
               <polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/>
             </svg>
-            <p style="font-family:var(--font-ui); color:var(--text-muted); font-size:.88rem; margin:0;">
+            <p class="extracted-style-50">
               No hay préstamos que coincidan con los filtros.
             </p>
           </td>
@@ -493,11 +465,10 @@
 <div class="modal fade" id="modalAprobarPrestamo" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
     <div class="modal-content">
-      <div class="modal-header" style="padding:.9rem 1.35rem;">
+      <div class="modal-header extracted-style-53">
         <div>
           <h5 class="modal-title" id="apr-titulo">Aprobar solicitud</h5>
-          <div style="font-family:var(--font-mono); font-size:.7rem; color:rgba(239,236,202,.5);
-                      margin-top:.15rem;" id="apr-subtitulo"></div>
+          <div class="extracted-style-274" id="apr-subtitulo"></div>
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
@@ -505,65 +476,50 @@
         {% csrf_token %}
         <input type="hidden" name="accion" value="aprobar_pendiente_modal">
         <input type="hidden" name="prestamo_pk" id="apr-pk">
-        <div class="modal-body" style="padding:1.5rem;">
-          <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1.2rem;
+        <div class="modal-body extracted-style-60">
+          <div class="d-flex"gap:1rem; flex-wrap:wrap; margin-bottom:1.2rem;
                       padding:.9rem 1rem; border-radius:var(--radius-md);
                       background:rgba(9,77,146,.04); border:1px solid rgba(9,77,146,.1);">
-            <div style="flex:1; min-width:150px;">
-              <div style="font-size:.62rem; text-transform:uppercase; letter-spacing:.08em;
-                          color:var(--text-muted); font-weight:600; margin-bottom:.15rem;">Solicitante</div>
-              <div style="font-weight:700; font-size:.95rem; color:var(--text-main);" id="apr-nombre"></div>
+            <div class="extracted-style-275">
+              <div class="extracted-style-276">Solicitante</div>
+              <div class="extracted-style-277" id="apr-nombre"></div>
             </div>
             <div>
-              <div style="font-size:.62rem; text-transform:uppercase; letter-spacing:.08em;
-                          color:var(--text-muted); font-weight:600; margin-bottom:.15rem;">Documento</div>
-              <div style="font-family:var(--font-mono); font-size:.88rem;" id="apr-doc"></div>
+              <div class="extracted-style-276">Documento</div>
+              <div class="extracted-style-278" id="apr-doc"></div>
             </div>
             <div>
-              <div style="font-size:.62rem; text-transform:uppercase; letter-spacing:.08em;
-                          color:var(--text-muted); font-weight:600; margin-bottom:.15rem;">Fecha</div>
-              <div style="font-family:var(--font-mono); font-size:.82rem;" id="apr-fecha"></div>
+              <div class="extracted-style-276">Fecha</div>
+              <div class="extracted-style-279" id="apr-fecha"></div>
             </div>
           </div>
-          <div id="apr-motivo-wrap" style="display:none; margin-bottom:1.2rem;">
-            <div style="font-size:.62rem; text-transform:uppercase; letter-spacing:.08em;
-                        color:var(--text-muted); font-weight:600; margin-bottom:.3rem;">Motivo de la solicitud</div>
-            <div id="apr-motivo"
-                 style="font-family:var(--font-ui); font-size:.88rem; color:var(--text-main);
-                        padding:.65rem 1rem; background:rgba(9,77,146,.03);
-                        border:1px solid rgba(9,77,146,.08); border-radius:var(--radius-md);"></div>
+          <div class="extracted-style-280" id="apr-motivo-wrap">
+            <div class="extracted-style-281">Motivo de la solicitud</div>
+            <div class="extracted-style-282" id="apr-motivo"></div>
           </div>
-          <div style="font-family:var(--font-mono); font-size:.65rem; letter-spacing:.13em;
-                      text-transform:uppercase; color:var(--navy);
-                      border-bottom:1px solid rgba(9,77,146,.18);
-                      padding-bottom:.4rem; margin-bottom:1rem;">
+          <div class="extracted-style-283">
             Registra el serial de cada herramienta a entregar
           </div>
           <div id="apr-items-container"></div>
-          <div style="font-family:var(--font-mono); font-size:.65rem; letter-spacing:.13em;
-                      text-transform:uppercase; color:var(--navy);
-                      border-bottom:1px solid rgba(9,77,146,.18);
-                      padding-bottom:.4rem; margin-bottom:1rem; margin-top:1.2rem;">
+          <div class="extracted-style-284">
             Fecha límite de devolución (opcional)
           </div>
-          <div style="max-width:240px;">
+          <div class="extracted-style-285">
             <label class="form-label">Fecha de vencimiento</label>
             <input type="date" name="fecha_vencimiento" id="apr-fecha-venc" class="form-control">
-            <div style="font-size:.72rem; color:var(--text-muted); margin-top:.25rem;">Dejar vacío si no aplica.</div>
+            <div class="extracted-style-145">Dejar vacío si no aplica.</div>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn-outline-mine" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn-outline-mine"
-                  style="color:var(--rust); border-color:rgba(152,71,62,.35);"
+          <button type="button" class="btn-outline-mine extracted-style-286"
                   onclick="abrirRechazar()">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
             Rechazar
           </button>
-          <button type="submit" name="accion_aprobacion" value="aprobar" class="btn-primary-mine"
-                  style="background:rgba(58,122,66,.85);" id="apr-btn-aprobar">
+          <button type="submit" name="accion_aprobacion" value="aprobar" class="btn-primary-mine extracted-style-287" id="apr-btn-aprobar">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="20 6 9 17 4 12"/>
             </svg>
@@ -577,7 +533,7 @@
 
 {# ══ MODAL RECHAZAR ══ #}
 <div class="modal fade" id="modalRechazarPrestamo" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" style="z-index:1060;">
+  <div class="modal-dialog modal-dialog-centered extracted-style-288">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Rechazar solicitud <span id="rch-id"></span></h5>
@@ -587,14 +543,14 @@
         {% csrf_token %}
         <input type="hidden" name="accion" value="rechazar_pendiente">
         <input type="hidden" name="prestamo_pk" id="rch-pk">
-        <div class="modal-body" style="padding:1.5rem;">
+        <div class="modal-body extracted-style-60">
           <label class="form-label">Motivo del rechazo *</label>
           <textarea name="motivo_rechazo" class="form-control" rows="3"
                     placeholder="Explica por qué se rechaza esta solicitud…" required></textarea>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn-outline-mine" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn-primary-mine" style="background:var(--rust);">
+          <button type="submit" class="btn-primary-mine extracted-style-76">
             Confirmar rechazo
           </button>
         </div>
@@ -611,14 +567,12 @@
         <h5 class="modal-title">Devolución — <span id="dev-usuario"></span></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body" style="padding:1.5rem;">
-        <p style="font-family:var(--font-ui); font-size:.88rem; color:var(--text-muted); margin-bottom:1rem;">
+      <div class="modal-body extracted-style-60">
+        <p class="extracted-style-289">
           Usa los botones <strong>Devolver</strong> en la fila expandida de este préstamo
           para registrar cada herramienta individualmente.
         </p>
-        <div style="padding:.75rem 1rem; background:rgba(9,77,146,.05);
-                    border:1px solid rgba(9,77,146,.12); border-radius:var(--radius-md);
-                    font-size:.82rem; color:var(--text-main);">
+        <div class="extracted-style-290">
           Expande la fila #<span id="dev-pk"></span> en la tabla y haz clic en
           <strong>Devolver</strong> junto a cada herramienta.
         </div>
@@ -642,7 +596,7 @@
         {% csrf_token %}
         <input type="hidden" name="accion" value="editar">
         <input type="hidden" name="prestamo_pk" id="edit_pk">
-        <div class="modal-body" style="padding:1.5rem;">
+        <div class="modal-body extracted-style-60">
           <label class="form-label">Observaciones</label>
           <textarea name="observaciones" id="edit_observaciones"
                     class="form-control" rows="4" placeholder="Notas sobre el préstamo..."></textarea>
@@ -659,37 +613,31 @@
 {# ══ MODAL NUEVO PRÉSTAMO (WIZARD) ══ #}
 <div class="modal fade" id="modalCrearPrestamo" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-    <div class="modal-content" style="display:flex; flex-direction:column; max-height:90vh;">
+    <divflex class="modal-content d-flex"-direction:column; max-height:90vh;">
 
-      <div class="modal-header" style="flex-shrink:0;">
+      <div class="modal-header extracted-style-74">
         <div>
           <h5 class="modal-title" id="wizard-title">Paso 1: Responsable del préstamo</h5>
-          <div style="font-family:var(--font-mono); font-size:.7rem; color:rgba(239,236,202,.5);
-                      margin-top:.15rem;" id="wizard-subtitle">Selecciona el usuario responsable</div>
+          <div class="extracted-style-274" id="wizard-subtitle">Selecciona el usuario responsable</div>
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
       <form method="post" action="{% url 'prestamo' %}" id="wizardForm" novalidate
-            style="display:flex; flex-direction:column; flex:1; overflow:hidden; min-height:0;">
+            class="d-flex"flex-direction:column; flex:1; overflow:hidden; min-height:0;">
         {% csrf_token %}
 
         {# Progress #}
-        <div style="padding:1rem 1.5rem; background:rgba(9,77,146,.02);
-                    border-bottom:1px solid rgba(9,77,146,.1); flex-shrink:0;">
-          <div id="wizard-progress-bar" style="display:flex; align-items:flex-start; gap:.5rem;"></div>
+        <div class="extracted-style-291">
+          <div id="wizard-progress-bar" class="d-flex"align-items:flex-start; gap:.5rem;"></div>
         </div>
 
         {# Scroll body #}
-        <div class="modal-body" style="flex:1; overflow-y:auto; padding:1.5rem; min-height:0;
-                                       overscroll-behavior:contain;">
+        <div class="modal-body extracted-style-292">
 
           {# PASO 1 #}
           <div id="step-1" class="wizard-step">
-            <div style="font-family:var(--font-mono); font-size:.65rem; letter-spacing:.13em;
-                        text-transform:uppercase; color:var(--navy);
-                        border-bottom:1px solid rgba(9,77,146,.18);
-                        padding-bottom:.4rem; margin-bottom:1.1rem;">
+            <div class="extracted-style-293">
               Responsable del préstamo
             </div>
             <div class="row g-3">
@@ -713,11 +661,8 @@
           </div>
 
           {# PASO 2 #}
-          <div id="step-2" class="wizard-step" style="display:none;">
-            <div style="font-family:var(--font-mono); font-size:.65rem; letter-spacing:.13em;
-                        text-transform:uppercase; color:var(--navy);
-                        border-bottom:1px solid rgba(9,77,146,.18);
-                        padding-bottom:.4rem; margin-bottom:1.1rem;">
+          <div id="step-2" class="wizard-step extracted-style-57">
+            <div class="extracted-style-293">
               Selecciona herramientas a prestar
             </div>
             <div id="crear-items-container">
@@ -731,8 +676,7 @@
                     </option>
                     {% endfor %}
                   </select>
-                  <div id="stock-info" class="d-none mt-1 px-2 py-1 rounded"
-                       style="font-size:.78rem; display:flex; align-items:center; gap:.4rem;">
+                  <div id="stock-info" class="d-none mt-1 px-2 py-1 rounded extracted-style-294">
                     <svg id="stock-icon" width="12" height="12" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2">
                       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -740,20 +684,16 @@
                     </svg>
                     <span id="stock-label"></span>
                   </div>
-                  <div id="stock-alert" class="d-none mt-1 px-2 py-1 rounded"
-                       style="font-size:.78rem; background:rgba(152,71,62,.08);
-                              border:1px solid rgba(152,71,62,.2); color:var(--rust);">
+                  <div id="stock-alert" class="d-none mt-1 px-2 py-1 rounded extracted-style-295">
                     ⚠ Sin stock disponible
                   </div>
                 </div>
-                <div class="col-auto" style="width:90px;">
+                <div class="col-auto extracted-style-296">
                   <input type="number" name="cantidad[]" class="form-control text-center"
                          min="1" value="1" placeholder="Cant." required>
                 </div>
                 <div class="col-auto">
-                  <button type="button" class="btn-ghost crear-del-btn disabled"
-                          style="width:36px; height:36px; padding:0; display:flex;
-                                 align-items:center; justify-content:center;">
+                  <button type="button" class="btn-ghost crear-del-btn disabled extracted-style-297">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2.5">
                       <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -762,8 +702,7 @@
                 </div>
               </div>
             </div>
-            <button type="button" id="crear-add-item" class="btn-outline-mine"
-                    style="font-size:.8rem; margin-top:.4rem;">
+            <button type="button" id="crear-add-item" class="btn-outline-mine extracted-style-298">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/>
                 <line x1="8" y1="12" x2="16" y2="12"/>
@@ -773,34 +712,29 @@
           </div>
 
           {# PASO 3 #}
-          <div id="step-3" class="wizard-step" style="display:none;">
-            <div style="font-family:var(--font-mono); font-size:.65rem; letter-spacing:.13em;
-                        text-transform:uppercase; color:var(--navy);
-                        border-bottom:1px solid rgba(9,77,146,.18);
-                        padding-bottom:.4rem; margin-bottom:1.1rem;">
+          <div id="step-3" class="wizard-step extracted-style-57">
+            <div class="extracted-style-293">
               Detalles del préstamo
             </div>
-            <div style="display:flex; flex-direction:column; gap:0.7rem;">
+            <div class="d-flex"flex-direction:column; gap:0.7rem;">
               <div>
-                <label class="form-label" style="margin-bottom:0.25rem;">Fecha de vencimiento</label>
-                <input type="date" name="fecha_vencimiento" class="form-control" style="font-size:0.9rem;">
-                <div style="font-size:.65rem; color:var(--text-muted); margin-top:0.1rem;">Opcional — Plazo para devolver</div>
+                <label class="form-label mb-0".25rem;">Fecha de vencimiento</label>
+                <input type="date" name="fecha_vencimiento" class="form-control extracted-style-299">
+                <div class="extracted-style-300">Opcional — Plazo para devolver</div>
               </div>
               <div>
-                <label class="form-label" style="margin-bottom:0.25rem;">Observaciones</label>
-                <textarea name="observaciones" class="form-control" rows="1" style="font-size:0.9rem; min-height:32px;"
+                <label class="form-label mb-0".25rem;">Observaciones</label>
+                <textarea name="observaciones" class="form-control extracted-style-301" rows="1"
                           placeholder="Notas internas sobre el préstamo"></textarea>
               </div>
               <div>
-                <label class="form-label" style="margin-bottom:0.25rem;">Motivo de la solicitud</label>
-                <textarea name="motivo_solicitud" class="form-control" rows="1" style="font-size:0.9rem; min-height:32px;"
+                <label class="form-label mb-0".25rem;">Motivo de la solicitud</label>
+                <textarea name="motivo_solicitud" class="form-control extracted-style-301" rows="1"
                           placeholder="¿Por qué se solicita este préstamo?"></textarea>
               </div>
-              <div style="padding:0.6rem 0.8rem; border-radius:var(--radius-md);
-                          background:rgba(196,144,10,.05); border:1px solid rgba(196,144,10,.15); margin-top:0.3rem;">
-                <div style="font-size:.7rem; color:#7a5500; font-weight:600;">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-                       style="vertical-align:middle; margin-right:.25rem;">
+              <div class="extracted-style-302">
+                <div class="extracted-style-303">
+                  <svg class="extracted-style-304" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                     <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                     <line x1="12" y1="9" x2="12" y2="13"/>
                   </svg>
@@ -811,31 +745,25 @@
           </div>
 
           {# PASO 4 — RESUMEN con scroll interno #}
-          <div id="step-4" class="wizard-step" style="display:none;">
-            <div style="font-family:var(--font-mono); font-size:.65rem; letter-spacing:.13em;
-                        text-transform:uppercase; color:var(--navy);
-                        border-bottom:1px solid rgba(9,77,146,.18);
-                        padding-bottom:.4rem; margin-bottom:1.1rem;">
+          <div id="step-4" class="wizard-step extracted-style-57">
+            <div class="extracted-style-293">
               Resumen del préstamo
             </div>
 
             {# Info responsable #}
-            <div style="margin-bottom:1rem; padding:.9rem 1rem; border-radius:var(--radius-md);
-                        background:rgba(9,77,146,.04); border:1px solid rgba(9,77,146,.1);">
-              <div style="font-size:.65rem; text-transform:uppercase; letter-spacing:.08em;
-                          color:var(--text-muted); font-weight:600; margin-bottom:.35rem;">Responsable</div>
-              <div id="summary-usuario" style="font-weight:700; font-size:.95rem; color:var(--text-main);">—</div>
-              <div id="summary-vencimiento" style="font-size:.8rem; color:var(--text-muted); margin-top:.25rem;"></div>
+            <div class="extracted-style-305">
+              <div class="extracted-style-306">Responsable</div>
+              <div class="extracted-style-277" id="summary-usuario">—</div>
+              <div class="extracted-style-307" id="summary-vencimiento"></div>
             </div>
 
             {# Lista herramientas — con scroll si son muchas #}
-            <div style="margin-bottom:1rem;">
-              <div style="font-size:.65rem; text-transform:uppercase; letter-spacing:.08em;
-                          color:var(--text-muted); font-weight:600; margin-bottom:.5rem;">
+            <div class="extracted-style-308">
+              <div class="extracted-style-309">
                 Herramientas a prestar
               </div>
               <div id="summary-items"
-                   style="display:flex; flex-direction:column; gap:.5rem;
+                   class="d-flex"flex-direction:column; gap:.5rem;
                           max-height:220px; overflow-y:auto;
                           padding-right:.3rem;
                           scrollbar-width:thin;
@@ -843,11 +771,9 @@
               </div>
             </div>
 
-            <div style="padding:.85rem 1rem; border-radius:var(--radius-md);
-                        background:rgba(58,122,66,.05); border:1px solid rgba(58,122,66,.15);">
-              <div style="font-size:.8rem; color:var(--sage); font-weight:600;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                     style="vertical-align:middle; margin-right:.3rem;">
+            <div class="extracted-style-310">
+              <div class="extracted-style-311">
+                <svg class="extracted-style-312" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
                 </svg>
                 Haz clic en <strong>Confirmar y registrar</strong> para guardar el préstamo
@@ -858,9 +784,9 @@
         </div>{# /modal-body #}
 
         {# Footer SIEMPRE fijo al fondo #}
-        <div class="modal-footer" style="flex-shrink:0; border-top:1px solid var(--border-color);">
+        <div class="modal-footer extracted-style-313">
           <button type="button" class="btn-outline-mine" id="btn-cancel" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn-outline-mine" id="btn-prev" style="display:none;">
+          <button type="button" class="btn-outline-mine extracted-style-57" id="btn-prev">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="15 18 9 12 15 6"/>
             </svg>
@@ -872,8 +798,7 @@
               <polyline points="9 18 15 12 9 6"/>
             </svg>
           </button>
-          <button type="submit" id="btn-submit" class="btn-primary-mine"
-                  style="display:none; background:rgba(58,122,66,.85);">
+          <button type="submit" id="btn-submit" class="btn-primary-mine extracted-style-314">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="20 6 9 17 4 12"/>
             </svg>
@@ -893,8 +818,8 @@
 
 
 {% block js %}
-<script src="{% static 'js/prestamos.js' %}?v=3"></script>
-<script src="{% static 'js/tables/prestamos_table.js' %}?v=3"></script>
+<script defer src="{% static 'js/prestamos.js' %}?v=3"></script>
+<script defer src="{% static 'js/tables/prestamos_table.js' %}?v=3"></script>
 <script>
   // Registrar el click handler para abrirAprobar y abrirDevolver dinámicamente usando data-* attributes
   document.addEventListener('DOMContentLoaded', function () {
