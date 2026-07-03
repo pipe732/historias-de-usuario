@@ -213,34 +213,34 @@
 
   </nav>
 
-  <!-- ── Bottom bar: notif + user ── -->
+  <!-- ── Bottom bar: bell icon + circular user, right-aligned ── -->
   <div class="nav-bottom">
     <hr class="opacity-10 mx-3 my-0">
-    <div class="d-flex align-items-center gap-2 px-2 py-2">
+    <div style="display:flex;align-items:center;justify-content:flex-end;gap:.5rem;padding:.5rem .75rem;">
 
-      <!-- Bell icon button (left) -->
-      <div id="aside-notif-widget" style="flex:1;">
+      <!-- Notification bell icon button -->
+      <div id="aside-notif-widget" style="position:relative;">
         <button id="aside-notif-btn" type="button" aria-label="Notificaciones" aria-expanded="false"
-          style="display:flex;align-items:center;justify-content:center;gap:.45rem;
-                 width:100%;padding:.45rem .6rem;
+          style="display:flex;align-items:center;justify-content:center;
+                 width:2.2rem;height:2.2rem;
                  background:transparent;
                  border:1px solid rgba(255,255,255,.08);
                  border-radius:.5rem;
                  color:rgba(255,255,255,.6);
-                 font-family:var(--font-ui);
-                 font-size:.82rem;
                  cursor:pointer;
                  transition:background .15s, border-color .15s;
-                 position:relative;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex-shrink:0;">
+                 position:relative;"
+          onmouseover="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='#fff';"
+          onmouseout="this.style.borderColor='rgba(255,255,255,.08)';this.style.color='rgba(255,255,255,.6)';">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
             <path d="M13.73 21a2 2 0 0 1-3.46 0" />
           </svg>
-          <span style="flex:1;text-align:left;">Notificaciones</span>
           <span id="aside-notif-badge"
-            style="display:none;background:#ef4444;color:#fff;font-size:.65rem;font-weight:700;
-                   border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;
-                   line-height:1;">
+            style="display:none;position:absolute;top:-4px;right:-4px;
+                   background:#ef4444;color:#fff;font-size:.55rem;font-weight:700;
+                   border-radius:50%;width:14px;height:14px;
+                   align-items:center;justify-content:center;line-height:1;">
             0
           </span>
         </button>
@@ -249,8 +249,8 @@
         {% include "partials/_notif_row.html" %}
       </div>
 
-      <!-- Circular user avatar dropup (right) -->
-      <div class="dropup" style="flex-shrink:0;">
+      <!-- Circular user avatar dropup -->
+      <div class="dropup" style="position:relative;">
         <button type="button"
           style="display:flex;align-items:center;justify-content:center;
                  width:2.2rem;height:2.2rem;
@@ -272,9 +272,9 @@
           {% endwith %}
         </button>
 
-        <ul class="dropdown-menu dropdown-menu-end shadow" style="
-          background:rgba(15,23,42,.95);backdrop-filter:blur(16px);
-          border:1px solid rgba(255,255,255,.1);border-radius:.75rem;min-width:180px;">
+        <ul class="dropdown-menu dropdown-menu-end shadow"
+          style="background:rgba(15,23,42,.95);backdrop-filter:blur(16px);
+                 border:1px solid rgba(255,255,255,.1);border-radius:.75rem;min-width:180px;">
           <li>
             <span class="dropdown-item-text small" style="color:rgba(255,255,255,.5);">
               <i class="bi bi-shield-check me-1"></i>
@@ -283,21 +283,21 @@
           </li>
           <li><hr class="dropdown-divider" style="border-color:rgba(255,255,255,.08);"></li>
           <li>
-            <a class="dropdown-item d-flex align-items-center gap-2" href="{% url 'perfil' %}"
-              style="color:rgba(255,255,255,.8);border-radius:.5rem;">
+            <a class="dropdown-item d-flex align-items-center gap-2"
+               href="{% url 'perfil' %}" style="color:rgba(255,255,255,.8);border-radius:.5rem;">
               <i class="bi bi-person"></i> Mi perfil
             </a>
           </li>
           <li>
-            <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="{% url 'logout' %}"
-              style="border-radius:.5rem;">
+            <a class="dropdown-item d-flex align-items-center gap-2 text-danger"
+               href="{% url 'logout' %}" style="border-radius:.5rem;">
               <i class="bi bi-box-arrow-right"></i> Cerrar sesión
             </a>
           </li>
         </ul>
       </div><!-- /dropup -->
 
-    </div><!-- /d-flex -->
+    </div>
   </div><!-- /nav-bottom -->
 
 </aside>
