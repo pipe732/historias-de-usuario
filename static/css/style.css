@@ -233,10 +233,10 @@ main .container {
 ════════════════════════════════════ */
 aside {
   width: var(--aside-w);
-  background: rgba(27, 32, 33, 0.90);
-  /* var(--dark) transparent */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--cream);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-right: 1px solid rgba(27, 32, 33, 0.10);
   position: relative;
   height: 100%;
   flex-shrink: 0;
@@ -6548,13 +6548,14 @@ table.dataTable tbody tr:hover {
     background-color: rgba(255, 255, 255, 0.05) !important;
   }
 }
+
 /* ═══════════════════════════════════════════════════════
    PREMIUM DESIGN OVERRIDES (FIXES)
    ═══════════════════════════════════════════════════════ */
 
 /* 1. Unified Premium Dark Theme for Sidebar */
 body.dark-mode aside {
-  background: rgba(15, 23, 42, 0.65) !important;
+  background: var(--cream) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -6575,7 +6576,8 @@ body.dark-mode aside .dropdown-item {
 body.dark-mode aside .dropdown-item:hover {
   background: rgba(255, 255, 255, 0.1) !important;
   color: #FFFFFF !important;
-  padding-left: 1.5rem !important; /* Premium hover indent */
+  padding-left: 1.5rem !important;
+  /* Premium hover indent */
 }
 
 /* 2. Glassmorphism & Depth for Cards */
@@ -6595,7 +6597,7 @@ body.dark-mode .card:hover {
 }
 
 /* 3. KPI Number Enhancements */
-.kpi-number, 
+.kpi-number,
 .extracted-style-216,
 .extracted-style-219,
 .extracted-style-221,
@@ -6607,7 +6609,7 @@ body.dark-mode .card:hover {
   -webkit-text-fill-color: transparent !important;
   line-height: 1.1 !important;
   margin: 0.5rem 0 !important;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 /* 4. Fix Sidebar Overlaps */
@@ -6628,11 +6630,11 @@ body.dark-mode .card:hover {
 
 /* Improve Notification Dropdown Z-Index & Positioning */
 #aside-notif-panel {
-  bottom: 60px !important; 
+  bottom: 60px !important;
   z-index: 1100 !important;
   max-height: 60vh;
   overflow-y: auto;
-  box-shadow: 0 -10px 40px rgba(0,0,0,0.5) !important;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5) !important;
 }
 
 .dropup .dropdown-menu {
@@ -6642,90 +6644,83 @@ body.dark-mode .card:hover {
 }
 
 
-/* 5. Fix Sidebar Link Colors in Dark Mode */
-body.dark-mode aside .nav-link,
-body.dark-mode aside .collapse .nav-link,
-body.dark-mode aside .collapsing .nav-link,
-body.dark-mode aside .nav-link.text-white,
-body.dark-mode aside .text-uppercase {
-  color: rgba(255, 255, 255, 0.7) !important;
+
+/* ============================================================
+   ASIDE TWO-MODE THEME
+   Light mode  -> navy blue background, white text
+   Dark mode   -> cream background, dark text
+   ============================================================ */
+
+/* --- LIGHT MODE (default) --- */
+aside {
+  background: #094D92 !important;
+  border-right: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
-body.dark-mode aside .nav-link:hover,
-body.dark-mode aside .collapse .nav-link:hover,
-body.dark-mode aside .collapsing .nav-link:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: #FFFFFF !important;
-  border-left-color: #60a5fa !important;
+aside .aside-brand-name { color: #fff !important; }
+aside .aside-brand-sub  { color: rgba(255,255,255,.5) !important; }
+
+aside .nav-link {
+  color: rgba(255,255,255,.75) !important;
+}
+aside .nav-link:hover {
+  color: #fff !important;
+  background: rgba(255,255,255,.10) !important;
+}
+aside .nav-link.active {
+  color: #fff !important;
+  background: rgba(255,255,255,.15) !important;
+  border-left: 3px solid #fff !important;
+  font-weight: 600 !important;
+}
+aside .nav-icon {
+  stroke: rgba(255,255,255,.7) !important;
+}
+aside .nav-link:hover .nav-icon,
+aside .nav-link.active .nav-icon {
+  stroke: #fff !important;
+}
+aside .bi { color: rgba(255,255,255,.7) !important; }
+aside .nav-link.active .bi { color: #fff !important; }
+aside .extracted-style-354,
+aside .extracted-style-355 { color: rgba(255,255,255,.38) !important; }
+aside .bi-chevron-down { color: rgba(255,255,255,.35) !important; }
+aside hr { border-color: rgba(255,255,255,.12) !important; }
+
+/* --- DARK MODE --- */
+body.dark-mode aside {
+  background: #EFECCA !important;
+  border-right: 1px solid rgba(27,32,33,.12) !important;
 }
 
+body.dark-mode aside .aside-brand-name { color: #98473E !important; }
+body.dark-mode aside .aside-brand-sub  { color: rgba(27,32,33,.5) !important; }
+
+body.dark-mode aside .nav-link {
+  color: rgba(27,32,33,.75) !important;
+}
+body.dark-mode aside .nav-link:hover {
+  color: #98473E !important;
+  background: rgba(152,71,62,.09) !important;
+}
 body.dark-mode aside .nav-link.active {
-  background: rgba(96, 165, 250, 0.1) !important;
-  color: #60a5fa !important;
-  border-left-color: #60a5fa !important;
-  border-radius: 4px 16px 16px 4px !important;
+  color: #98473E !important;
+  background: rgba(152,71,62,.12) !important;
+  border-left: 3px solid #98473E !important;
+  font-weight: 600 !important;
 }
-
 body.dark-mode aside .nav-icon {
-  stroke: rgba(255, 255, 255, 0.6) !important;
+  stroke: rgba(27,32,33,.65) !important;
 }
-
 body.dark-mode aside .nav-link:hover .nav-icon,
 body.dark-mode aside .nav-link.active .nav-icon {
-  stroke: #60a5fa !important;
-  opacity: 1 !important;
+  stroke: #98473E !important;
 }
-
-body.dark-mode aside hr {
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  opacity: 1 !important;
-}
-
-/* Fix User Profile button in aside */
-body.dark-mode aside .dropup > button,
-body.dark-mode aside .dropup > button .flex-grow-1 {
-  background: transparent !important;
-  color: rgba(255, 255, 255, 0.8) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-body.dark-mode aside .dropup > button:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: #FFF !important;
-}
-
- 
- 
-/* ═══════════════════════════════════════════════════════
-   BADGE STATES (REPAIRED FROM CORRUPTED HTML)
-   ═══════════════════════════════════════════════════════ */
-
-.state-Administrador {
-  background: rgba(152, 71, 62, 0.15) !important;
-  color: #f87171 !important;
-  border: 1px solid rgba(248, 113, 113, 0.3) !important;
-}
-
-.state-vencido {
-  background: rgba(220, 38, 38, 0.15) !important;
-  color: #f87171 !important;
-  border: 1px solid rgba(248, 113, 113, 0.3) !important;
-}
-
-.state-devuelto {
-  background: rgba(5, 150, 105, 0.15) !important;
-  color: #34d399 !important;
-  border: 1px solid rgba(52, 211, 153, 0.3) !important;
-}
-
-.badge {
-  font-family: var(--font-ui, 'Inter', sans-serif);
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.2rem 0.6rem;
-  border-radius: 20px;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
+body.dark-mode aside .bi { color: rgba(27,32,33,.65) !important; }
+body.dark-mode aside .nav-link.active .bi { color: #98473E !important; }
+body.dark-mode aside .extracted-style-354,
+body.dark-mode aside .extracted-style-355 { color: rgba(27,32,33,.38) !important; }
+body.dark-mode aside .bi-chevron-down { color: rgba(27,32,33,.35) !important; }
+body.dark-mode aside hr { border-color: rgba(27,32,33,.12) !important; }
