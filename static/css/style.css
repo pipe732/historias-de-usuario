@@ -6640,3 +6640,56 @@ body.dark-mode .card:hover {
   margin-bottom: 0.5rem !important;
   z-index: 1100 !important;
 }
+
+
+/* 5. Fix Sidebar Link Colors in Dark Mode */
+body.dark-mode aside .nav-link,
+body.dark-mode aside .collapse .nav-link,
+body.dark-mode aside .collapsing .nav-link,
+body.dark-mode aside .nav-link.text-white,
+body.dark-mode aside .text-uppercase {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.dark-mode aside .nav-link:hover,
+body.dark-mode aside .collapse .nav-link:hover,
+body.dark-mode aside .collapsing .nav-link:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #FFFFFF !important;
+  border-left-color: #60a5fa !important;
+}
+
+body.dark-mode aside .nav-link.active {
+  background: rgba(96, 165, 250, 0.1) !important;
+  color: #60a5fa !important;
+  border-left-color: #60a5fa !important;
+  border-radius: 4px 16px 16px 4px !important;
+}
+
+body.dark-mode aside .nav-icon {
+  stroke: rgba(255, 255, 255, 0.6) !important;
+}
+
+body.dark-mode aside .nav-link:hover .nav-icon,
+body.dark-mode aside .nav-link.active .nav-icon {
+  stroke: #60a5fa !important;
+  opacity: 1 !important;
+}
+
+body.dark-mode aside hr {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  opacity: 1 !important;
+}
+
+/* Fix User Profile button in aside */
+body.dark-mode aside .dropup > button,
+body.dark-mode aside .dropup > button .flex-grow-1 {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.dark-mode aside .dropup > button:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #FFF !important;
+}
