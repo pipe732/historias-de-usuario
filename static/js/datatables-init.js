@@ -99,6 +99,15 @@ $(document).ready(function () {
     else if (id.includes('almacen') || id.includes('estante')) moduloName = 'almacenamiento';
     else if (id.includes('usuario')) moduloName = 'usuarios';
 
+    // Extraer y remover la fila de estado vacío (evita warning TN/4)
+    var emptyStateHtml = '';
+    $(this).find('tbody tr').each(function () {
+      if ($(this).find('td').length === 1 && $(this).find('td').attr('colspan')) {
+        emptyStateHtml = $(this).find('td').html();
+        $(this).remove();
+      }
+    });
+
     $(this).DataTable({
       responsive: true,
       dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6"f>>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
@@ -110,6 +119,9 @@ $(document).ready(function () {
       lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
       order: [],
       drawCallback: function (settings) {
+        if (settings.aiDisplay.length === 0 && emptyStateHtml) {
+          $(this).find('.dataTables_empty').html(emptyStateHtml);
+        }
         var tooltipTriggerList = this.api().table().container().querySelectorAll('[data-bs-toggle="tooltip"]');
         var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => {
           return bootstrap.Tooltip.getOrCreateInstance(tooltipTriggerEl);
