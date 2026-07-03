@@ -213,45 +213,91 @@
 
   </nav>
 
-  <!-- ── Usuario + logout al fondo ── -->
+  <!-- ── Bottom bar: notif + user ── -->
   <div class="nav-bottom">
-    <hr class="opacity-10 mx-3 my-2">
-    {% include "partials/_notif_row.html" %}
-    <div class="dropup px-2 pb-2">
-      <button type="button" class="btn w-100 d-flex align-items-center gap-2 px-3 py-2 dropdown-toggle extracted-style-358"
-        data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-        {% with nombre=request.session.usuario_nombre|default:"Invitado" %}
-        <div class="d-flex align-items-center justify-content-center rounded-circle bg-danger flex-shrink-0 fw-bold text-white extracted-style-359">
-          {{ nombre|slice:":2"|upper }}
-        </div>
-        {% with partes=nombre.split %}
-        <span class="flex-grow-1 text-start">{{ partes.0 }} {{ partes.2 }}</span>
-        {% endwith %}
-        {% endwith %}
-        <i class="bi bi-chevron-down opacity-25 extracted-style-321"></i>
-      </button>
+    <hr class="opacity-10 mx-3 my-0">
+    <div class="d-flex align-items-center gap-2 px-2 py-2">
 
-      <ul class="dropdown-menu dropdown-menu-end shadow extracted-style-360">
-        <li>
-          <span class="dropdown-item-text small text-muted">
-            <i class="bi bi-shield-check me-1"></i>
-            {{ request.session.usuario_rol|default:"Sin rol" }}
+      <!-- Bell icon button (left) -->
+      <div id="aside-notif-widget" style="flex:1;">
+        <button id="aside-notif-btn" type="button" aria-label="Notificaciones" aria-expanded="false"
+          style="display:flex;align-items:center;justify-content:center;gap:.45rem;
+                 width:100%;padding:.45rem .6rem;
+                 background:transparent;
+                 border:1px solid rgba(255,255,255,.08);
+                 border-radius:.5rem;
+                 color:rgba(255,255,255,.6);
+                 font-family:var(--font-ui);
+                 font-size:.82rem;
+                 cursor:pointer;
+                 transition:background .15s, border-color .15s;
+                 position:relative;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="flex-shrink:0;">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+          <span style="flex:1;text-align:left;">Notificaciones</span>
+          <span id="aside-notif-badge"
+            style="display:none;background:#ef4444;color:#fff;font-size:.65rem;font-weight:700;
+                   border-radius:50%;width:16px;height:16px;align-items:center;justify-content:center;
+                   line-height:1;">
+            0
           </span>
-        </li>
-        <li><hr class="dropdown-divider"></li>
-        <li>
-          <a class="dropdown-item d-flex align-items-center gap-2" href="{% url 'perfil' %}">
-            <i class="bi bi-person"></i> Mi perfil
-          </a>
-        </li>
-        <li>
-          <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="{% url 'logout' %}">
-            <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-          </a>
-        </li>
-      </ul>
-    </div>
+        </button>
 
-  </div>
+        <!-- Notif panel + JS -->
+        {% include "partials/_notif_row.html" %}
+      </div>
+
+      <!-- Circular user avatar dropup (right) -->
+      <div class="dropup" style="flex-shrink:0;">
+        <button type="button"
+          style="display:flex;align-items:center;justify-content:center;
+                 width:2.2rem;height:2.2rem;
+                 background:transparent;
+                 border:1px solid rgba(255,255,255,.08);
+                 border-radius:50%;
+                 padding:0;
+                 cursor:pointer;
+                 transition:border-color .15s;"
+          data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false"
+          onmouseover="this.style.borderColor='rgba(255,255,255,.3)'"
+          onmouseout="this.style.borderColor='rgba(255,255,255,.08)'">
+          {% with nombre=request.session.usuario_nombre|default:"Inv" %}
+          <div style="width:2.2rem;height:2.2rem;border-radius:50%;background:var(--rust);
+                      display:flex;align-items:center;justify-content:center;
+                      font-family:var(--font-ui);font-size:.72rem;font-weight:700;color:#fff;">
+            {{ nombre|slice:":2"|upper }}
+          </div>
+          {% endwith %}
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow" style="
+          background:rgba(15,23,42,.95);backdrop-filter:blur(16px);
+          border:1px solid rgba(255,255,255,.1);border-radius:.75rem;min-width:180px;">
+          <li>
+            <span class="dropdown-item-text small" style="color:rgba(255,255,255,.5);">
+              <i class="bi bi-shield-check me-1"></i>
+              {{ request.session.usuario_rol|default:"Sin rol" }}
+            </span>
+          </li>
+          <li><hr class="dropdown-divider" style="border-color:rgba(255,255,255,.08);"></li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center gap-2" href="{% url 'perfil' %}"
+              style="color:rgba(255,255,255,.8);border-radius:.5rem;">
+              <i class="bi bi-person"></i> Mi perfil
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="{% url 'logout' %}"
+              style="border-radius:.5rem;">
+              <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+            </a>
+          </li>
+        </ul>
+      </div><!-- /dropup -->
+
+    </div><!-- /d-flex -->
+  </div><!-- /nav-bottom -->
 
 </aside>
