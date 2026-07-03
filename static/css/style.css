@@ -5577,7 +5577,7 @@ animation:slideIn .2s ease;
 .extracted-style-354 {
   font-size: 0.6rem;
   letter-spacing: 0.13em;
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .extracted-style-355 {
@@ -6693,7 +6693,8 @@ body.dark-mode aside .dropup > button:hover {
   background: rgba(255, 255, 255, 0.05) !important;
   color: #FFF !important;
 }
- 
+
+ 
  
 /* ═══════════════════════════════════════════════════════
    BADGE STATES (REPAIRED FROM CORRUPTED HTML)
