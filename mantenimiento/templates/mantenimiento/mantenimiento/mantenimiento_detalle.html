@@ -13,16 +13,16 @@ Detalle de Mantenimiento
   
   <div class="col-md-8">
     <div class="card mb-3">
-      <div class="card-body" style="padding: 1.25rem">
+      <div class="card-body extracted-style-91">
         {% include "mantenimiento/partials/_section_heading.html" with titulo="Item / Herramienta" %}
-        <p style="font-weight: 700; font-size: 1rem; margin: 0">
-          <span style="font-family: var(--font-mono); color: var(--text-muted); font-size: 0.85rem;">
+        <p class="extracted-style-92">
+          <span class="extracted-style-93">
             [{{ m.producto.codigo_sku }}]
           </span>
           {{ m.producto.nombre }}
         </p>
         {% if m.ubicacion_snapshot %}
-        <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.25rem 0 0;">
+        <p class="extracted-style-94">
           Ubicación al registrar: {{ m.ubicacion_snapshot }}
         </p>
         {% endif %}
@@ -30,7 +30,7 @@ Detalle de Mantenimiento
     </div>
 
     <div class="card mb-3">
-      <div class="card-body" style="padding: 1.25rem">
+      <div class="card-body extracted-style-91">
         {% include "mantenimiento/partials/_section_heading.html" with titulo="Nuevo detalle" %}
 
         <form method="post" action="{% url 'mantenimiento:detalle_mantenimiento_crear' m.pk %}" enctype="multipart/form-data" class="row g-3">
@@ -84,18 +84,18 @@ Detalle de Mantenimiento
     </div>
 
     <div class="card mb-3">
-      <div class="card-body" style="padding: 1.25rem">
+      <div class="card-body extracted-style-91">
         {% include "mantenimiento/partials/_section_heading.html" with titulo="Detalles registrados" %}
         {% if m.detalles.all %}
           <div class="d-flex flex-column gap-3">
             {% for d in m.detalles.all %}
-              <div class="p-3 rounded" style="border: 1px solid rgba(27, 32, 33, 0.12); background: rgba(255,255,255,.7);">
+              <div class="p-3 rounded extracted-style-95">
                 <div class="d-flex justify-content-between gap-3 flex-wrap mb-2">
                   <strong>{{ d.get_tipo_display }}</strong>
-                  <small style="color: var(--text-muted); font-family: var(--font-mono);">{{ d.creado_en|date:"d/m/Y H:i" }}</small>
+                  <small class="extracted-style-96">{{ d.creado_en|date:"d/m/Y H:i" }}</small>
                 </div>
-                <p class="mb-2" style="font-size: .9rem; line-height: 1.5;">{{ d.descripcion }}</p>
-                <div class="d-flex justify-content-between flex-wrap gap-2" style="font-size: .82rem; color: var(--text-muted);">
+                <p class="mb-2 extracted-style-97">{{ d.descripcion }}</p>
+                <div class="d-flex justify-content-between flex-wrap gap-2 extracted-style-98">
                   <span>Tipo mantenimiento: {{ d.tipo_mantenimiento.nombre }}</span>
                   <span>
                     {{ d.registrado_por.nombre_completo|default:"Sistema" }}
@@ -110,17 +110,17 @@ Detalle de Mantenimiento
             {% endfor %}
           </div>
         {% else %}
-          <p class="mb-0" style="color: var(--text-muted);">Todavía no hay detalles registrados.</p>
+          <p class="mb-0 extracted-style-83">Todavía no hay detalles registrados.</p>
         {% endif %}
       </div>
     </div>
 
     {% if cambios_auditoria %}
     <div class="card mb-3">
-      <div class="card-body" style="padding: 1.25rem">
+      <div class="card-body extracted-style-91">
         {% include "mantenimiento/partials/_section_heading.html" with titulo="Historial de cambios" %}
         <div class="table-responsive">
-          <table class="table-app datatable-disabled" style="width: 100%; border-collapse: collapse; font-size: 0.84rem;">
+          <tableborder class="table-app datatable-disabled w-100"-collapse: collapse; font-size: 0.84rem;">
             <thead>
               <tr>
                 <th>Fecha</th>
@@ -132,17 +132,17 @@ Detalle de Mantenimiento
             <tbody>
               {% for c in cambios_auditoria %}
               <tr>
-                <td style="font-family: var(--font-mono);">{{ c.fecha_edicion|date:"d/m/Y H:i" }}</td>
+                <td class="extracted-style-99">{{ c.fecha_edicion|date:"d/m/Y H:i" }}</td>
                 <td>
                   {{ c.editado_por.nombre_completo|default:c.editado_por.get_full_name|default:c.editado_por.username|default:"Sistema" }}
                 </td>
                 <td>
                   {{ c.get_motivo_edicion_display }}
                   {% if c.detalle_motivo %}
-                    <br><small style="color: var(--text-muted);">{{ c.detalle_motivo }}</small>
+                    <br><small class="extracted-style-83">{{ c.detalle_motivo }}</small>
                   {% endif %}
                 </td>
-                <td><code style="font-size: 0.72rem; white-space: pre-wrap;">{{ c.cambios }}</code></td>
+                <td><code class="extracted-style-100">{{ c.cambios }}</code></td>
               </tr>
               {% endfor %}
             </tbody>
@@ -155,15 +155,14 @@ Detalle de Mantenimiento
 
   <div class="col-md-4">
     <div class="card mb-3">
-      <div class="card-body" style="padding: 1.25rem">
+      <div class="card-body extracted-style-91">
         {% include "mantenimiento/partials/_section_heading.html" with titulo="Estado del registro" %}
 
-        <div class="d-flex flex-column gap-2" style="font-size: 0.88rem">
+        <div class="d-flex flex-column gap-2 extracted-style-101">
           <div class="d-flex justify-content-between align-items-center">
-            <span style="color: var(--text-muted)">Tipo</span>
+            <span class="extracted-style-83">Tipo</span>
             {% if m.tipo_mantenimiento %}
-              <span class="badge-state" 
-                    style="background:{{ m.tipo_mantenimiento.color|default:'#6c757d' }}; color:#fff;">
+              <span class="badge-state extracted-style-86"#6c757d' }}; color:#fff;">
                 {{ m.tipo_mantenimiento.nombre }}
               </span>
             {% else %}
@@ -172,31 +171,30 @@ Detalle de Mantenimiento
           </div>
 
           <div class="d-flex justify-content-between align-items-center">
-            <span style="color: var(--text-muted)">Prioridad</span>
+            <span class="extracted-style-83">Prioridad</span>
             <span class="badge-state badge-pendiente">{{ m.get_prioridad_display }}</span>
           </div>
 
           <div class="d-flex justify-content-between align-items-center">
-            <span style="color: var(--text-muted)">Estado</span>
+            <span class="extracted-style-83">Estado</span>
             {% include "mantenimiento/partials/_badge_estado_registro.html" with estado=m.estado_registro etiqueta=m.get_estado_registro_display %}
           </div>
 
           <div class="d-flex justify-content-between align-items-center">
-            <span style="color: var(--text-muted)">Tipo de estado</span>
+            <span class="extracted-style-83">Tipo de estado</span>
             {% if m.tipo_estado %}
-            <span class="badge-state" 
-                  data-dynamic-bg="{{ m.tipo_estado.color|default:'#6c757d' }}" 
-                  style="color:#fff; border:none;">
+            <span class="badge-state extracted-style-84" 
+                  data-dynamic-bg="{{ m.tipo_estado.color|default:'#6c757d' }}">
               {{ m.tipo_estado.nombre }}
             </span>
             {% else %}
-            <span style="color: var(--text-muted)">—</span>
+            <span class="extracted-style-83">—</span>
             {% endif %}
           </div>
 
           <div class="d-flex justify-content-between align-items-center">
-            <span style="color: var(--text-muted)">Responsable</span>
-            <span style="font-weight: 600">
+            <span class="extracted-style-83">Responsable</span>
+            <span class="extracted-style-80">
               {{ m.responsable.nombre_completo|default:"-" }}
             </span>
           </div>
@@ -205,46 +203,46 @@ Detalle de Mantenimiento
     </div>
 
     <div class="card mb-3">
-      <div class="card-body" style="padding: 1.25rem">
+      <div class="card-body extracted-style-91">
         {% include "mantenimiento/partials/_section_heading.html" with titulo="Fechas" %}
 
-        <div class="d-flex flex-column gap-2" style="font-size: 0.85rem">
+        <div class="d-flex flex-column gap-2 extracted-style-102">
           <div class="d-flex justify-content-between">
-            <span style="color: var(--text-muted)">Reporte</span>
-            <span style="font-family: var(--font-mono)">{{ m.fecha_reporte|date:"d/m/Y" }}</span>
+            <span class="extracted-style-83">Reporte</span>
+            <span class="extracted-style-99">{{ m.fecha_reporte|date:"d/m/Y" }}</span>
           </div>
           <div class="d-flex justify-content-between">
-            <span style="color: var(--text-muted)">Inicio</span>
-            <span style="font-family: var(--font-mono)">{{ m.fecha_inicio|date:"d/m/Y" }}</span>
+            <span class="extracted-style-83">Inicio</span>
+            <span class="extracted-style-99">{{ m.fecha_inicio|date:"d/m/Y" }}</span>
           </div>
           <div class="d-flex justify-content-between">
-            <span style="color: var(--text-muted)">Fin estimado</span>
-            <span style="font-family: var(--font-mono)">{{ m.fecha_fin_estimada|date:"d/m/Y"|default:"—" }}</span>
+            <span class="extracted-style-83">Fin estimado</span>
+            <span class="extracted-style-99">{{ m.fecha_fin_estimada|date:"d/m/Y"|default:"—" }}</span>
           </div>
           <div class="d-flex justify-content-between">
-            <span style="color: var(--text-muted)">Fin real</span>
-            <span style="font-family: var(--font-mono)">{{ m.fecha_fin_real|date:"d/m/Y"|default:"—" }}</span>
+            <span class="extracted-style-83">Fin real</span>
+            <span class="extracted-style-99">{{ m.fecha_fin_real|date:"d/m/Y"|default:"—" }}</span>
           </div>
           <div class="d-flex justify-content-between">
-            <span style="color: var(--text-muted)">Tiempo empleado</span>
-            <span style="font-family: var(--font-mono)">{{ m.tiempo_empleado_horas|default:"—" }}</span>
+            <span class="extracted-style-83">Tiempo empleado</span>
+            <span class="extracted-style-99">{{ m.tiempo_empleado_horas|default:"—" }}</span>
           </div>
         </div>
       </div>
     </div>
 
     <div class="card mb-3">
-      <div class="card-body" style="padding: 1.25rem">
+      <div class="card-body extracted-style-91">
         {% include "mantenimiento/partials/_section_heading.html" with titulo="Costos" %}
 
-        <div class="d-flex flex-column gap-2" style="font-size: 0.85rem">
+        <div class="d-flex flex-column gap-2 extracted-style-102">
           <div class="d-flex justify-content-between">
-            <span style="color: var(--text-muted)">Estimado</span>
-            <span style="font-family: var(--font-mono)">{% if m.costo_estimado %}${{ m.costo_estimado }}{% else %}—{% endif %}</span>
+            <span class="extracted-style-83">Estimado</span>
+            <span class="extracted-style-99">{% if m.costo_estimado %}${{ m.costo_estimado }}{% else %}—{% endif %}</span>
           </div>
           <div class="d-flex justify-content-between">
-            <span style="color: var(--text-muted)">Real</span>
-            <span style="font-family: var(--font-mono); font-weight: 600">
+            <span class="extracted-style-83">Real</span>
+            <span class="extracted-style-103">
               {% if m.costo_real %}${{ m.costo_real }}{% else %}—{% endif %}
             </span>
           </div>
@@ -253,21 +251,21 @@ Detalle de Mantenimiento
     </div>
 
     <div class="card">
-      <div class="card-body" style="padding: 1.25rem">
+      <div class="card-body extracted-style-91">
         {% include "mantenimiento/partials/_section_heading.html" with titulo="Auditoria" %}
 
-        <div class="d-flex flex-column gap-2" style="font-size: 0.82rem; color: var(--text-muted)">
+        <div class="d-flex flex-column gap-2 extracted-style-104">
           <div class="d-flex justify-content-between">
             <span>Registrado por</span>
             <span>{{ m.creado_por.nombre_completo|default:"-" }}</span>
           </div>
           <div class="d-flex justify-content-between">
             <span>Creado el</span>
-            <span style="font-family: var(--font-mono)">{{ m.creado_en|date:"d/m/Y H:i" }}</span>
+            <span class="extracted-style-99">{{ m.creado_en|date:"d/m/Y H:i" }}</span>
           </div>
           <div class="d-flex justify-content-between">
             <span>Actualizado</span>
-            <span style="font-family: var(--font-mono)">{{ m.actualizado_en|date:"d/m/Y H:i" }}</span>
+            <span class="extracted-style-99">{{ m.actualizado_en|date:"d/m/Y H:i" }}</span>
           </div>
           <div class="d-flex justify-content-between">
             <span>Última edición por</span>
