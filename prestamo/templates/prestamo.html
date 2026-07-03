@@ -304,7 +304,7 @@
           </td>
           <td>
             {% if p.fecha_vencimiento %}
-              <span class="{% if p.urgencia ==  extracted-style-259"vencido' %}urgencia-vencido{% elif p.urgencia == 'proximo' %}urgencia-proximo{% else %}urgencia-normal{% endif %}">
+              <span class="{% if p.urgencia == 'vencido' %}urgencia-vencido{% elif p.urgencia == 'proximo' %}urgencia-proximo{% else %}urgencia-normal{% endif %}">
                 {{ p.fecha_vencimiento|date:"d/m/Y" }}
                 {% if p.dias_restantes is not None and p.dias_restantes >= 0 %}
                   <span class="extracted-style-260">({{ p.dias_restantes }}d)</span>
