@@ -218,13 +218,39 @@ aside::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius
 .nav-link:hover i,
 .nav-link:hover .nav-icon { opacity: 1; }
 .nav-link.active {
-    color: var(--cream) !important;
-    background: rgba(152,71,62,.13);
-    border-left-color: var(--rust);
+    background: linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.02) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-bottom-color: rgba(255,255,255,0.03);
+    border-right-color: rgba(255,255,255,0.03);
+    /* Gota de agua: esquinas redondeadas salvo la inferior izquierda */
+    border-radius: 16px 16px 16px 4px;
+    color: #ffffff !important;
     font-weight: 700;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    overflow: hidden;
 }
+
+/* Indicador lateral rojo estilo gota */
+.nav-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--rust);
+    box-shadow: 1px 0 8px rgba(152,71,62,0.6);
+}
+
 .nav-link.active i,
-.nav-link.active .nav-icon { opacity: 1; color: #c47a74; }
+.nav-link.active .nav-icon {
+    opacity: 1;
+    color: #ffffff;
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.4));
+}
 
 .nav-pill {
     margin-left: auto;
