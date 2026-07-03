@@ -22,6 +22,9 @@ from usuario.decorators import admin_required, login_required
 from .models import Usuario, validar_numero_documento
 from common.mixins import sesion_requerida
 from prestamo.models import Prestamo
+def registro_qr_pdf(request):
+    # lógica pendiente
+    pass
 
 logger = logging.getLogger(__name__)
 
