@@ -354,9 +354,7 @@
               </td>
               <td>
                 {% if p.fecha_vencimiento %}
-                  <spanvencido class="extracted-style-185"' %}color:var(--rust); font-weight:700;
-                    {% elif p.urgencia == 'proximo' %}color:#c4900a;
-                    {% else %}color:var(--text-muted);{% endif %}">
+                  <span class="badge state-vencido">
                     {{ p.fecha_vencimiento|date:"d/m/Y" }}
                     {% if p.dias_restantes is not None and p.dias_restantes >= 0 %}
                       <br><span class="extracted-style-186">({{ p.dias_restantes }}d)</span>
@@ -373,9 +371,7 @@
                 {% with total_items=p.items.count devueltos=p.items.all %}
                   {% with dev_count=0 %}
                     <div class="extracted-style-190">
-                      <divdevuelto class="extracted-style-191"' %}var(--sage){% elif p.estado == 'vencido' %}var(--rust){% elif p.estado == 'parcial' %}#c4900a{% else %}var(--navy){% endif %};
-                                  width:{% if p.estado == 'devuelto' %}100{% elif p.estado == 'activo' or p.estado == 'pendiente' %}15{% elif p.estado == 'parcial' %}50{% elif p.estado == 'vencido' %}100{% else %}0{% endif %}%;
-                                  border-radius:2px;"></div>
+                      <div class="badge state-devuelto"></div>
                     </div>
                     <div class="extracted-style-192">
                       {% if p.estado == 'devuelto' %}completo
@@ -391,7 +387,7 @@
             </tr>
             {% empty %}
             <tr>
-              <td colspan="5" class="text-center"padding:3rem 1rem; color:var(--text-muted);">
+              <td colspan="5" class="text-center" style="padding:3rem 1rem; color:var(--text-muted);">
                 <svg class="extracted-style-193" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
                   <polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/>
                 </svg>
@@ -433,11 +429,7 @@
           {% for p in all_prestamos|slice:":5" %}
           <div class="timeline-item extracted-style-198">
             {# Punto de la línea de tiempo #}
-            <divdevuelto class="extracted-style-199"' %}var(--sage)
-                        {% elif p.estado == 'vencido' %}var(--rust)
-                        {% elif p.estado == 'pendiente' %}#c4900a
-                        {% else %}var(--navy){% endif %};
-                        background:var(--bg-surface);"></div>
+            <div class="badge state-devuelto"></div>
 
             <div class="d-flex align-items-start justify-content-between gap-2 flex-wrap">
               <div class="extracted-style-200">
@@ -469,7 +461,7 @@
                   {{ p.fecha_prestamo|date:"d/m/Y" }}
                 </div>
                 {% if p.fecha_vencimiento %}
-                <divvencido class="extracted-style-209"' %}var(--rust){% elif p.urgencia == 'proximo' %}#c4900a{% else %}var(--text-muted){% endif %};">
+                <div class="badge state-vencido">
                   vence {{ p.fecha_vencimiento|date:"d/m/Y" }}
                 </div>
                 {% endif %}
@@ -488,7 +480,7 @@
 
         </div>
         {% else %}
-        <div class="text-center"padding:2.5rem 1rem; color:var(--text-muted);">
+        <div class="text-center" style="padding:2.5rem 1rem; color:var(--text-muted);">
           <svg class="extracted-style-210" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
             <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
           </svg>

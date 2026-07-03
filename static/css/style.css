@@ -5577,7 +5577,7 @@ animation:slideIn .2s ease;
 .extracted-style-354 {
   font-size: 0.6rem;
   letter-spacing: 0.13em;
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .extracted-style-355 {
@@ -6692,4 +6692,40 @@ body.dark-mode aside .dropup > button .flex-grow-1 {
 body.dark-mode aside .dropup > button:hover {
   background: rgba(255, 255, 255, 0.05) !important;
   color: #FFF !important;
+}
+
+ 
+ 
+/* ═══════════════════════════════════════════════════════
+   BADGE STATES (REPAIRED FROM CORRUPTED HTML)
+   ═══════════════════════════════════════════════════════ */
+
+.state-Administrador {
+  background: rgba(152, 71, 62, 0.15) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(248, 113, 113, 0.3) !important;
+}
+
+.state-vencido {
+  background: rgba(220, 38, 38, 0.15) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(248, 113, 113, 0.3) !important;
+}
+
+.state-devuelto {
+  background: rgba(5, 150, 105, 0.15) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(52, 211, 153, 0.3) !important;
+}
+
+.badge {
+  font-family: var(--font-ui, 'Inter', sans-serif);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
