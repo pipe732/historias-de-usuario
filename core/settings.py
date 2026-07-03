@@ -3,6 +3,7 @@ Django settings for core project.
 """
 
 from pathlib import Path
+import re
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -71,23 +72,44 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 
 # ─────────────────────────────────────────────────────────────
+#  LEER .ENV PARA BASE DE DATOS
+# ─────────────────────────────────────────────────────────────
+env_path = BASE_DIR / ".env"
+db_engine = "nube"
+if env_path.exists():
+    contenido = env_path.read_text(encoding="utf-8")
+    match = re.search(r"^DB_ENGINE\s*=\s*(.+)$", contenido, re.MULTILINE)
+    if match:
+        db_engine = match.group(1).strip()
+
+# ─────────────────────────────────────────────────────────────
 #  BASE DE DATOS
 # ─────────────────────────────────────────────────────────────
 DATABASES = {
-    "default": {
+    "neon_db": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "neondb",
         "USER": "neondb_owner",
         "PASSWORD": "npg_3SWYcRrA5aTz",
         "HOST": "ep-crimson-glitter-at1wc2qg-pooler.c-9.us-east-1.aws.neon.tech",
         "PORT": "5432",
-        "CONN_MAX_AGE": 300,  # cambiamos el valor de 0  a 300 para reutilizar conexiones cada 5 minutos y mejorar el rendimiento
+        "CONN_MAX_AGE": 300,
         "OPTIONS": {
             "sslmode": "require",
             "channel_binding": "require",
         },
-    }
+    },
+    "local_db": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    },
 }
+
+# Asignar la base de datos default según el .env
+if db_engine == "local":
+    DATABASES["default"] = DATABASES["local_db"]
+else:
+    DATABASES["default"] = DATABASES["neon_db"]
 
 
 # ─────────────────────────────────────────────────────────────
@@ -95,7 +117,10 @@ DATABASES = {
 # ─────────────────────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator"
+        )
     },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
