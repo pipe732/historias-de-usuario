@@ -7,9 +7,8 @@
 
   <nav class="aside-nav">
     <!-- GENERAL -->
-    <div class="d-flex align-items-center gap-2 px-3 pt-3 pb-1">
+    <div class="px-3 pt-3 pb-1">
       <span class="text-uppercase fw-semibold extracted-style-354">General</span>
-      <hr class="flex-grow-1 my-0 opacity-10" />
     </div>
 
     <a href="{% url 'home' %}"
@@ -41,9 +40,8 @@
     </a>
 
     <!-- ANÁLISIS -->
-    <div class="d-flex align-items-center gap-2 px-3 pt-3 pb-1">
+    <div class="px-3 pt-4 pb-1">
       <span class="text-uppercase fw-semibold extracted-style-354">Análisis</span>
-      <hr class="flex-grow-1 my-0 opacity-10" />
     </div>
 
     <a href="{% url 'reportes' %}"
@@ -57,9 +55,8 @@
     </a>
 
     <!-- DEVOLUCIONES -->
-    <div class="d-flex align-items-center gap-2 px-3 pt-3 pb-1">
+    <div class="px-3 pt-4 pb-1">
       <span class="text-uppercase fw-semibold extracted-style-354">Devoluciones</span>
-      <hr class="flex-grow-1 my-0 opacity-10" />
     </div>
 
     <a href="{% url 'devoluciones' %}"
@@ -72,9 +69,8 @@
     </a>
 
     <!-- USUARIOS -->
-    <div class="d-flex align-items-center gap-2 px-3 pt-3 pb-1">
+    <div class="px-3 pt-4 pb-1">
       <span class="text-uppercase fw-semibold extracted-style-355">Usuarios</span>
-      <hr class="flex-grow-1 my-0 opacity-10">
     </div>
 
     <a href="{% url 'lista_usuarios' %}"
@@ -89,9 +85,8 @@
 
     <!-- SESIÓN — solo visible si NO hay sesión activa -->
     {% if not request.session.usuario_nombre %}
-    <div class="d-flex align-items-center gap-2 px-3 pt-3 pb-1">
+    <div class="px-3 pt-4 pb-1">
       <span class="text-uppercase fw-semibold extracted-style-354">Sesión</span>
-      <hr class="flex-grow-1 my-0 opacity-10" />
     </div>
 
     <a href="{% url 'login' %}"
@@ -106,9 +101,8 @@
     {% endif %}
 
     <!-- OPERACIONES -->
-    <div class="d-flex align-items-center gap-2 px-3 pt-3 pb-1">
+    <div class="px-3 pt-4 pb-1">
       <span class="text-uppercase fw-semibold extracted-style-354">Operaciones</span>
-      <hr class="flex-grow-1 my-0 opacity-10" />
     </div>
 
     <!-- Almacén collapse -->
@@ -197,9 +191,8 @@
     </div>
 
     <!-- configuracion -->
-    <div class="d-flex align-items-center gap-2 px-3 pt-3 pb-1">
+    <div class="px-3 pt-4 pb-1">
       <span class="text-uppercase fw-semibold extracted-style-354">Sistema</span>
-      <hr class="flex-grow-1 my-0 opacity-10" />
     </div>
 
     <a href="{% url 'configuracion' %}"
