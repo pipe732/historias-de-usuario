@@ -200,17 +200,8 @@ main {
   /* aire vertical y lateral uniforme en todas las páginas */
 }
 
-main::-webkit-scrollbar {
-  width: 5px;
-}
-
 main::-webkit-scrollbar-track {
   background: transparent;
-}
-
-main::-webkit-scrollbar-thumb {
-  background: rgba(27, 32, 33, .15);
-  border-radius: 3px;
 }
 
 /* Wrapper interior — centrado con aire lateral estilo dashboard */
@@ -247,17 +238,8 @@ aside {
   border-right: 1px solid rgba(255, 255, 255, .04);
 }
 
-aside::-webkit-scrollbar {
-  width: 3px;
-}
-
 aside::-webkit-scrollbar-track {
   background: transparent;
-}
-
-aside::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, .1);
-  border-radius: 3px;
 }
 
 .nav-section {
@@ -491,19 +473,11 @@ th {
   white-space: nowrap;
 }
 
-th:first-child {
-  padding-left: 1.4rem;
-}
-
 td {
   padding: .68rem 1rem;
   border-bottom: 1px solid rgba(27, 32, 33, .045);
   color: var(--text-main);
   vertical-align: middle;
-}
-
-td:first-child {
-  padding-left: 1.4rem;
 }
 
 tbody tr {
@@ -918,29 +892,6 @@ tbody tr:last-child td {
 }
 
 /* ── Panel en modo claro (body sin clases de accesibilidad, o con light-mode) ── */
-body:not(.dark-mode) #acc-panel {
-  --ap-bg: #ffffff;
-  --ap-head-bg: var(--navy);
-  --ap-head-color: var(--cream);
-  --ap-btn-color: rgba(27, 32, 33, .72);
-  --ap-btn-hover-bg: rgba(27, 32, 33, .05);
-  --ap-btn-hover-c: #1B2021;
-  --ap-btn-active-bg: rgba(9, 77, 146, .10);
-  --ap-btn-active-c: var(--navy);
-  --ap-divider: rgba(27, 32, 33, .08);
-  --ap-border: rgba(27, 32, 33, .10);
-  --ap-ico-bg: rgba(9, 77, 146, .08);
-  --ap-ico-border: rgba(9, 77, 146, .18);
-  --ap-ico-color: var(--navy);
-  --ap-reset-bg: rgba(27, 32, 33, .04);
-  --ap-reset-border: rgba(27, 32, 33, .12);
-  --ap-reset-color: rgba(27, 32, 33, .42);
-  --ap-reset-hover-bg: rgba(27, 32, 33, .09);
-  --ap-reset-hover-c: #1B2021;
-  border-color: rgba(27, 32, 33, .12);
-  box-shadow: 0 8px 28px rgba(27, 32, 33, .14), 0 2px 6px rgba(27, 32, 33, .08);
-}
-
 /* ── Panel en modo oscuro ── */
 body.dark-mode #acc-panel {
   --ap-bg: #182225;
@@ -3889,8 +3840,6 @@ tbody tr:hover {
   color: var(--text-muted);
 }
 
-
-
 .extracted-style-87 {
   max-width: 260px;
 }
@@ -4002,8 +3951,6 @@ tbody tr:hover {
   font-family: var(--font-ui);
   font-size: .88rem;
 }
-
-
 
 .extracted-style-110 {
   color: #fff;
@@ -4130,21 +4077,7 @@ tbody tr:hover {
   gap: 0.5rem;
 }
 
-
-
-margin-left: {
-    {
-    margin_left
-  }
 }
-
-;
-
-  {
-  % endif %
-}
-
-;
 }
 
 .extracted-style-132 {
@@ -4261,28 +4194,8 @@ margin-left: {
   line-height: 1;
 }
 
-
-
 border-color:rgba(152, 71, 62, .35);
-
-  {
-  % endif %
 }
-
-;
-}
-
-
-
-var(--rust) {
-  % else %
-}
-
-var(--text-main) {
-  % endif %
-}
-
-;
 line-height:1;
 }
 
@@ -4422,31 +4335,7 @@ line-height:1;
   width: 0;
   transition: width 1.2s ease .6s;
 }
-
-
-
-var(--rust) {
-  % else %
 }
-
-var(--sage) {
-  % endif %
-}
-
-;
-}
-
-
-
-var(--rust) {
-  % else %
-}
-
-var(--sage) {
-  % endif %
-}
-
-;
 border-radius:3px;
 width:0;
 transition:width 1.2s ease .8s;
@@ -4516,8 +4405,6 @@ transition:width 1.2s ease .8s;
   display: inline-block;
 }
 
-
-
 .extracted-style-186 {
   font-size: .65rem;
   opacity: .7;
@@ -4543,8 +4430,6 @@ transition:width 1.2s ease .8s;
   border-radius: 2px;
   overflow: hidden;
 }
-
-
 
 .extracted-style-192 {
   font-size: .65rem;
@@ -4589,8 +4474,6 @@ transition:width 1.2s ease .8s;
   padding-bottom: 1.1rem;
   border-bottom: 1px solid var(--border-color);
 }
-
-
 
 .extracted-style-200 {
   flex: 1;
@@ -4652,8 +4535,6 @@ transition:width 1.2s ease .8s;
   font-size: .72rem;
   color: var(--text-muted);
 }
-
-
 
 .extracted-style-210 {
   opacity: .3;
@@ -5519,10 +5400,6 @@ transition:width 1.2s ease .8s;
   height: 12px;
   border-width: 2px;
 }
-
-
-
-;
 color:#fff;
 padding:.65rem 1rem;
 border-radius:var(--radius-md);
@@ -5844,8 +5721,6 @@ animation:slideIn .2s ease;
   word-break: break-word;
 }
 
-
-
 .extracted-style-390 {
   font-family: var(--font-ui);
   font-weight: 700;
@@ -5968,19 +5843,13 @@ animation:slideIn .2s ease;
   border: 1px solid rgba(9, 77, 146, .15);
 }
 
-
-
 .extracted-style-408 {
   transition: box-shadow .2s;
 }
 
-
-
 .extracted-style-410 {
   padding: 1.1rem;
 }
-
-
 
 .extracted-style-412 {
   font-family: var(--font-ui);
@@ -6642,8 +6511,6 @@ body.dark-mode .card:hover {
   margin-bottom: 0.5rem !important;
   z-index: 1100 !important;
 }
-
-
 
 /* ============================================================
    ASIDE TWO-MODE THEME
