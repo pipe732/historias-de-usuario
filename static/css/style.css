@@ -4,7 +4,7 @@
      --cream  #EFECCA  texto / fondos claros
      --sage   #71816D  acento secundario
      --rust   #98473E  acento principal
-     --navy   #094D92  header
+     --navy   #04294f  header
      --dark   #1B2021  sidebar / fondo profundo
 ═══════════════════════════════════════════════════════ */
 
@@ -12,7 +12,7 @@
   --cream: #EFECCA;
   --sage: #71816D;
   --rust: #98473E;
-  --navy: #094D92;
+  --navy: #04294f;
   --dark: #1B2021;
   --bg-body: hsl(45, 23%, 94%);
   /* #F2F0EB slightly tweaked */
@@ -200,17 +200,8 @@ main {
   /* aire vertical y lateral uniforme en todas las páginas */
 }
 
-main::-webkit-scrollbar {
-  width: 5px;
-}
-
 main::-webkit-scrollbar-track {
   background: transparent;
-}
-
-main::-webkit-scrollbar-thumb {
-  background: rgba(27, 32, 33, .15);
-  border-radius: 3px;
 }
 
 /* Wrapper interior — centrado con aire lateral estilo dashboard */
@@ -233,10 +224,10 @@ main .container {
 ════════════════════════════════════ */
 aside {
   width: var(--aside-w);
-  background: rgba(27, 32, 33, 0.90);
-  /* var(--dark) transparent */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--cream);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-right: 1px solid rgba(27, 32, 33, 0.10);
   position: relative;
   height: 100%;
   flex-shrink: 0;
@@ -247,17 +238,8 @@ aside {
   border-right: 1px solid rgba(255, 255, 255, .04);
 }
 
-aside::-webkit-scrollbar {
-  width: 3px;
-}
-
 aside::-webkit-scrollbar-track {
   background: transparent;
-}
-
-aside::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, .1);
-  border-radius: 3px;
 }
 
 .nav-section {
@@ -491,19 +473,11 @@ th {
   white-space: nowrap;
 }
 
-th:first-child {
-  padding-left: 1.4rem;
-}
-
 td {
   padding: .68rem 1rem;
   border-bottom: 1px solid rgba(27, 32, 33, .045);
   color: var(--text-main);
   vertical-align: middle;
-}
-
-td:first-child {
-  padding-left: 1.4rem;
 }
 
 tbody tr {
@@ -918,29 +892,6 @@ tbody tr:last-child td {
 }
 
 /* ── Panel en modo claro (body sin clases de accesibilidad, o con light-mode) ── */
-body:not(.dark-mode) #acc-panel {
-  --ap-bg: #ffffff;
-  --ap-head-bg: var(--navy);
-  --ap-head-color: var(--cream);
-  --ap-btn-color: rgba(27, 32, 33, .72);
-  --ap-btn-hover-bg: rgba(27, 32, 33, .05);
-  --ap-btn-hover-c: #1B2021;
-  --ap-btn-active-bg: rgba(9, 77, 146, .10);
-  --ap-btn-active-c: var(--navy);
-  --ap-divider: rgba(27, 32, 33, .08);
-  --ap-border: rgba(27, 32, 33, .10);
-  --ap-ico-bg: rgba(9, 77, 146, .08);
-  --ap-ico-border: rgba(9, 77, 146, .18);
-  --ap-ico-color: var(--navy);
-  --ap-reset-bg: rgba(27, 32, 33, .04);
-  --ap-reset-border: rgba(27, 32, 33, .12);
-  --ap-reset-color: rgba(27, 32, 33, .42);
-  --ap-reset-hover-bg: rgba(27, 32, 33, .09);
-  --ap-reset-hover-c: #1B2021;
-  border-color: rgba(27, 32, 33, .12);
-  box-shadow: 0 8px 28px rgba(27, 32, 33, .14), 0 2px 6px rgba(27, 32, 33, .08);
-}
-
 /* ── Panel en modo oscuro ── */
 body.dark-mode #acc-panel {
   --ap-bg: #182225;
@@ -2143,7 +2094,7 @@ body.auth-page .btn-submit {
 }
 
 body.auth-page .btn-submit:hover {
-  background: #094D92;
+  background: #04294f;
 }
 
 body.auth-page .alert-mine {
@@ -3370,7 +3321,7 @@ tbody tr:hover {
 }
 
 .extracted-style-5 {
-  color: #094D92;
+  color: #04294f;
 }
 
 .extracted-style-6 {
@@ -3390,12 +3341,12 @@ tbody tr:hover {
   width: 42px;
   height: 42px;
   background-color: #ddeeff;
-  color: #094D92;
+  color: #04294f;
   font-size: 1.2rem;
 }
 
 .extracted-style-9 {
-  background-color: #094D92;
+  background-color: #04294f;
   color: #fff;
 }
 
@@ -3889,8 +3840,6 @@ tbody tr:hover {
   color: var(--text-muted);
 }
 
-
-
 .extracted-style-87 {
   max-width: 260px;
 }
@@ -4002,8 +3951,6 @@ tbody tr:hover {
   font-family: var(--font-ui);
   font-size: .88rem;
 }
-
-
 
 .extracted-style-110 {
   color: #fff;
@@ -4130,21 +4077,7 @@ tbody tr:hover {
   gap: 0.5rem;
 }
 
-
-
-margin-left: {
-    {
-    margin_left
-  }
 }
-
-;
-
-  {
-  % endif %
-}
-
-;
 }
 
 .extracted-style-132 {
@@ -4261,28 +4194,8 @@ margin-left: {
   line-height: 1;
 }
 
-
-
 border-color:rgba(152, 71, 62, .35);
-
-  {
-  % endif %
 }
-
-;
-}
-
-
-
-var(--rust) {
-  % else %
-}
-
-var(--text-main) {
-  % endif %
-}
-
-;
 line-height:1;
 }
 
@@ -4422,31 +4335,7 @@ line-height:1;
   width: 0;
   transition: width 1.2s ease .6s;
 }
-
-
-
-var(--rust) {
-  % else %
 }
-
-var(--sage) {
-  % endif %
-}
-
-;
-}
-
-
-
-var(--rust) {
-  % else %
-}
-
-var(--sage) {
-  % endif %
-}
-
-;
 border-radius:3px;
 width:0;
 transition:width 1.2s ease .8s;
@@ -4516,8 +4405,6 @@ transition:width 1.2s ease .8s;
   display: inline-block;
 }
 
-
-
 .extracted-style-186 {
   font-size: .65rem;
   opacity: .7;
@@ -4543,8 +4430,6 @@ transition:width 1.2s ease .8s;
   border-radius: 2px;
   overflow: hidden;
 }
-
-
 
 .extracted-style-192 {
   font-size: .65rem;
@@ -4589,8 +4474,6 @@ transition:width 1.2s ease .8s;
   padding-bottom: 1.1rem;
   border-bottom: 1px solid var(--border-color);
 }
-
-
 
 .extracted-style-200 {
   flex: 1;
@@ -4652,8 +4535,6 @@ transition:width 1.2s ease .8s;
   font-size: .72rem;
   color: var(--text-muted);
 }
-
-
 
 .extracted-style-210 {
   opacity: .3;
@@ -5519,10 +5400,6 @@ transition:width 1.2s ease .8s;
   height: 12px;
   border-width: 2px;
 }
-
-
-
-;
 color:#fff;
 padding:.65rem 1rem;
 border-radius:var(--radius-md);
@@ -5844,8 +5721,6 @@ animation:slideIn .2s ease;
   word-break: break-word;
 }
 
-
-
 .extracted-style-390 {
   font-family: var(--font-ui);
   font-weight: 700;
@@ -5968,19 +5843,13 @@ animation:slideIn .2s ease;
   border: 1px solid rgba(9, 77, 146, .15);
 }
 
-
-
 .extracted-style-408 {
   transition: box-shadow .2s;
 }
 
-
-
 .extracted-style-410 {
   padding: 1.1rem;
 }
-
-
 
 .extracted-style-412 {
   font-family: var(--font-ui);
@@ -6548,13 +6417,14 @@ table.dataTable tbody tr:hover {
     background-color: rgba(255, 255, 255, 0.05) !important;
   }
 }
+
 /* ═══════════════════════════════════════════════════════
    PREMIUM DESIGN OVERRIDES (FIXES)
    ═══════════════════════════════════════════════════════ */
 
 /* 1. Unified Premium Dark Theme for Sidebar */
 body.dark-mode aside {
-  background: rgba(15, 23, 42, 0.65) !important;
+  background: var(--cream) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -6575,7 +6445,8 @@ body.dark-mode aside .dropdown-item {
 body.dark-mode aside .dropdown-item:hover {
   background: rgba(255, 255, 255, 0.1) !important;
   color: #FFFFFF !important;
-  padding-left: 1.5rem !important; /* Premium hover indent */
+  padding-left: 1.5rem !important;
+  /* Premium hover indent */
 }
 
 /* 2. Glassmorphism & Depth for Cards */
@@ -6595,7 +6466,7 @@ body.dark-mode .card:hover {
 }
 
 /* 3. KPI Number Enhancements */
-.kpi-number, 
+.kpi-number,
 .extracted-style-216,
 .extracted-style-219,
 .extracted-style-221,
@@ -6607,7 +6478,7 @@ body.dark-mode .card:hover {
   -webkit-text-fill-color: transparent !important;
   line-height: 1.1 !important;
   margin: 0.5rem 0 !important;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 /* 4. Fix Sidebar Overlaps */
@@ -6628,11 +6499,11 @@ body.dark-mode .card:hover {
 
 /* Improve Notification Dropdown Z-Index & Positioning */
 #aside-notif-panel {
-  bottom: 60px !important; 
+  bottom: 60px !important;
   z-index: 1100 !important;
   max-height: 60vh;
   overflow-y: auto;
-  box-shadow: 0 -10px 40px rgba(0,0,0,0.5) !important;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5) !important;
 }
 
 .dropup .dropdown-menu {
@@ -6641,91 +6512,130 @@ body.dark-mode .card:hover {
   z-index: 1100 !important;
 }
 
+/* ============================================================
+   ASIDE TWO-MODE THEME
+   Light mode  -> navy blue background, white text
+   Dark mode   -> cream background, dark text
+   ============================================================ */
 
-/* 5. Fix Sidebar Link Colors in Dark Mode */
-body.dark-mode aside .nav-link,
-body.dark-mode aside .collapse .nav-link,
-body.dark-mode aside .collapsing .nav-link,
-body.dark-mode aside .nav-link.text-white,
-body.dark-mode aside .text-uppercase {
-  color: rgba(255, 255, 255, 0.7) !important;
+/* --- LIGHT MODE (default) --- */
+aside {
+  background: #04294f !important;
+  border-right: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
-body.dark-mode aside .nav-link:hover,
-body.dark-mode aside .collapse .nav-link:hover,
-body.dark-mode aside .collapsing .nav-link:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: #FFFFFF !important;
-  border-left-color: #60a5fa !important;
+aside .aside-brand-name {
+  color: #fff !important;
+}
+
+aside .aside-brand-sub {
+  color: rgba(255, 255, 255, .5) !important;
+}
+
+aside .nav-link {
+  color: rgba(255, 255, 255, .75) !important;
+}
+
+aside .nav-link:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, .10) !important;
+}
+
+aside .nav-link.active {
+  color: #fff !important;
+  background: rgba(255, 255, 255, .15) !important;
+  border-left: 3px solid #fff !important;
+  font-weight: 600 !important;
+}
+
+aside .nav-icon {
+  stroke: rgba(255, 255, 255, .7) !important;
+}
+
+aside .nav-link:hover .nav-icon,
+aside .nav-link.active .nav-icon {
+  stroke: #fff !important;
+}
+
+aside .bi {
+  color: rgba(255, 255, 255, .7) !important;
+}
+
+aside .nav-link.active .bi {
+  color: #fff !important;
+}
+
+aside .extracted-style-354,
+aside .extracted-style-355 {
+  color: rgba(255, 255, 255, .38) !important;
+}
+
+aside .bi-chevron-down {
+  color: rgba(255, 255, 255, .35) !important;
+}
+
+aside hr {
+  border-color: rgba(255, 255, 255, .12) !important;
+}
+
+/* --- DARK MODE --- */
+body.dark-mode aside {
+  background: #EFECCA !important;
+  border-right: 1px solid rgba(27, 32, 33, .12) !important;
+}
+
+body.dark-mode aside .aside-brand-name {
+  color: #98473E !important;
+}
+
+body.dark-mode aside .aside-brand-sub {
+  color: rgba(27, 32, 33, .5) !important;
+}
+
+body.dark-mode aside .nav-link {
+  color: rgba(27, 32, 33, .75) !important;
+}
+
+body.dark-mode aside .nav-link:hover {
+  color: #98473E !important;
+  background: rgba(152, 71, 62, .09) !important;
 }
 
 body.dark-mode aside .nav-link.active {
-  background: rgba(96, 165, 250, 0.1) !important;
-  color: #60a5fa !important;
-  border-left-color: #60a5fa !important;
-  border-radius: 4px 16px 16px 4px !important;
+  color: #98473E !important;
+  background: rgba(152, 71, 62, .12) !important;
+  border-left: 3px solid #98473E !important;
+  font-weight: 600 !important;
 }
 
 body.dark-mode aside .nav-icon {
-  stroke: rgba(255, 255, 255, 0.6) !important;
+  stroke: rgba(27, 32, 33, .65) !important;
 }
 
 body.dark-mode aside .nav-link:hover .nav-icon,
 body.dark-mode aside .nav-link.active .nav-icon {
-  stroke: #60a5fa !important;
-  opacity: 1 !important;
+  stroke: #98473E !important;
+}
+
+body.dark-mode aside .bi {
+  color: rgba(27, 32, 33, .65) !important;
+}
+
+body.dark-mode aside .nav-link.active .bi {
+  color: #98473E !important;
+}
+
+body.dark-mode aside .extracted-style-354,
+body.dark-mode aside .extracted-style-355 {
+  color: rgba(27, 32, 33, .38) !important;
+}
+
+body.dark-mode aside .bi-chevron-down {
+  color: rgba(27, 32, 33, .35) !important;
 }
 
 body.dark-mode aside hr {
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  opacity: 1 !important;
-}
-
-/* Fix User Profile button in aside */
-body.dark-mode aside .dropup > button,
-body.dark-mode aside .dropup > button .flex-grow-1 {
-  background: transparent !important;
-  color: rgba(255, 255, 255, 0.8) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-body.dark-mode aside .dropup > button:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: #FFF !important;
-}
-
- 
- 
-/* ═══════════════════════════════════════════════════════
-   BADGE STATES (REPAIRED FROM CORRUPTED HTML)
-   ═══════════════════════════════════════════════════════ */
-
-.state-Administrador {
-  background: rgba(152, 71, 62, 0.15) !important;
-  color: #f87171 !important;
-  border: 1px solid rgba(248, 113, 113, 0.3) !important;
-}
-
-.state-vencido {
-  background: rgba(220, 38, 38, 0.15) !important;
-  color: #f87171 !important;
-  border: 1px solid rgba(248, 113, 113, 0.3) !important;
-}
-
-.state-devuelto {
-  background: rgba(5, 150, 105, 0.15) !important;
-  color: #34d399 !important;
-  border: 1px solid rgba(52, 211, 153, 0.3) !important;
-}
-
-.badge {
-  font-family: var(--font-ui, 'Inter', sans-serif);
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.2rem 0.6rem;
-  border-radius: 20px;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  border-color: rgba(27, 32, 33, .12) !important;
 }
