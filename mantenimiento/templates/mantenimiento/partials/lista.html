@@ -1,0 +1,18 @@
+<div class="card mb-4">
+  <div class="card-body extracted-style-91">
+    <form method="get" class="row g-3 align-items-end">
+      
+      {% if modo == 'mantenimiento' %}
+        {% include 'mantenimiento/partials/filtros_mantenimiento.html' %}
+
+      {% elif modo == 'historial' %}
+        {% include 'mantenimiento/partials/filtros_historial.html' %}
+
+      {% elif modo == 'estado_actual' %}
+        {% include 'mantenimiento/partials/filtros_estado_actual.html' %}
+
+      {% endif %}
+      
+    </form>
+  </div>
+</div>

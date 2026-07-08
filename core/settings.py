@@ -2,112 +2,140 @@
 Django settings for core project.
 """
 
-import os
 from pathlib import Path
+import re
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # ─────────────────────────────────────────────────────────────
+#  LEER .ENV PARA VARIABLES DE ENTORNO
+# ─────────────────────────────────────────────────────────────
+env_path = BASE_DIR / ".env"
+env_vars = {}
+if env_path.exists():
+    contenido = env_path.read_text(encoding="utf-8")
+    for match in re.finditer(r"^([A-Z_]+)\s*=\s*(.+)$", contenido, re.MULTILINE):
+        env_vars[match.group(1)] = match.group(2).strip()
+
+# ─────────────────────────────────────────────────────────────
 #  SEGURIDAD
 # ─────────────────────────────────────────────────────────────
-# ADVERTENCIA: cambia esta clave en producción y nunca la publiques
-SECRET_KEY = 'django-insecure-)1t4q$yd=#qejd0tu*58*n89e8i^(=)&*=5()7it#l0b997(w^'
+SECRET_KEY = env_vars.get(
+    "SECRET_KEY", "django-insecure-)1t4q$yd=#qejd0tu*58*n89e8i^(=)&*=5()7it#l0b997(w^"
+)
+EMAIL_HOST_PASSWORD = env_vars.get("EMAIL_HOST_PASSWORD", "")
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 
 # ─────────────────────────────────────────────────────────────
 #  APLICACIONES
 # ─────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'devoluciones',
-    'usuario',
-    'prestamo',
-    'inventario',
-    'almacenamiento',
-    'pagina_principal',
-    'mantenimiento',
-    'reportes',
-    'configuracion',
-    ]
-
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "devoluciones",
+    "usuario",
+    "prestamo",
+    "inventario",
+    "almacenamiento",
+    "pagina_principal",
+    "mantenimiento",
+    "reportes",
+    "configuracion",
 ]
 
-ROOT_URLCONF = 'core.urls'
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates', BASE_DIR / 'usuario' / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates", BASE_DIR / "usuario" / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+WSGI_APPLICATION = "core.wsgi.application"
 
 
 # ─────────────────────────────────────────────────────────────
 #  BASE DE DATOS
 # ─────────────────────────────────────────────────────────────
+db_engine = env_vars.get("DB_ENGINE", "nube")
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'neondb'),
-        'USER': os.getenv('DB_USER', 'neondb_owner'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'npg_3SWYcRrA5aTz'),
-        'HOST': os.getenv('DB_HOST', 'ep-crimson-glitter-at1wc2qg-pooler.c-9.us-east-1.aws.neon.tech'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-        'CONN_MAX_AGE': 300,
-        'OPTIONS': {
-            'sslmode': os.getenv('DB_SSLMODE', 'require'),
-            'channel_binding': os.getenv('DB_CHANNEL_BINDING', 'require'),
+    "neon_db": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "neondb",
+        "USER": "neondb_owner",
+        "PASSWORD": "npg_3SWYcRrA5aTz",
+        "HOST": "ep-crimson-glitter-at1wc2qg-pooler.c-9.us-east-1.aws.neon.tech",
+        "PORT": "5432",
+        "CONN_MAX_AGE": 300,
+        "OPTIONS": {
+            "sslmode": "require",
+            "channel_binding": "require",
         },
-    }
+    },
+    "local_db": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    },
 }
+
+# Asignar la base de datos default según el .env
+if db_engine == "local":
+    DATABASES["default"] = DATABASES["local_db"]
+else:
+    DATABASES["default"] = DATABASES["neon_db"]
 
 
 # ─────────────────────────────────────────────────────────────
 #  VALIDACIÓN DE CONTRASEÑAS
 # ─────────────────────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator"
+        )
+    },
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
 
 # ─────────────────────────────────────────────────────────────
 #  INTERNACIONALIZACIÓN
 # ─────────────────────────────────────────────────────────────
-LANGUAGE_CODE = 'es-co'   # ✅ cambiado a español Colombia
+LANGUAGE_CODE = "es-co"  # ✅ cambiado a español Colombia
 
-TIME_ZONE = 'America/Bogota'  # ✅ zona horaria correcta
+TIME_ZONE = "America/Bogota"  # ✅ zona horaria correcta
 
 USE_I18N = True
 USE_TZ = True
@@ -116,51 +144,50 @@ USE_TZ = True
 # ─────────────────────────────────────────────────────────────
 #  ARCHIVOS ESTÁTICOS Y MEDIA
 # ─────────────────────────────────────────────────────────────
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 
 # ─────────────────────────────────────────────────────────────
 #  SESIONES
 # ─────────────────────────────────────────────────────────────
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_AGE = 3600          # sesión expira en 1 hora (segundos)
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_COOKIE_AGE = 3600  # sesión expira en 1 hora (segundos)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # cierra sesión al cerrar el navegador
 
 
 # ─────────────────────────────────────────────────────────────
 #  REDIRECCIONES DE AUTH  ✅ corregidas
 # ─────────────────────────────────────────────────────────────
-LOGIN_URL = '/'               # si no está logueado, va al login (ruta raíz)
-LOGIN_REDIRECT_URL = '/home/' # después de login exitoso, va a home
-LOGOUT_REDIRECT_URL = '/'     # después de logout, vuelve al login
+LOGIN_URL = "/"  # si no está logueado, va al login (ruta raíz)
+LOGIN_REDIRECT_URL = "/home/"  # después de login exitoso, va a home
+LOGOUT_REDIRECT_URL = "/"  # después de logout, vuelve al login
 
 
 # ─────────────────────────────────────────────────────────────
 #  CORREO (configura con tus credenciales reales)
 # ─────────────────────────────────────────────────────────────
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'mineinventory01@gmail.com'       
-EMAIL_HOST_PASSWORD = 'koww utbl mhzs cayf'    
+EMAIL_HOST_USER = "mineinventory01@gmail.com"
+EMAIL_HOST_PASSWORD = "koww utbl mhzs cayf"
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 # ─────────────────────────────────────────────────────────────
 #  CAMPO PK POR DEFECTO
 # ─────────────────────────────────────────────────────────────
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Permite que JS lea la cookie CSRF
 CSRF_COOKIE_HTTPONLY = False
 # Silencia el warning Cross-Origin-Opener-Policy en desarrollo HTTP
 # (en producción con HTTPS esto no es necesario)
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
- 
+
 # Permite que JS lea la cookie CSRF (ya estaba, confirmar que existe)
 CSRF_COOKIE_HTTPONLY = False
- 

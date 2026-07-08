@@ -8,7 +8,7 @@ Todos los Mantenimientos
 
 {% include "mantenimiento/partials/_cabecera.html" with titulo="Todos los Mantenimientos" subtitulo="Listado completo de registros de mantenimiento" url_accion=url_accion label_accion=label_accion %}
 
-{% include "mantenimiento/partials/_filtros.html" with modo='mantenimiento' %}
+{% include "mantenimiento/partials/lista.html" with modo='mantenimiento' %}
 
 <div class="card table-card">
   <div class="card-header d-flex align-items-center justify-content-between">
@@ -26,7 +26,7 @@ Todos los Mantenimientos
   </div>
 
   <div class="table-responsive">
-    <table class="table-app datatable-custom" id="mantenimiento-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem">
+    <table class="table-app datatable-custom w-100" id="mantenimiento-table"border-collapse: collapse; font-size: 0.9rem">
       <thead>
         <tr>
           <th>Fecha</th>
@@ -35,15 +35,15 @@ Todos los Mantenimientos
           <th>Estado actual</th>
           <th>Responsable</th>
           <th>Estado del registro</th>
-          <th style="text-align: center">Acciones</th>
-          <th style="text-align: center">Historial</th>
+          <th class="text-center">Acciones</th>
+          <th class="text-center">Historial</th>
         </tr>
       </thead>
       <tbody>
         {% for r in registros %}
         <tr>
           <td>
-            <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">
+            <span class="extracted-style-85">
               {{ r.fecha_reporte|date:"d/m/Y" }}
             </span>
           </td>
@@ -52,8 +52,7 @@ Todos los Mantenimientos
           </td>
           <td>
             {% if r.tipo_mantenimiento %}
-              <span class="badge-state" 
-                    style="background:{{ r.tipo_mantenimiento.color|default:'#6c757d' }}; color:#fff;">
+              <span class="badge-state extracted-style-109"#6c757d' }}; color:#fff;">
                 {{ r.tipo_mantenimiento.nombre }}
               </span>
             {% else %}
@@ -62,7 +61,7 @@ Todos los Mantenimientos
           </td>
           <td>
             {% if r.tipo_estado %}
-              <span class="badge-state" data-dynamic-bg="{{ r.tipo_estado.color|default:'#6c757d' }}" style="color:#fff;">
+              <span class="badge-state extracted-style-110" data-dynamic-bg="{{ r.tipo_estado.color|default:'#6c757d' }}">
                 {{ r.tipo_estado.nombre }}
               </span>
             {% else %}
@@ -78,11 +77,11 @@ Todos los Mantenimientos
           {% url 'mantenimiento:mantenimiento_detalle' r.pk as detalle_url %}
           {% url 'mantenimiento:mantenimiento_editar' r.pk as editar_url %}
           {% url 'mantenimiento:historial_producto' r.producto.pk as historial_url %}
-          <td style="text-align: center">
+          <td class="text-center">
             {% if r.pk in editable_ids %}
               {% include "mantenimiento/partials/_action_icon_button.html" with href=editar_url title="Editar" icon="edit" %}
             {% else %}
-              <span style="width: 28px; height: 28px; border-radius: 6px; background: rgba(27, 32, 33, 0.06); border: 1px solid rgba(27, 32, 33, 0.12); color: var(--text-muted); display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: not-allowed; margin-right: 2px;" title="Sin permisos para editar este registro">
+              <span class="extracted-style-111" title="Sin permisos para editar este registro">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14 a2 2 0 0 0 2-2v-7" />
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
@@ -91,7 +90,7 @@ Todos los Mantenimientos
             {% endif %}
             {% include "mantenimiento/partials/_action_icon_button.html" with href=detalle_url title="Ver detalle" icon="view" %}
           </td>
-          <td style="text-align: center">
+          <td class="text-center">
             {% include "mantenimiento/partials/_action_icon_button.html" with href=historial_url title="Ver historial" icon="history" %}
           </td>
         </tr>
@@ -104,6 +103,6 @@ Todos los Mantenimientos
 </div>
 
 {% block js %}
-<script src="{% static 'js/tables/mantenimiento_table.js' %}"></script>
+<script defer src="{% static 'js/tables/mantenimiento_table.js' %}?v=3"></script>
 {% endblock js %}
 {% endblock %}

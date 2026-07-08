@@ -7,7 +7,7 @@ Historial — {{ producto.nombre }}
 
 {% include "mantenimiento/partials/_cabecera.html" with titulo="Historial de Mantenimientos" subtitulo=producto.nombre url_accion=url_accion label_accion=label_accion %}
 
-{% include "mantenimiento/partials/_filtros.html" with modo='historial' %}
+{% include "mantenimiento/partials/lista.html" with modo='historial' %}
 
 <div class="card table-card">
   <div class="card-header d-flex align-items-center justify-content-between">
@@ -25,7 +25,7 @@ Historial — {{ producto.nombre }}
   </div>
 
   <div class="table-responsive">
-    <table class="table-app datatable-disabled" style="width: 100%; border-collapse: collapse; font-size: 0.9rem">
+    <tableborder class="table-app datatable-disabled w-100"-collapse: collapse; font-size: 0.9rem">
       <thead>
         <tr>
           <th>Fecha</th>
@@ -34,29 +34,28 @@ Historial — {{ producto.nombre }}
           <th>Técnico</th>
           <th>Estado registro</th>
           <th>Costo real</th>
-          <th style="text-align: center">Acciones</th>
+          <th class="text-center">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for m in mantenimientos %}
         <tr>
           <td>
-            <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">
+            <span class="extracted-style-85">
               {{ m.fecha_reporte|date:"d/m/Y" }}
             </span>
           </td>
           <td>
             {% if m.tipo_mantenimiento %}
-              <span class="badge-state" 
-                    style="background:{{ m.tipo_mantenimiento.color|default:'#6c757d' }}; color:#fff;">
+              <span class="badge-state extracted-style-86"#6c757d' }}; color:#fff;">
                 {{ m.tipo_mantenimiento.nombre }}
               </span>
             {% else %}
               <span class="badge-state badge-pendiente">Sin tipo</span>
             {% endif %}
           </td>
-          <td style="max-width: 260px">
-            <span style="font-weight: 600; font-size: 0.88rem">
+          <td class="extracted-style-87">
+            <span class="extracted-style-88">
               {% with detalle=m.detalles.all.0 %}
                 {{ detalle.descripcion|default:"Sin detalle registrado"|truncatewords:12 }}
               {% endwith %}
@@ -64,7 +63,7 @@ Historial — {{ producto.nombre }}
             {% with detalle=m.detalles.all.0 %}
               {% if detalle and detalle.evidencia_adicional %}
                 <br />
-                <small style="color: var(--text-muted); font-size: 0.78rem">
+                <small class="extracted-style-89">
                   Tiene evidencia adjunta
                 </small>
               {% endif %}
@@ -78,16 +77,16 @@ Historial — {{ producto.nombre }}
           </td>
           <td>
             {% if m.costo_real %}
-            <span style="font-family: var(--font-mono); font-size: 0.82rem">
+            <span class="extracted-style-90">
               ${{ m.costo_real }}
             </span>
             {% else %}
-            <span style="color: var(--text-muted)">—</span>
+            <span class="extracted-style-83">—</span>
             {% endif %}
           </td>
           {% url 'mantenimiento:mantenimiento_detalle' m.pk as detalle_url %}
           {% url 'mantenimiento:mantenimiento_editar' m.pk as editar_url %}
-          <td style="text-align: center">
+          <td class="text-center">
             {% if m.pk in editable_ids %}
               {% include "mantenimiento/partials/_action_icon_button.html" with href=editar_url title="Editar" icon="edit" %}
             {% endif %}

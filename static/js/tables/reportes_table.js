@@ -21,6 +21,15 @@ $.fn.dataTable.ext.search.push(
 );
 
 $(document).ready(function() {
+    // Extraer y remover la fila de estado vacío (evita warning TN/4)
+    var emptyStateHtml = '';
+    $('#reportes-table tbody tr').each(function () {
+      if ($(this).find('td').length === 1 && $(this).find('td').attr('colspan')) {
+        emptyStateHtml = $(this).find('td').html();
+        $(this).remove();
+      }
+    });
+
     var table = $('#reportes-table').DataTable({
         responsive: true,
         dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6"f>>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
@@ -56,7 +65,12 @@ $(document).ready(function() {
         },
         order: [[6, 'desc']], // Ordenar por Fecha (columna 6) descendente
         pageLength: 10,
-        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]]
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+        drawCallback: function (settings) {
+            if (settings.aiDisplay.length === 0 && emptyStateHtml) {
+                $(this).find('.dataTables_empty').html(emptyStateHtml);
+            }
+        }
     });
 
     // Escuchar los cambios en los inputs de fechas para redibujar la tabla instantáneamente

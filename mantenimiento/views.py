@@ -103,7 +103,7 @@ def _editable_ids(request, registros):
 
 class TipoEstadoListView(SesionRequeridaMixin, ContextoMixin, ListView):
     model = TipoEstado
-    template_name = "mantenimiento/tipo_estado_list.html"
+    template_name = "mantenimiento/tipo_estado/tipo_estado_list.html"
     context_object_name = "estados"
     ordering = ["nombre"]
     titulo = "Catálogo de Tipos de Estado"
@@ -148,7 +148,7 @@ def tipo_estado_crear(request):
 class TipoEstadoUpdateView(SesionRequeridaMixin, ContextoMixin, UpdateView):
     model = TipoEstado
     form_class = TipoEstadoForm
-    template_name = "mantenimiento/tipo_estado_editar.html"
+    template_name = "mantenimiento/tipo_estado/tipo_estado_editar.html"
     success_url = reverse_lazy("mantenimiento:tipo_estado_lista")
     titulo = "Editar Tipo de Estado"
     subtitulo = "Modifica los datos del estado seleccionado"
@@ -171,7 +171,7 @@ class TipoMantenimientoListView(SesionRequeridaMixin, ContextoMixin, ListView):
     """Lista de tipos de mantenimiento con búsqueda y filtro activo/inactivo."""
 
     model = TipoMantenimiento
-    template_name = "mantenimiento/tipo_mantenimiento_lista.html"
+    template_name = "mantenimiento/tipo_mantenimiento/tipo_mantenimiento_lista.html"
     context_object_name = "tipos"
     paginate_by = 20
     titulo = "Catálogo de Tipos de Mantenimiento"
@@ -245,7 +245,7 @@ class TipoMantenimientoUpdateView(SesionRequeridaMixin, ContextoMixin, UpdateVie
 
     model = TipoMantenimiento
     form_class = TipoMantenimientoForm
-    template_name = "mantenimiento/tipo_mantenimiento_form.html"
+    template_name = "mantenimiento/tipo_mantenimiento/tipo_mantenimiento_form.html"
     success_url = reverse_lazy("mantenimiento:tipo_mantenimiento_lista")
     titulo = "Editar Tipo de Mantenimiento"
     subtitulo = "Modifica los datos del tipo seleccionado"
@@ -323,7 +323,7 @@ def tipo_mantenimiento_eliminar(request, pk):
 
 class MantenimientoListView(SesionRequeridaMixin, ListView):
     model = Mantenimiento
-    template_name = "mantenimiento/mantenimiento_lista.html"
+    template_name = "mantenimiento/mantenimiento/mantenimiento_lista.html"
     context_object_name = "registros"
 
     def get_queryset(self):
@@ -360,7 +360,7 @@ class MantenimientoListView(SesionRequeridaMixin, ListView):
 
 class MantenimientoDetailView(SesionRequeridaMixin, DetailView):
     model = Mantenimiento
-    template_name = "mantenimiento/mantenimiento_detalle.html"
+    template_name = "mantenimiento/mantenimiento/mantenimiento_detalle.html"
     context_object_name = "m"
 
     def get_queryset(self):
@@ -421,7 +421,7 @@ def detalle_mantenimiento_crear(request, pk):
 class MantenimientoUpdateView(SesionRequeridaMixin, ContextoMixin, UpdateView):
     model = Mantenimiento
     form_class = MantenimientoUpdateForm
-    template_name = "mantenimiento/mantenimiento_form.html"
+    template_name = "mantenimiento/mantenimiento/mantenimiento_form.html"
     titulo = "Editar Mantenimiento"
     subtitulo = "Actualiza la orden sin perder trazabilidad"
     boton_texto = "Guardar cambios"
@@ -490,7 +490,7 @@ class MantenimientoUpdateView(SesionRequeridaMixin, ContextoMixin, UpdateView):
 
 class EstadoActualListView(SesionRequeridaMixin, ListView):
     model = Producto
-    template_name = "mantenimiento/estado_actual.html"
+    template_name = "mantenimiento/estado_actual/estado_actual.html"
     context_object_name = "productos"
 
     def get_queryset(self):
@@ -526,7 +526,7 @@ class EstadoActualListView(SesionRequeridaMixin, ListView):
 
 class HistorialProductoView(SesionRequeridaMixin, ListView):
     model = Mantenimiento
-    template_name = "mantenimiento/historial_producto.html"
+    template_name = "mantenimiento/historial/historial_producto.html"
     context_object_name = "mantenimientos"
 
     def get_queryset(self):
