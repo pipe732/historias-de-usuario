@@ -1,94 +1,35 @@
 {# templates/partials/_notif_row.html — campanita del aside #}
 
-<div id="aside-notif-widget" style="padding:.35rem .75rem .15rem; position:relative;">
+<div id="aside-notif-widget" class="position-relative px-3 pt-2 pb-1">
 
-  <button id="aside-notif-btn" type="button" aria-label="Notificaciones" aria-expanded="false" style="width:100%; display:flex; align-items:center; gap:.65rem;
-                 padding:.48rem .75rem;
-                 background:rgba(255,255,255,.04);
-                 border:1px solid rgba(255,255,255,.07);
-                 border-radius:.5rem;
-                 color:rgba(239,236,202,.72);
-                 font-family:var(--font-ui);
-                 font-size:.86rem;
-                 cursor:pointer;
-                 transition:background .15s;
-                 position:relative;">
-
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-      style="flex-shrink:0; opacity:.7;">
+  <button id="aside-notif-btn" type="button" aria-label="Notificaciones" aria-expanded="false" class="aside-notif-btn">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="aside-notif-btn-icon">
       <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
       <path d="M13.73 21a2 2 0 0 1-3.46 0" />
     </svg>
 
     <span class="flex-grow-1 text-start">Notificaciones</span>
 
-    <span id="aside-notif-badge" style="display:none;
-                 min-width:18px; height:18px;
-                 padding:0 5px;
-                 border-radius:20px;
-                 background:var(--rust);
-                 color:#fff;
-                 font-family:var(--font-mono);
-                 font-size:.62rem;
-                 font-weight:700;
-                 line-height:18px;
-                 text-align:center;
-                 flex-shrink:0;">
-      0
-    </span>
+    <span id="aside-notif-badge" class="aside-notif-badge d-none">0</span>
   </button>
 
-  <div id="aside-notif-panel" style="display:none;
-              position:fixed;
-              bottom:5.5rem;
-              left:calc(var(--aside-w) + .5rem);
-              width:320px;
-              max-height:min(480px, calc(100vh - 8rem));
-              background:var(--bg-surface);
-              border:1px solid var(--border-color);
-              border-radius:var(--radius-lg);
-              box-shadow:0 8px 32px rgba(27,32,33,.18);
-              z-index:99995;
-              overflow:hidden;
-              flex-direction:column;">
-
-    <div style="padding:.72rem 1rem;
-                background:var(--dark);
-                border-bottom:2px solid var(--rust);
-                display:flex; align-items:center; justify-content:space-between;
-                flex-shrink:0;">
-      <div style="display:flex; align-items:center; gap:.5rem;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" stroke-width="1.8"
-          opacity=".8">
+  <div id="aside-notif-panel" class="aside-notif-panel d-none">
+    <div class="aside-notif-panel-header">
+      <div class="d-flex align-items-center gap-2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" stroke-width="1.8" opacity=".8">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
           <path d="M13.73 21a2 2 0 0 1-3.46 0" />
         </svg>
-        <span style="font-family:var(--font-ui); font-weight:700; font-size:.85rem;
-                     color:var(--cream); letter-spacing:.04em;">Notificaciones</span>
-        <span id="aside-panel-count" style="font-family:var(--font-mono); font-size:.65rem;
-                     background:rgba(152,71,62,.3); color:var(--cream);
-                     padding:.1rem .45rem; border-radius:20px; margin-left:.25rem;
-                     display:none;">
-          0
-        </span>
+        <span class="aside-notif-panel-title">Notificaciones</span>
+        <span id="aside-panel-count" class="aside-panel-count d-none">0</span>
       </div>
-      <button id="aside-notif-close" type="button" aria-label="Cerrar notificaciones" style="background:none; border:none; cursor:pointer;
-                     color:rgba(239,236,202,.4); padding:0; line-height:1;
-                     font-size:1.1rem; transition:color .15s;" onmouseover="this.style.color='var(--cream)'"
-        onmouseout="this.style.color='rgba(239,236,202,.4)'">
-        ✕
-      </button>
+      <button id="aside-notif-close" type="button" aria-label="Cerrar notificaciones" class="aside-notif-close">✕</button>
     </div>
 
-    <div id="aside-notif-list" style="flex:1; overflow-y:auto; padding:.5rem .6rem;
-                max-height:380px;
-                scrollbar-width:thin;
-                scrollbar-color:rgba(9,77,146,.2) transparent;">
-    </div>
+    <div id="aside-notif-list" class="aside-notif-list"></div>
 
-    <div id="aside-notif-loading" style="padding:2rem; text-align:center;
-                color:var(--text-muted); font-family:var(--font-ui); font-size:.82rem;">
-      <div style="display:inline-flex; gap:.25rem; align-items:center; margin-bottom:.4rem;">
+    <div id="aside-notif-loading" class="aside-notif-loading text-center">
+      <div class="d-inline-flex gap-1 align-items-center mb-1">
         <span class="notif-dot-anim"></span>
         <span class="notif-dot-anim" style="animation-delay:.18s"></span>
         <span class="notif-dot-anim" style="animation-delay:.36s"></span>
@@ -96,38 +37,20 @@
       <div>Cargando…</div>
     </div>
 
-    <div id="aside-notif-empty" style="display:none; padding:2.5rem 1rem; text-align:center;">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.2"
-        style="opacity:.3; display:block; margin:0 auto .65rem;">
-        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    <div id="aside-notif-empty" class="aside-notif-empty d-none text-center">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--rust)" stroke-width="1.2" class="d-block mx-auto mb-2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
       </svg>
-      <p style="font-family:var(--font-ui); color:var(--text-muted);
-                font-size:.82rem; font-weight:600; margin:0 0 .2rem;">
-        Sin notificaciones
-      </p>
-      <p style="font-family:var(--font-ui); color:var(--text-muted);
-                font-size:.72rem; margin:0; opacity:.7;">
-        Todo está en orden
-      </p>
+      <p class="aside-notif-empty-title">Sin notificaciones</p>
+      <p class="aside-notif-empty-desc">Todo está en orden</p>
     </div>
 
-    <div style="padding:.5rem .9rem;
-                border-top:1px solid var(--border-color);
-                background:rgba(27,32,33,.03);
-                display:flex; align-items:center; justify-content:space-between;
-                flex-shrink:0;">
-      <span id="aside-notif-ts" style="font-family:var(--font-mono); font-size:.62rem; color:var(--text-muted);">
-        —
-      </span>
-      <button id="aside-notif-refresh" type="button" aria-label="Actualizar notificaciones" style="background:none; border:none; cursor:pointer;
-                     color:var(--text-muted); font-family:var(--font-ui);
-                     font-size:.72rem; font-weight:600; padding:0;
-                     display:flex; align-items:center; gap:.3rem;
-                     transition:color .15s;" onmouseover="this.style.color='var(--navy)'"
-        onmouseout="this.style.color='var(--text-muted)'">
-        <svg id="aside-refresh-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2.5">
+    <div class="aside-notif-panel-footer">
+      <span id="aside-notif-ts" class="aside-notif-ts">—</span>
+      <button id="aside-notif-refresh" type="button" aria-label="Actualizar notificaciones" class="aside-notif-refresh">
+        <svg id="aside-refresh-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="1 4 1 10 7 10" />
           <path d="M3.51 15a9 9 0 1 0 .49-3.51" />
         </svg>
@@ -138,6 +61,24 @@
 </div>
 
 <style>
+  .aside-notif-btn { width: 100%; display: flex; align-items: center; gap: .65rem; padding: .48rem .75rem; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); border-radius: .5rem; color: rgba(239,236,202,.72); font-family: var(--font-ui); font-size: .86rem; cursor: pointer; transition: background .15s; position: relative; }
+  .aside-notif-btn-icon { flex-shrink: 0; opacity: .7; }
+  .aside-notif-badge { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 20px; background: var(--rust); color: #fff; font-family: var(--font-mono); font-size: .62rem; font-weight: 700; line-height: 18px; text-align: center; flex-shrink: 0; }
+  .aside-notif-panel { position: fixed; bottom: 5.5rem; left: calc(var(--aside-w) + .5rem); width: 320px; max-height: min(480px, calc(100vh - 8rem)); background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: 0 8px 32px rgba(27,32,33,.18); z-index: 99995; overflow: hidden; flex-direction: column; }
+  .aside-notif-panel-header { padding: .72rem 1rem; background: var(--dark); border-bottom: 2px solid var(--rust); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .aside-notif-panel-title { font-family: var(--font-ui); font-weight: 700; font-size: .85rem; color: var(--cream); letter-spacing: .04em; }
+  .aside-panel-count { font-family: var(--font-mono); font-size: .65rem; background: rgba(152,71,62,.3); color: var(--cream); padding: .1rem .45rem; border-radius: 20px; margin-left: .25rem; }
+  .aside-notif-close { background: none; border: none; cursor: pointer; color: rgba(239,236,202,.4); padding: 0; line-height: 1; font-size: 1.1rem; transition: color .15s; }
+  .aside-notif-close:hover { color: var(--cream); }
+  .aside-notif-list { flex: 1; overflow-y: auto; padding: .5rem .6rem; max-height: 380px; scrollbar-width: thin; scrollbar-color: rgba(9,77,146,.2) transparent; }
+  .aside-notif-loading { padding: 2rem; color: var(--text-muted); font-family: var(--font-ui); font-size: .82rem; }
+  .aside-notif-empty { padding: 2.5rem 1rem; }
+  .aside-notif-empty-title { font-family: var(--font-ui); color: var(--text-muted); font-size: .82rem; font-weight: 600; margin: 0 0 .2rem; }
+  .aside-notif-empty-desc { font-family: var(--font-ui); color: var(--text-muted); font-size: .72rem; margin: 0; opacity: .7; }
+  .aside-notif-panel-footer { padding: .5rem .9rem; border-top: 1px solid var(--border-color); background: rgba(27,32,33,.03); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .aside-notif-ts { font-family: var(--font-mono); font-size: .62rem; color: var(--text-muted); }
+  .aside-notif-refresh { background: none; border: none; cursor: pointer; color: var(--text-muted); font-family: var(--font-ui); font-size: .72rem; font-weight: 600; padding: 0; display: flex; align-items: center; gap: .3rem; transition: color .15s; }
+  .aside-notif-refresh:hover { color: var(--navy); }
   .notif-dot-anim {
     display: inline-block;
     width: 7px;
