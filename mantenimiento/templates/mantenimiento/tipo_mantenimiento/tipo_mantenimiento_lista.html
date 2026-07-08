@@ -132,7 +132,7 @@
             <span class="badge-state badge-rechazada">Inactivo</span>
             {% endif %}
           </td>
-          <td class="text-center"display: flex; gap: 0.4rem; justify-content: center; align-items: center;">
+          <td class="text-center" style="display: flex; gap: 0.4rem; justify-content: center; align-items: center;">
             {% url 'mantenimiento:tipo_mantenimiento_editar' tipo.pk as editar_url %}
             {% include "mantenimiento/partials/_action_icon_button.html" with href=editar_url title="Editar" icon="edit" %}
             

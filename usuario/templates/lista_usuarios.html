@@ -5,9 +5,7 @@
 {% block content %}
 {% if messages %}
   {% for message in messages %}
-  <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 mb-3 extracted-style-389"error' %}rgba(152,71,62,.1){% else %}rgba(58,122,66,.1){% endif %};
-              border:1px solid {% if message.tags == 'error' %}rgba(152,71,62,.25){% else %}rgba(58,122,66,.25){% endif %};
-              border-radius:var(--radius-md);color:var(--text-main);font-family:var(--font-ui);" role="alert">
+  <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 mb-3 extracted-style-389" role="alert">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
          stroke="{% if message.tags == 'error' %}#98473E{% else %}#3a7a42{% endif %}" stroke-width="2.2">
       {% if message.tags == 'error' %}
@@ -165,11 +163,7 @@
               </span>
             </td>
             <td>
-              <spanAdministrador class="extracted-style-407"' %}rgba(152,71,62,.1){% else %}rgba(113,129,109,.1){% endif %};
-                           color:{% if u.rol == 'Administrador' %}var(--rust){% else %}var(--sage){% endif %};
-                           font-family:var(--font-ui);font-size:.78rem;font-weight:700;
-                           padding:.15rem .55rem;border-radius:20px;
-                           border:1px solid {% if u.rol == 'Administrador' %}rgba(152,71,62,.2){% else %}rgba(113,129,109,.2){% endif %};">
+              <span class="badge state-Administrador">
                 {{ u.rol }}
               </span>
             </td>
@@ -215,24 +209,17 @@
       <div class="card h-100 extracted-style-408"
            onmouseover="this.style.boxShadow='0 6px 24px rgba(27,32,33,.12)'"
            onmouseout="this.style.boxShadow=''">
-        <divAdministrador class="extracted-style-409"' %}var(--rust){% else %}var(--navy){% endif %};"></div>
+        <div class="badge state-Administrador"></div>
         <div class="card-body extracted-style-410">
           <div class="d-flex"align-items:center;gap:.75rem;margin-bottom:.85rem;">
-            <divAdministrador class="extracted-style-411"' %}rgba(152,71,62,.12){% else %}rgba(9,77,146,.1){% endif %};
-                         color:{% if u.rol == 'Administrador' %}var(--rust){% else %}var(--navy){% endif %};
-                         display:flex;align-items:center;justify-content:center;
-                         font-family:var(--font-ui);font-weight:700;font-size:.9rem;
-                         letter-spacing:.04em;border:2px solid {% if u.rol == 'Administrador' %}rgba(152,71,62,.2){% else %}rgba(9,77,146,.15){% endif %};">
+            <div class="badge state-Administrador">
               {{ u.nombre_completo|slice:":2"|upper }}
             </div>
             <div class="extracted-style-228">
               <div class="extracted-style-412">
                 {{ u.nombre_completo }}
               </div>
-              <spanAdministrador class="extracted-style-407"' %}rgba(152,71,62,.1){% else %}rgba(113,129,109,.1){% endif %};
-                           color:{% if u.rol == 'Administrador' %}var(--rust){% else %}var(--sage){% endif %};
-                           font-size:.7rem;font-weight:700;padding:.1rem .45rem;border-radius:10px;
-                           font-family:var(--font-ui);">
+              <span class="badge state-Administrador">
                 {{ u.rol }}
               </span>
             </div>
@@ -699,7 +686,7 @@ function renderPrestamosUsuario(prestamos) {
       + '<div class="extracted-style-460">Vencimiento</div>'
       + '<div class="extracted-style-461">' + escapeHtml(p.fecha_vencimiento) + '</div>'
       + '<div class="extracted-style-460">Observaciones</div>'
-      + '<textarea id="obs_prestamo_' + p.pk + '" rows="3" class="w-100"padding:.65rem;border:1px solid rgba(9,77,146,.12);border-radius:12px;font-size:.88rem;margin-bottom:.65rem;">' + escapeHtml(p.observaciones) + '</textarea>'
+      + '<textarea id="obs_prestamo_' + p.pk + '" rows="3" class="w-100" style="padding:.65rem;border:1px solid rgba(9,77,146,.12);border-radius:12px;font-size:.88rem;margin-bottom:.65rem;">' + escapeHtml(p.observaciones) + '</textarea>'
       + '<button class="extracted-style-462" type="button" id="obs_btn_' + p.pk + '" onclick="guardarObservacionPrestamo(' + p.pk + ')">Guardar observación</button>'
       + '<div class="extracted-style-463">Ítems del préstamo</div>'
       + itemsHtml + '</div></div>';

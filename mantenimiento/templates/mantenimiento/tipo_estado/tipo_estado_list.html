@@ -11,7 +11,7 @@
   <div class="flex-grow-1">
     {% include "mantenimiento/partials/_cabecera.html" with titulo=titulo subtitulo=subtitulo only %}
   </div>
-  <button type="button" class="btn-primary-mine extracted-style-114" data-bs-toggle="modal" data-bs-target="#modalNuevoEstado">
+  <button type="button" class="btn-primary-mine" data-bs-toggle="modal" data-bs-target="#modalNuevoEstado" style="white-space: nowrap">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
       <circle cx="12" cy="12" r="10" />
       <line x1="12" y1="8" x2="12" y2="16" />
@@ -25,41 +25,42 @@
   <!-- ... header igual ... -->
 
   <div class="table-responsive">
-    <tableborder class="table-app datatable-disabled w-100"-collapse: collapse; font-size: 0.9rem">
+    <table class="table-app datatable-disabled" style="width: 100%; border-collapse: collapse; font-size: 0.9rem">
       <thead>
         <tr>
           <th>Código</th>
           <th>Nombre</th>
           <th>Categoría</th>
           <th>Impacto disponibilidad</th>
-          <th class="text-center">Color</th>
-          <th class="text-center">Activo</th>
-          <th class="text-center">Acciones</th>
+          <th style="text-align: center">Color</th>
+          <th style="text-align: center">Activo</th>
+          <th style="text-align: center">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for estado in estados %}
         <tr>
-          <td><span class="extracted-style-85">{{ estado.codigo }}</span></td>
-          <td class="extracted-style-80">{{ estado.nombre }}</td>
+          <td><span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">{{ estado.codigo }}</span></td>
+          <td style="font-weight: 600">{{ estado.nombre }}</td>
           <td>{{ estado.get_categoria_display|default:"—" }}</td>
-          <td class="extracted-style-115">
+          <td style="font-size: 0.85rem; color: var(--text-muted)">
             {{ estado.get_impacto_disponibilidad_display|default:"—" }}
           </td>
-          <td class="text-center">
+          <td style="text-align: center">
             {% if estado.color %}
-              <span class="extracted-style-116" data-dynamic-bg="{{ estado.color }}"
+              <span data-dynamic-bg="{{ estado.color }}" 
+                    style="display:inline-block; width:20px; height:20px; border-radius:4px; border:1px solid rgba(0,0,0,.12); vertical-align:middle;"
                     title="{{ estado.color }}"></span>
             {% else %}—{% endif %}
           </td>
-          <td class="text-center">
+          <td style="text-align: center">
             {% if estado.activo %}
               <span class="badge-state badge-aprobada">Activo</span>
             {% else %}
               <span class="badge-state badge-rechazada">Inactivo</span>
             {% endif %}
           </td>
-          <td class="text-center">
+          <td style="text-align: center">
             {% url 'mantenimiento:tipo_estado_editar' estado.pk as editar_url %}
             {% include "mantenimiento/partials/_action_icon_button.html" with href=editar_url title="Editar" icon="edit" %}
           </td>

@@ -304,7 +304,7 @@
           </td>
           <td>
             {% if p.fecha_vencimiento %}
-              <span class="{% if p.urgencia ==  extracted-style-259"vencido' %}urgencia-vencido{% elif p.urgencia == 'proximo' %}urgencia-proximo{% else %}urgencia-normal{% endif %}">
+              <span class="{% if p.urgencia == 'vencido' %}urgencia-vencido{% elif p.urgencia == 'proximo' %}urgencia-proximo{% else %}urgencia-normal{% endif %}">
                 {{ p.fecha_vencimiento|date:"d/m/Y" }}
                 {% if p.dias_restantes is not None and p.dias_restantes >= 0 %}
                   <span class="extracted-style-260">({{ p.dias_restantes }}d)</span>
@@ -445,7 +445,7 @@
         </tr>
         {% empty %}
         <tr>
-          <td colspan="8" class="text-center"padding:4rem 1rem;">
+          <td colspan="8" class="text-center" style="padding:4rem 1rem;">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)"
                  stroke-width="1.3" class="empty-state-icon">
               <polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/>

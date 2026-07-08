@@ -1,35 +1,9 @@
-{# templates/partials/_notif_row.html — campanita del aside #}
-
-<div class="extracted-style-363" id="aside-notif-widget">
-
-  <button id="aside-notif-btn" type="button" aria-label="Notificaciones" aria-expanded="false" class="w-100"display:flex; align-items:center; gap:.65rem;
-                 padding:.48rem .75rem;
-                 background:rgba(255,255,255,.04);
-                 border:1px solid rgba(255,255,255,.07);
-                 border-radius:.5rem;
-                 color:rgba(239,236,202,.72);
-                 font-family:var(--font-ui);
-                 font-size:.86rem;
-                 cursor:pointer;
-                 transition:background .15s;
-                 position:relative;">
-
-    <svg class="extracted-style-364" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-    </svg>
-
-    <span class="flex-grow-1 text-start">Notificaciones</span>
-
-    <span class="extracted-style-365" id="aside-notif-badge">
-      0
-    </span>
-  </button>
+{# templates/partials/_notif_row.html — panel de notificaciones del aside (sin botón) #}
 
   <div class="extracted-style-366" id="aside-notif-panel">
 
     <div class="extracted-style-367">
-      <div class="d-flex"align-items:center; gap:.5rem;">
+      <div class="d-flex" style="align-items:center; gap:.5rem;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" stroke-width="1.8"
           opacity=".8">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -85,8 +59,7 @@
         Actualizar
       </button>
     </div>
-  </div>
-</div>
+
 
 <style>
   .notif-dot-anim {
