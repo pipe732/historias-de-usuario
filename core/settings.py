@@ -3,7 +3,7 @@ Django settings for core project.
 """
 
 from pathlib import Path
-import re
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,24 +12,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ─────────────────────────────────────────────────────────────
 #  LEER .ENV PARA VARIABLES DE ENTORNO
 # ─────────────────────────────────────────────────────────────
-env_path = BASE_DIR / ".env"
-env_vars = {}
-if env_path.exists():
-    contenido = env_path.read_text(encoding="utf-8")
-    for match in re.finditer(r"^([A-Z_]+)\s*=\s*(.+)$", contenido, re.MULTILINE):
-        env_vars[match.group(1)] = match.group(2).strip()
+env = environ.Env(
+    DJANGO_DEBUG=(bool, False),
+)
+environ.Env.read_env(BASE_DIR / ".env")
+
 
 # ─────────────────────────────────────────────────────────────
 #  SEGURIDAD
 # ─────────────────────────────────────────────────────────────
-SECRET_KEY = env_vars.get(
-    "SECRET_KEY", "django-insecure-)1t4q$yd=#qejd0tu*58*n89e8i^(=)&*=5()7it#l0b997(w^"
-)
-EMAIL_HOST_PASSWORD = env_vars.get("EMAIL_HOST_PASSWORD", "")
-
-DEBUG = True
-
-ALLOWED_HOSTS = ["*"]
+SECRET_KEY = env("DJANGO_SECRET_KEY")  # sin default → truena si falta. Correcto.
+DEBUG = env("DJANGO_DEBUG")
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["localhost"])
 
 
 # ─────────────────────────────────────────────────────────────
@@ -86,15 +80,16 @@ WSGI_APPLICATION = "core.wsgi.application"
 # ─────────────────────────────────────────────────────────────
 #  BASE DE DATOS
 # ─────────────────────────────────────────────────────────────
-db_engine = env_vars.get("DB_ENGINE", "nube")
+db_engine = env("DB_ENGINE", default="nube")
+
 DATABASES = {
     "neon_db": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "neondb",
-        "USER": "neondb_owner",
-        "PASSWORD": "npg_3SWYcRrA5aTz",
-        "HOST": "ep-crimson-glitter-at1wc2qg-pooler.c-9.us-east-1.aws.neon.tech",
-        "PORT": "5432",
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST"),
+        "PORT": env("DB_PORT", default="5432"),
         "CONN_MAX_AGE": 300,
         "OPTIONS": {
             "sslmode": "require",
@@ -108,10 +103,7 @@ DATABASES = {
 }
 
 # Asignar la base de datos default según el .env
-if db_engine == "local":
-    DATABASES["default"] = DATABASES["local_db"]
-else:
-    DATABASES["default"] = DATABASES["neon_db"]
+DATABASES["default"] = DATABASES["local_db"] if db_engine == "local" else DATABASES["neon_db"]
 
 
 # ─────────────────────────────────────────────────────────────
@@ -160,7 +152,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # cierra sesión al cerrar el navegador
 
 
 # ─────────────────────────────────────────────────────────────
-#  REDIRECCIONES DE AUTH  ✅ corregidas
+#  REDIRECCIONES DE AUTH
 # ─────────────────────────────────────────────────────────────
 LOGIN_URL = "/"  # si no está logueado, va al login (ruta raíz)
 LOGIN_REDIRECT_URL = "/home/"  # después de login exitoso, va a home
@@ -168,14 +160,14 @@ LOGOUT_REDIRECT_URL = "/"  # después de logout, vuelve al login
 
 
 # ─────────────────────────────────────────────────────────────
-#  CORREO (configura con tus credenciales reales)
+#  CORREO
 # ─────────────────────────────────────────────────────────────
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "mineinventory01@gmail.com"
-EMAIL_HOST_PASSWORD = "koww utbl mhzs cayf"
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
@@ -183,11 +175,10 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 #  CAMPO PK POR DEFECTO
 # ─────────────────────────────────────────────────────────────
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-# Permite que JS lea la cookie CSRF
+
+# Permite que JS lea la cookie CSRF (necesario para peticiones AJAX con token CSRF)
 CSRF_COOKIE_HTTPONLY = False
+
 # Silencia el warning Cross-Origin-Opener-Policy en desarrollo HTTP
 # (en producción con HTTPS esto no es necesario)
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
-
-# Permite que JS lea la cookie CSRF (ya estaba, confirmar que existe)
-CSRF_COOKIE_HTTPONLY = False
