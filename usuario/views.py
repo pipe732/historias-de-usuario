@@ -6,7 +6,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password, make_password
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from django.conf import settings
 from django.utils.crypto import get_random_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -265,20 +267,21 @@ def olvido_contrasena_view(request):
         )
 
         try:
-            send_mail(
+            html_content = render_to_string('email_recuperacion.html', {
+                'nombre': usuario.nombre_completo,
+                'link': link,
+            })
+            text_content = strip_tags(html_content)
+
+            correo = EmailMultiAlternatives(
                 subject='Recuperación de contraseña – SENA Centro Minero',
-                message=(
-                    f'Hola {usuario.nombre_completo},\n\n'
-                    f'Haz clic en el siguiente enlace para cambiar tu contraseña:\n\n'
-                    f'{link}\n\n'
-                    'Este enlace expira en 15 minutos.\n\n'
-                    'Si no solicitaste esto, ignora este mensaje.\n\n'
-                    'SENA – Centro Minero · Regional Boyacá'
-                ),
+                body=text_content,
                 from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[email],
-                fail_silently=False,
+                to=[email],
             )
+            correo.attach_alternative(html_content, "text/html")
+            correo.send(fail_silently=False)
+
             messages.success(request, 'Te enviamos un enlace a tu correo. Tienes 15 minutos para usarlo.')
         except Exception as e:
             # Registrar el error real en consola/logs para poder diagnosticarlo
