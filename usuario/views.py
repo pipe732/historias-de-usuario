@@ -152,7 +152,8 @@ def registro_view(request):
     ctx_base = {
         'roles':           ROLES,
         'tipo_documento':  'CC',
-        'username':        '',
+        'first_name':      '',
+        'last_name':       '',
         'email':           '',
         'documento':       '',
         'numero_ficha':    '',
@@ -160,7 +161,8 @@ def registro_view(request):
     }
 
     if request.method == 'POST':
-        username        = request.POST.get('username', '').strip()
+        first_name      = request.POST.get('first_name', '').strip()
+        last_name       = request.POST.get('last_name', '').strip()
         email           = request.POST.get('email', '').strip().lower()
         tipo_documento  = request.POST.get('tipo_documento', '').strip().upper()
         documento       = request.POST.get('documento', '').strip()
@@ -172,7 +174,8 @@ def registro_view(request):
 
         ctx = {
             **ctx_base,
-            'username':        username,
+            'first_name':      first_name,
+            'last_name':       last_name,
             'email':           email,
             'tipo_documento':  tipo_documento,
             'documento':       documento,
@@ -180,7 +183,7 @@ def registro_view(request):
             'nombre_programa': nombre_programa,
         }
 
-        if not all([username, email, tipo_documento, documento, password1, password2]):
+        if not all([first_name, last_name, email, tipo_documento, documento, password1, password2]):
             messages.error(request, 'Completa todos los campos obligatorios.')
             return render(request, 'registro.html', ctx)
 
@@ -205,6 +208,7 @@ def registro_view(request):
             messages.error(request, 'El correo ya está registrado.')
             return render(request, 'registro.html', ctx)
 
+        username = f"{first_name} {last_name}".strip()
         usuario = Usuario(
             numero_documento=documento,
             nombre_completo=username,

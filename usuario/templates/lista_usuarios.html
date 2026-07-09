@@ -489,14 +489,32 @@
 
             <div class="col-md-6">
               <label class="form-label">Número de ficha</label>
-              <input type="text" name="numero_ficha" id="edit_ficha"
-                     class="form-control" placeholder="Ej. 2758369" maxlength="10">
+              <select name="numero_ficha" id="edit_ficha" class="form-select">
+                <option value="">-- Seleccionar Ficha --</option>
+                <option value="2758369">2758369</option>
+                <option value="2827435">2827435</option>
+                <option value="2895642">2895642</option>
+                <option value="2910384">2910384</option>
+                <option value="3021948">3021948</option>
+                <option value="3196477">3196477</option>
+                <option value="ADMIN-001">ADMIN-001</option>
+              </select>
             </div>
 
             <div class="col-md-6">
               <label class="form-label">Nombre del programa</label>
-              <input type="text" name="nombre_programa" id="edit_programa"
-                     class="form-control" placeholder="Ej. ADSO">
+              <select name="nombre_programa" id="edit_programa" class="form-select">
+                <option value="">-- Seleccionar Programa --</option>
+                <option value="Análisis y Desarrollo de Software (ADSO)">Análisis y Desarrollo de Software (ADSO)</option>
+                <option value="Sistemas">Sistemas</option>
+                <option value="Electricidad Industrial">Electricidad Industrial</option>
+                <option value="Mantenimiento Electromecánico">Mantenimiento Electromecánico</option>
+                <option value="Supervisión de Labores Mineras">Supervisión de Labores Mineras</option>
+                <option value="Topografía">Topografía</option>
+                <option value="Soldadura">Soldadura</option>
+                <option value="Gestión Ambiental">Gestión Ambiental</option>
+                <option value="Administración">Administración</option>
+              </select>
             </div>
 
             <div class="col-12 lista_usuarios__style-88">
@@ -762,9 +780,9 @@ document.getElementById('edit_telefono').addEventListener('input', function() {
   this.value = this.value.replace(/\D/g, '');
 });
 
-document.getElementById('edit_ficha').addEventListener('input', function() {
-  this.value = this.value.replace(/\D/g, '');
-});
+// document.getElementById('edit_ficha').addEventListener('input', function() {
+//   this.value = this.value.replace(/\D/g, '');
+// });
 </script>
 
 {% endblock %}  {# ← cierra el block content AQUÍ #}
