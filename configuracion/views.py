@@ -117,13 +117,16 @@ def configuracion_view(request):
 def probar_conexion_neon(request):
     try:
         import psycopg2
-        from decouple import config as env
+        import environ
+        from django.conf import settings
+        env = environ.Env()
+        environ.Env.read_env(settings.BASE_DIR / ".env")
 
         conn = psycopg2.connect(
-            dbname=env("DB_NAME"),
-            user=env("DB_USER"),
-            password=env("DB_PASSWORD"),
-            host=env("DB_HOST"),
+            dbname=env("DB_NAME", default=""),
+            user=env("DB_USER", default=""),
+            password=env("DB_PASSWORD", default=""),
+            host=env("DB_HOST", default=""),
             port=env("DB_PORT", default="5432"),
             connect_timeout=5,
             sslmode="require",

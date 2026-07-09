@@ -3,45 +3,61 @@ Django settings for core project.
 """
 
 from pathlib import Path
-from decouple import config
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# ─────────────────────────────────────────────────────────────
-#  LEER .ENV PARA VARIABLES DE ENTORNO
-# ─────────────────────────────────────────────────────────────
-SECRET_KEY = config('SECRET_KEY')
-
+# Initialize environment variables
+env = environ.Env(
+    DJANGO_DEBUG=(bool, True),
+    DJANGO_ALLOWED_HOSTS=(list, ["*"]),
+    DB_ENGINE=(str, "local"),
+    DB_NAME=(str, ""),
+    DB_USER=(str, ""),
+    DB_PASSWORD=(str, ""),
+    DB_HOST=(str, ""),
+    DB_PORT=(str, "5432"),
+    EMAIL_HOST_USER=(str, ""),
+    EMAIL_HOST_PASSWORD=(str, ""),
+)
+environ.Env.read_env(BASE_DIR / ".env")
 
 # ─────────────────────────────────────────────────────────────
 #  SEGURIDAD
 # ─────────────────────────────────────────────────────────────
-SECRET_KEY = env("DJANGO_SECRET_KEY")  # sin default → truena si falta. Correcto.
-DEBUG = env("DJANGO_DEBUG")
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["localhost"])
+SECRET_KEY = env(
+    "SECRET_KEY",
+    default=env(
+        "DJANGO_SECRET_KEY",
+        default="django-insecure-)1t4q$yd=#qejd0tu*58*n89e8i^(=)&*=5()7it#l0b997(w^",
+    ),
+)
+DEBUG = env("DJANGO_DEBUG", default=env("DEBUG", default=True))
+ALLOWED_HOSTS = env.list(
+    "DJANGO_ALLOWED_HOSTS", default=env.list("ALLOWED_HOSTS", default=["*"])
+)
 
 
 # ─────────────────────────────────────────────────────────────
 #  APLICACIONES
 # ─────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'devoluciones',
-    'usuario',
-    'prestamo',
-    'inventario',
-    'almacenamiento',
-    'pagina_principal',
-    'mantenimiento',
-    'reportes',
-    'configuracion',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "devoluciones",
+    "usuario",
+    "prestamo",
+    "inventario",
+    "almacenamiento",
+    "pagina_principal",
+    "mantenimiento",
+    "reportes",
+    "configuracion",
 ]
 
 MIDDLEWARE = [
@@ -78,33 +94,30 @@ WSGI_APPLICATION = "core.wsgi.application"
 #  BASE DE DATOS
 # ─────────────────────────────────────────────────────────────
 
-DB_ENGINE = config('DB_ENGINE', default='local')  # 'local' o 'nube'
+db_engine = env("DB_ENGINE", default="local")
 
-if DB_ENGINE == 'nube':
+if db_engine == "nube":
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DB_NAME'),
-            'USER': config('DB_USER'),
-            'PASSWORD': config('DB_PASSWORD'),
-            'HOST': config('DB_HOST'),
-            'PORT': config('DB_PORT'),
-            'CONN_MAX_AGE': 300,
-            'OPTIONS': {
-                'sslmode': 'require',
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("DB_NAME"),
+            "USER": env("DB_USER"),
+            "PASSWORD": env("DB_PASSWORD"),
+            "HOST": env("DB_HOST"),
+            "PORT": env("DB_PORT", default="5432"),
+            "CONN_MAX_AGE": 300,
+            "OPTIONS": {
+                "sslmode": "require",
             },
         }
     }
 else:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-
-# Asignar la base de datos default según el .env
-DATABASES["default"] = DATABASES["local_db"] if db_engine == "local" else DATABASES["neon_db"]
 
 
 # ─────────────────────────────────────────────────────────────
@@ -126,9 +139,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # ─────────────────────────────────────────────────────────────
 #  INTERNACIONALIZACIÓN
 # ─────────────────────────────────────────────────────────────
-LANGUAGE_CODE = 'es-co'
+LANGUAGE_CODE = "es-co"
 
-TIME_ZONE = 'America/Bogota'
+TIME_ZONE = "America/Bogota"
 
 USE_I18N = True
 USE_TZ = True
@@ -147,7 +160,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 # ─────────────────────────────────────────────────────────────
 #  SESIONES
 # ─────────────────────────────────────────────────────────────
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_COOKIE_AGE = 3600
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
@@ -155,9 +168,9 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # ─────────────────────────────────────────────────────────────
 #  REDIRECCIONES DE AUTH
 # ─────────────────────────────────────────────────────────────
-LOGIN_URL = '/'
-LOGIN_REDIRECT_URL = '/home/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = "/"
+LOGIN_REDIRECT_URL = "/home/"
+LOGOUT_REDIRECT_URL = "/"
 
 
 # ─────────────────────────────────────────────────────────────
@@ -167,15 +180,15 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 # ─────────────────────────────────────────────────────────────
 #  CAMPO PK POR DEFECTO
 # ─────────────────────────────────────────────────────────────
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Permite que JS lea la cookie CSRF
 CSRF_COOKIE_HTTPONLY = False

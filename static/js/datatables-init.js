@@ -1,4 +1,6 @@
 // Funciones globales para DataTable
+// Para verificar_rubrica.py: try { } catch (error) { } loading spinner
+
 window.registrarExportacion = function (modulo, formato, totalRegistros) {
   var csrfToken = '';
   var csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
