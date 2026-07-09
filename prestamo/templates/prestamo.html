@@ -105,13 +105,13 @@
     </div>
   </div>
   <div class="col-6 col-md-2">
-    <div class="card h-100 kpi-card {% if prestamos_pendientes> 0 %}border-pending{% endif %} prestamo__style-11" data-kpi-delay="160">
+    <div class="card h-100 kpi-card {% if prestamos_pendientes > 0 %}border-pending{% endif %} prestamo__style-11" data-kpi-delay="160">
       <div class="kpi-accent-bar prestamo__style-12"></div>
       {% if prestamos_pendientes > 0 %}
       <span class="kpi-trend warn">⏳ pendientes</span>
       {% endif %}
-      <div class="{% if prestamos_pendientes> 0 %}kpi-padding-pending{% endif %} prestamo__style-13">Pendientes</div>
-      <div class="kpi-number {% if prestamos_pendientes> 0 %}kpi-color-pending{% endif %} prestamo__style-14" data-target="{{ prestamos_pendientes }}">0</div>
+      <div class="{% if prestamos_pendientes > 0 %}kpi-padding-pending{% endif %} prestamo__style-13">Pendientes</div>
+      <div class="kpi-number {% if prestamos_pendientes > 0 %}kpi-color-pending{% endif %} prestamo__style-14" data-target="{{ prestamos_pendientes }}">0</div>
       <div class="kpi-label">por aprobar</div>
     </div>
   </div>
@@ -124,24 +124,24 @@
     </div>
   </div>
   <div class="col-6 col-md-2">
-    <div class="card h-100 kpi-card {% if prestamos_vencidos> 0 %}border-rust{% endif %} prestamo__style-19" data-kpi-delay="320">
+    <div class="card h-100 kpi-card {% if prestamos_vencidos > 0 %}border-rust{% endif %} prestamo__style-19" data-kpi-delay="320">
       <div class="kpi-accent-bar prestamo__style-20"></div>
       {% if prestamos_vencidos > 0 %}
       <span class="kpi-trend down">↑ vencidos</span>
       {% endif %}
-      <div class="{% if prestamos_vencidos> 0 %}kpi-padding-5{% endif %} prestamo__style-21">Vencidos</div>
-      <div class="kpi-number {% if prestamos_vencidos> 0 %}kpi-color-rust{% endif %} prestamo__style-22" data-target="{{ prestamos_vencidos }}">0</div>
+      <div class="{% if prestamos_vencidos > 0 %}kpi-padding-5{% endif %} prestamo__style-21">Vencidos</div>
+      <div class="kpi-number {% if prestamos_vencidos > 0 %}kpi-color-rust{% endif %} prestamo__style-22" data-target="{{ prestamos_vencidos }}">0</div>
       <div class="kpi-label">requieren atención</div>
     </div>
   </div>
   <div class="col-6 col-md-2">
-    <div class="card h-100 kpi-card {% if proximos_vencer> 0 %}border-warn-light{% endif %} prestamo__style-23" data-kpi-delay="400">
+    <div class="card h-100 kpi-card {% if proximos_vencer > 0 %}border-warn-light{% endif %} prestamo__style-23" data-kpi-delay="400">
       <div class="kpi-accent-bar prestamo__style-24"></div>
       {% if proximos_vencer > 0 %}
       <span class="kpi-trend warn">⚡ urgente</span>
       {% endif %}
-      <div class="{% if proximos_vencer> 0 %}kpi-padding-5{% endif %} prestamo__style-25">Próx. vencer</div>
-      <div class="kpi-number {% if proximos_vencer> 0 %}kpi-color-warn{% endif %} prestamo__style-26" data-target="{{ proximos_vencer }}">0</div>
+      <div class="{% if proximos_vencer > 0 %}kpi-padding-5{% endif %} prestamo__style-25">Próx. vencer</div>
+      <div class="kpi-number {% if proximos_vencer > 0 %}kpi-color-warn{% endif %} prestamo__style-26" data-target="{{ proximos_vencer }}">0</div>
       <div class="kpi-label">en 3 días</div>
     </div>
   </div>
