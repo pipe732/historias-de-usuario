@@ -56,8 +56,7 @@
     <div class="card h-100 p-3 {% if proximos_vencer > 0 %}border-warning{% endif %}">
       <div class="font-monospace text-uppercase text-muted mb-1 extracted-style-315">Próx.
         vencer</div>
-      <div class="font-monospace fw-bold lh-1 {% if proximos_vencer > 0 %}text-warning{% endif %}"
-        style="font-size:1.55rem;">{{ proximos_vencer }}</div>
+      <div class="font-monospace fw-bold lh-1 {% if proximos_vencer> 0 %}text-warning{% endif %} prestamo_usuario__style-1">{{ proximos_vencer }}</div>
       <div class="text-muted mt-1 extracted-style-317">en 3 días</div>
     </div>
   </div>
@@ -65,8 +64,7 @@
     <div class="card h-100 p-3 {% if vencidos_count > 0 %}border-danger{% endif %}">
       <div class="font-monospace text-uppercase text-muted mb-1 extracted-style-315">
         Vencidos</div>
-      <div class="font-monospace fw-bold lh-1 {% if vencidos_count > 0 %}text-danger{% endif %}"
-        style="font-size:1.55rem;">{{ vencidos_count }}</div>
+      <div class="font-monospace fw-bold lh-1 {% if vencidos_count> 0 %}text-danger{% endif %} prestamo_usuario__style-2">{{ vencidos_count }}</div>
       <div class="text-muted mt-1 extracted-style-317">requieren atención</div>
     </div>
   </div>

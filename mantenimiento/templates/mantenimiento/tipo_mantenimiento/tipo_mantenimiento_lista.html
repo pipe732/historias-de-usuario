@@ -95,15 +95,15 @@
   </div>
 
   <div class="table-responsive">
-    <table class="table-app datatable-disabled w-100" style="border-collapse: collapse; font-size: 0.9rem">
+    <table class="table-app datatable-disabled w-100 tipo_mantenimiento_lista__style-1">
       <thead>
         <tr>
           <th>Nombre</th>
           <th>Descripción</th>
-          <th class="text-center" style="width: 100px">Color</th>
-          <th class="text-center" style="width: 80px">Usado en</th>          
-          <th class="text-center" style="width: 80px">Activo</th>
-          <th class="text-center" style="width: 120px">Acciones</th>
+          <th class="text-center tipo_mantenimiento_lista__style-2">Color</th>
+          <th class="text-center tipo_mantenimiento_lista__style-3">Usado en</th>          
+          <th class="text-center tipo_mantenimiento_lista__style-4">Activo</th>
+          <th class="text-center tipo_mantenimiento_lista__style-5">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -121,7 +121,7 @@
             ></span>
             {% else %}—{% endif %}
           </td>
-          <td class="text-center" style="font-family: var(--font-mono); font-size: 0.85rem">
+          <td class="text-center tipo_mantenimiento_lista__style-6">
             {{ tipo.mantenimientos.count }}
           </td>
           <td class="text-center">
@@ -131,7 +131,7 @@
             <span class="badge-state badge-rechazada">Inactivo</span>
             {% endif %}
           </td>
-          <td class="text-center" style="display: flex; gap: 0.4rem; justify-content: center; align-items: center;">
+          <td class="text-center tipo_mantenimiento_lista__style-7">
             {% url 'mantenimiento:tipo_mantenimiento_editar' tipo.pk as editar_url %}
             {% include "mantenimiento/partials/_action_icon_button.html" with href=editar_url title="Editar" icon="edit" %}
             
@@ -183,7 +183,7 @@
     <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-outline-secondary">Anterior</a>
     {% endif %}
 
-    <span class="d-flex" style="align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+    <span class="d-flex tipo_mantenimiento_lista__style-8">
       Página <strong>{{ page_obj.number }}</strong> de <strong>{{ page_obj.paginator.num_pages }}</strong>
     </span>
 

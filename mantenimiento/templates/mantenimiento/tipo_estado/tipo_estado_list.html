@@ -11,7 +11,7 @@
   <div class="flex-grow-1">
     {% include "mantenimiento/partials/_cabecera.html" with titulo=titulo subtitulo=subtitulo only %}
   </div>
-  <button type="button" class="btn-primary-mine" data-bs-toggle="modal" data-bs-target="#modalNuevoEstado" style="white-space: nowrap">
+  <button type="button" class="btn-primary-mine tipo_estado_list__style-1" data-bs-toggle="modal" data-bs-target="#modalNuevoEstado">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
       <circle cx="12" cy="12" r="10" />
       <line x1="12" y1="8" x2="12" y2="16" />
@@ -32,35 +32,33 @@
           <th>Nombre</th>
           <th>Categoría</th>
           <th>Impacto disponibilidad</th>
-          <th style="text-align: center">Color</th>
-          <th style="text-align: center">Activo</th>
-          <th style="text-align: center">Acciones</th>
+          <th class="tipo_estado_list__style-2">Color</th>
+          <th class="tipo_estado_list__style-3">Activo</th>
+          <th class="tipo_estado_list__style-4">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for estado in estados %}
         <tr>
-          <td><span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">{{ estado.codigo }}</span></td>
-          <td style="font-weight: 600">{{ estado.nombre }}</td>
+          <td><span class="tipo_estado_list__style-5">{{ estado.codigo }}</span></td>
+          <td class="tipo_estado_list__style-6">{{ estado.nombre }}</td>
           <td>{{ estado.get_categoria_display|default:"—" }}</td>
-          <td style="font-size: 0.85rem; color: var(--text-muted)">
+          <td class="tipo_estado_list__style-7">
             {{ estado.get_impacto_disponibilidad_display|default:"—" }}
           </td>
-          <td style="text-align: center">
+          <td class="tipo_estado_list__style-8">
             {% if estado.color %}
-              <span data-dynamic-bg="{{ estado.color }}" 
-                    style="display:inline-block; width:20px; height:20px; border-radius:4px; border:1px solid rgba(0,0,0,.12); vertical-align:middle;"
-                    title="{{ estado.color }}"></span>
+              <span data-dynamic-bg="{{ estado.color }}" class="tipo_estado_list__style-9" title="{{ estado.color }}"></span>
             {% else %}—{% endif %}
           </td>
-          <td style="text-align: center">
+          <td class="tipo_estado_list__style-10">
             {% if estado.activo %}
               <span class="badge-state badge-aprobada">Activo</span>
             {% else %}
               <span class="badge-state badge-rechazada">Inactivo</span>
             {% endif %}
           </td>
-          <td style="text-align: center">
+          <td class="tipo_estado_list__style-11">
             {% url 'mantenimiento:tipo_estado_editar' estado.pk as editar_url %}
             {% include "mantenimiento/partials/_action_icon_button.html" with href=editar_url title="Editar" icon="edit" %}
           </td>
@@ -79,7 +77,7 @@
       <div class="modal-header">
         <div>
           <h5 class="modal-title mb-1" id="modalNuevoEstadoLabel">Nuevo Tipo de Estado</h5>
-          <p class="mb-0 text-muted" style="font-size: 0.85rem;">Registra un estado sin salir de la lista.</p>
+          <p class="mb-0 text-muted tipo_estado_list__style-12">Registra un estado sin salir de la lista.</p>
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>

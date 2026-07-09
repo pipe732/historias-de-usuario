@@ -209,10 +209,10 @@
   <!-- ── Bottom bar: bell + user icon buttons (right-aligned) ── -->
   <div class="nav-bottom">
     <hr class="opacity-10 mx-3 my-0">
-    <div style="display:flex;align-items:center;justify-content:flex-end;gap:.5rem;padding:.5rem .75rem;">
+    <div class="aside_admin__style-1">
 
       <!-- Bell notification button -->
-      <div id="aside-notif-widget" style="display:inline-flex;align-items:center;position:relative;">
+      <div id="aside-notif-widget" class="aside_admin__style-2">
         <button id="aside-notif-btn" type="button" aria-label="Notificaciones" aria-expanded="false"
           style="display:flex;align-items:center;justify-content:center;
                  width:2.2rem;height:2.2rem;
@@ -243,7 +243,7 @@
       </div>
 
       <!-- Circular user avatar dropup -->
-      <div class="dropup" style="display:inline-flex;align-items:center;">
+      <div class="dropup aside_admin__style-3">
         <button type="button"
           style="display:flex;align-items:center;justify-content:center;
                  width:2.2rem;height:2.2rem;
@@ -258,31 +258,27 @@
           onmouseover="this.style.opacity='.85';this.style.transform='scale(1.06)';"
           onmouseout="this.style.opacity='1';this.style.transform='scale(1)';">
           {% with nombre=request.session.usuario_nombre|default:"Inv" %}
-          <span style="font-family:var(--font-ui);font-size:.72rem;font-weight:700;color:#fff;">
+          <span class="aside_admin__style-4">
             {{ nombre|slice:":2"|upper }}
           </span>
           {% endwith %}
         </button>
 
-        <ul class="dropdown-menu dropdown-menu-end shadow"
-          style="background:rgba(15,23,42,.95);backdrop-filter:blur(16px);
-                 border:1px solid rgba(255,255,255,.1);border-radius:.75rem;min-width:180px;">
+        <ul class="dropdown-menu dropdown-menu-end shadow aside_admin__style-5">
           <li>
-            <span class="dropdown-item-text small" style="color:rgba(255,255,255,.5);">
+            <span class="dropdown-item-text small aside_admin__style-6">
               <i class="bi bi-shield-check me-1"></i>
               {{ request.session.usuario_rol|default:"Sin rol" }}
             </span>
           </li>
-          <li><hr class="dropdown-divider" style="border-color:rgba(255,255,255,.08);"></li>
+          <li><hr class="dropdown-divider aside_admin__style-7"></li>
           <li>
-            <a class="dropdown-item d-flex align-items-center gap-2"
-               href="{% url 'perfil' %}" style="color:rgba(255,255,255,.8);border-radius:.5rem;">
+            <a class="dropdown-item d-flex align-items-center gap-2 aside_admin__style-8" href="{% url 'perfil' %}">
               <i class="bi bi-person"></i> Mi perfil
             </a>
           </li>
           <li>
-            <a class="dropdown-item d-flex align-items-center gap-2 text-danger"
-               href="{% url 'logout' %}" style="border-radius:.5rem;">
+            <a class="dropdown-item d-flex align-items-center gap-2 text-danger aside_admin__style-9" href="{% url 'logout' %}">
               <i class="bi bi-box-arrow-right"></i> Cerrar sesión
             </a>
           </li>
