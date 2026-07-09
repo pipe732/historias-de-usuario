@@ -59,47 +59,39 @@ def configuracion_view(request):
         almacenamiento = request.POST.get("almacenamiento", "nube")
 
         # Si el usuario quiere cambiar a local y actualmente está en la nube, sincronizamos
+        sincronizado_ok = False
         if almacenamiento == "local" and almacenamiento_actual == "nube":
-            db_path = settings.BASE_DIR / "db.sqlite3"
-            if db_path.exists():
-                db_path.unlink()
-
-            call_command("migrate", database="local_db")
-
-            dump_path = settings.BASE_DIR / "neon_dump.json"
-            with open(dump_path, "w", encoding="utf-8") as f:
-                call_command(
-                    "dumpdata",
-                    database="neon_db",
-                    exclude=[
-                        "contenttypes",
-                        "auth.Permission",
-                        "sessions.session",
-                    ],
-                    indent=2,
-                    stdout=f,
+            try:
+                from migrar_db import migrate as run_db_migration
+                run_db_migration()
+                sincronizado_ok = True
+            except Exception as e:
+                messages.error(
+                    request,
+                    f"Error al sincronizar datos desde la nube: {e}. Se cambió de entorno pero la BD local podría estar incompleta."
                 )
-
-            call_command("loaddata", dump_path, database="local_db")
-
-            if dump_path.exists():
-                dump_path.unlink()
 
         _actualizar_env("DB_ENGINE", almacenamiento)
         _forzar_recarga()
 
-        # Cierra sesión para que el admin entre con la nueva BD activa
-        request.session.flush()
-
         nombre_bd = (
             "Local (SQLite)" if almacenamiento == "local" else "Nube (Neon PostgreSQL)"
         )
-        messages.success(
-            request,
-            f" Base de datos cambiada a {nombre_bd}. "
-            "Espera 3 segundos e inicia sesión nuevamente.",
-        )
-        return redirect("login")
+
+        if almacenamiento == "local" and almacenamiento_actual == "nube" and sincronizado_ok:
+            messages.success(
+                request,
+                f"Base de datos cambiada a {nombre_bd} y sincronizada con éxito. Sesión mantenida activa."
+            )
+            return redirect("home")
+        else:
+            # Cierra sesión para que el admin entre con la nueva BD activa
+            request.session.flush()
+            messages.success(
+                request,
+                f" Base de datos cambiada a {nombre_bd}. Espera 3 segundos e inicia sesión nuevamente.",
+            )
+            return redirect("login")
 
     class Config:
         pass
