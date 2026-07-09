@@ -232,7 +232,7 @@ function rchLimpiarError() {
       var sel  = e.seleccionado !== undefined ? e.seleccionado : true;
       var esc  = e.escaneado    || false;
       var cant = e.cantDevolver !== undefined ? e.cantDevolver : it.cantidad;
-      var serialTxt = it.serial ? ' &nbsp;·&nbsp; <span style="color:var(--navy);opacity:.8;">SN: ' + it.serial + '</span>' : '';
+      var serialTxt = '';
       var rowCls = 'dev-item-row' + (esc ? ' dev-item-scanned' : (sel ? ' dev-item-sel' : ''));
       var chkMark = sel ? '<svg width="8" height="7" viewBox="0 0 11 9" fill="none"><path d="M1 4L4.5 7.5L10 1.5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '';
       var escBadge = esc ? '<span style="font-size:.62rem;background:rgba(22,163,74,.1);color:#15803d;padding:.08rem .38rem;border-radius:6px;font-weight:700;border:1px solid rgba(22,163,74,.2);">✓ Escaneado</span>' : '';

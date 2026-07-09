@@ -310,7 +310,7 @@
         <a href="{% url 'prestamo_usuario' %}" class="btn-ghost extracted-style-179">Ver todos</a>
       </div>
       <div class="table-responsive">
-        <tableborder class="table-app datatable-disabled w-100"-collapse:collapse; font-size:.86rem;">
+        <table class="table table-app datatable-disabled w-100" style="border-collapse:collapse;font-size:.86rem;">
           <thead>
             <tr>
               <th>#</th>
@@ -354,16 +354,16 @@
               </td>
               <td>
                 {% if p.fecha_vencimiento %}
-                  <span class="badge state-vencido">
+                  <span class="loan-date-cell">
                     {{ p.fecha_vencimiento|date:"d/m/Y" }}
                     {% if p.dias_restantes is not None and p.dias_restantes >= 0 %}
-                      <br><span class="extracted-style-186">({{ p.dias_restantes }}d)</span>
+                      <br><span class="loan-days-ok">({{ p.dias_restantes }}d)</span>
                     {% elif p.dias_restantes is not None and p.dias_restantes < 0 %}
-                      <br><span class="extracted-style-187">Venció</span>
+                      <br><span class="loan-days-late">Venció</span>
                     {% endif %}
                   </span>
                 {% else %}
-                  <span class="extracted-style-188">—</span>
+                  <span class="loan-date-empty">—</span>
                 {% endif %}
               </td>
               <td class="extracted-style-189">

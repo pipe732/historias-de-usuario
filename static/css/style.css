@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
+
 /* ═══════════════════════════════════════════════════════
    MINE INVENTORY — style.css
    Paleta:
@@ -6,7 +8,7 @@
      --rust   #98473E  acento principal
      --navy   #04294f  header
      --dark   #1B2021  sidebar / fondo profundo
-═══════════════════════════════════════════════════════ */
+ ═══════════════════════════════════════════════════════ */
 
 :root {
   --cream: #EFECCA;
@@ -22,13 +24,28 @@
   --border-color: rgba(27, 32, 33, .09);
   --header-h: 56px;
   --aside-w: 232px;
-  --font-ui: 'Inter', sans-serif;
+  --font-ui: 'Inter', 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-title: 'Space Grotesk', 'Montserrat', sans-serif;
   --font-mono: 'Share Tech Mono', monospace;
   --radius-sm: .35rem;
   --radius-md: .6rem;
   --radius-lg: .85rem;
   --shadow-sm: 0 2px 8px rgba(27, 32, 33, .06);
   --shadow-md: 0 8px 24px rgba(27, 32, 33, .08);
+}
+
+/* --- Global Font Overrides --- */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6,
+button, .btn, .button,
+input[type="submit"], input[type="button"],
+.brand-text, .page-title, .field-lbl, .sel-btn, .tab-btn, .btn-submit,
+.logo-name, .logo-sup, .corner-note {
+  font-family: var(--font-title) !important;
+}
+
+body, input, select, textarea, table, .table, td, th, .form-control, .form-select, .mine-input {
+  font-family: var(--font-ui) !important;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -43,6 +60,78 @@
     --dark: #121212;
   }
 }
+
+/* ════════════════════════════════════
+   FORM VALIDATION ICONS  (fv-wrap)
+════════════════════════════════════ */
+.fv-wrap {
+  position: relative;
+  display: block;
+}
+
+.fv-icon {
+  position: absolute;
+  top: 50%;
+  right: .65rem;
+  transform: translateY(-50%);
+  width: 1.1rem;
+  height: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 4;
+  transition: opacity .18s;
+}
+
+/* textarea: anclar arriba */
+.fv-wrap:has(textarea) .fv-icon {
+  top: .75rem;
+  transform: none;
+}
+
+.fv-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.fv-icon--ok  { color: #22c55e; filter: drop-shadow(0 0 4px rgba(34,197,94,.35)); }
+.fv-icon--err { color: #ef4444; }
+
+.fv-valid   { border-color: #22c55e !important; box-shadow: 0 0 0 2.5px rgba(34,197,94,.15) !important; }
+.fv-invalid { border-color: #ef4444 !important; box-shadow: 0 0 0 2.5px rgba(239,68,68,.13) !important; }
+
+.fv-wrap input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),
+.fv-wrap select,
+.fv-wrap textarea {
+  padding-right: 2.2rem !important;
+}
+
+@keyframes fv-pop {
+  0%   { transform: translateY(-50%) scale(.4); opacity: 0; }
+  60%  { transform: translateY(-50%) scale(1.22); opacity: 1; }
+  100% { transform: translateY(-50%) scale(1);   opacity: 1; }
+}
+@keyframes fv-pop-top {
+  0%   { transform: scale(.4); opacity: 0; }
+  60%  { transform: scale(1.22); opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+@keyframes fv-shake {
+  0%,100% { transform: translateY(-50%) translateX(0); }
+  20%     { transform: translateY(-50%) translateX(-3px); }
+  40%     { transform: translateY(-50%) translateX( 3px); }
+  60%     { transform: translateY(-50%) translateX(-2px); }
+  80%     { transform: translateY(-50%) translateX( 2px); }
+}
+
+.fv-icon--pop { animation: fv-pop .32s cubic-bezier(.34,1.56,.64,1) both; }
+.fv-wrap:has(textarea) .fv-icon--pop { animation: fv-pop-top .32s cubic-bezier(.34,1.56,.64,1) both; }
+.fv-icon--err { animation: fv-shake .35s ease both; }
+
+body.dark-mode .fv-valid   { border-color: #16a34a !important; box-shadow: 0 0 0 2.5px rgba(22,163,74,.2)  !important; }
+body.dark-mode .fv-invalid { border-color: #dc2626 !important; box-shadow: 0 0 0 2.5px rgba(220,38,38,.18) !important; }
 
 *,
 *::before,
@@ -730,6 +819,59 @@ tbody tr:last-child td {
 }
 
 /* ════════════════════════════════════
+   LOAN DATE CELLS (tabla préstamos usuario)
+════════════════════════════════════ */
+.loan-date-cell {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.4;
+}
+
+.loan-days-ok {
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  font-weight: 700;
+  color: #1a7a40;          /* verde claro-mode */
+}
+
+.loan-days-late {
+  font-family: var(--font-ui);
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--rust);
+}
+
+.loan-date-empty {
+  color: var(--text-muted);
+  font-size: .82rem;
+}
+
+/* ── Dark mode overrides ── */
+body.dark-mode .loan-date-cell {
+  color: rgba(239,236,202,.85);
+}
+body.dark-mode .loan-days-ok {
+  color: #4ec97b;          /* verde más brillante */
+}
+body.dark-mode .loan-days-late {
+  color: #e07a6e;
+}
+body.dark-mode .loan-date-empty {
+  color: rgba(239,236,202,.38);
+}
+
+/* ── Light mode (acc-widget) overrides ── */
+body.light-mode .loan-date-cell {
+  color: #1B2021;
+}
+body.light-mode .loan-days-ok {
+  color: #166534;
+}
+
+/* ════════════════════════════════════
    MODAL
 ════════════════════════════════════ */
 .modal-content {
@@ -824,7 +966,7 @@ tbody tr:last-child td {
   height: 44px;
   border-radius: 50%;
   background: var(--navy);
-  color: var(--cream);
+  color: #EFECCA !important;
   border: 2px solid rgba(255, 255, 255, .15);
   cursor: pointer;
   display: flex;
@@ -1761,11 +1903,9 @@ body.dark-mode .icon-box-critical {
 }
 
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600&display=swap');
-
 body.auth-page {
   display: flex;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-ui);
   background: #111212;
   color: #1B2021;
   height: 100vh;
@@ -1942,7 +2082,7 @@ body.auth-page .tab-btn {
   background: transparent;
   border-radius: 7px;
   padding: 0.5rem 1rem;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-title);
   font-size: 13px;
   font-weight: 500;
   color: #71816D;
@@ -1985,7 +2125,7 @@ body.auth-page .sel-btn {
   border-radius: 8px 0 0 8px !important;
   padding: 0 0.8rem;
   height: 42px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-title);
   font-size: 13px;
   font-weight: 600;
   color: #1B2021;
@@ -2035,7 +2175,7 @@ body.auth-page .mine-input {
   border: 1px solid rgba(27, 32, 33, 0.18) !important;
   border-radius: 0 8px 8px 0 !important;
   padding: 0 1rem !important;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-ui);
   font-size: 14px;
   color: #1B2021;
   background: #fff !important;
@@ -2051,7 +2191,7 @@ body.auth-page .mine-input.full {
 }
 
 body.auth-page select.mine-input {
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: var(--font-ui) !important;
   font-size: 14px !important;
   color: #1B2021 !important;
   border-radius: 8px !important;
@@ -2084,7 +2224,7 @@ body.auth-page .btn-submit {
   border: none;
   border-radius: 8px;
   padding: 0.82rem 1rem;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-title);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -7062,3 +7202,106 @@ body.dark-mode aside hr {
 .perfil__style-40 { font-family:var(--font-ui);font-weight:600;font-size:.88rem;                color:var(--text-main); }
 .perfil__style-41 { font-family:var(--font-ui);font-size:.76rem;color:var(--text-muted);                margin-top:.1rem; }
 .perfil__style-42 { flex-shrink:0; }
+
+/* User sidebar bottom layout improvements */
+.aside-user-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  padding: .5rem .75rem;
+}
+
+.aside-user-notif-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  background: var(--navy);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity .15s, transform .15s;
+  position: relative;
+}
+
+.aside-user-notif-btn:hover {
+  opacity: .85;
+  transform: scale(1.06);
+}
+
+.aside-user-notif-badge {
+  display: none;
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: #fff;
+  color: var(--navy);
+  font-size: .55rem;
+  font-weight: 900;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.aside-user-dropup-container {
+  display: inline-flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.aside-user-dropup-btn {
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  border-radius: .5rem !important;
+  color: #fff !important;
+  font-size: .82rem !important;
+  cursor: pointer !important;
+}
+
+.aside-user-avatar {
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: .7rem;
+}
+
+.aside-user-dropdown-menu {
+  background: rgba(15,23,42,.95) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,.1) !important;
+  border-radius: .75rem !important;
+  min-width: 180px !important;
+}
+
+/* ── Dropdown item text colors inside dark sidebar menus ── */
+.aside-user-dropdown-menu .dropdown-item-text {
+  color: rgba(255,255,255,.45) !important;
+}
+
+.aside-user-dropdown-menu .dropdown-item {
+  color: rgba(255,255,255,.82) !important;
+  border-radius: .5rem;
+  transition: background .15s, color .15s;
+}
+
+.aside-user-dropdown-menu .dropdown-item:hover,
+.aside-user-dropdown-menu .dropdown-item:focus {
+  background: rgba(255,255,255,.08) !important;
+  color: #fff !important;
+}
+
+.aside-user-dropdown-menu .dropdown-item.text-danger,
+.aside-user-dropdown-menu .dropdown-item.text-danger:hover {
+  color: #f87171 !important;
+}
+
+.aside-user-dropdown-menu .dropdown-divider {
+  border-color: rgba(255,255,255,.08) !important;
+}
+

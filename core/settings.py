@@ -184,10 +184,10 @@ if EMAIL_HOST_USER:
     EMAIL_HOST = "smtp.gmail.com"
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+    DEFAULT_FROM_EMAIL = f"MINE Inventory <{EMAIL_HOST_USER}>"
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-    DEFAULT_FROM_EMAIL = "no-reply@mineinventory.com"
+    DEFAULT_FROM_EMAIL = "MINE Inventory <no-reply@mineinventory.com>"
 
 
 # ─────────────────────────────────────────────────────────────
