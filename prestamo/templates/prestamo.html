@@ -260,7 +260,7 @@
           <th>Estado</th>
           <th>Fecha</th>
           <th>Vencimiento</th>
-          <th style="text-align:center;">Acciones</th>
+          <th class="text-center">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -332,7 +332,7 @@
               <span style="color:var(--text-muted); font-size:.8rem;">—</span>
             {% endif %}
           </td>
-          <td style="text-align:center;">
+          <td class="text-center">
             <div style="display:flex; align-items:center; justify-content:center; gap:.3rem; flex-wrap:wrap;">
               {% if p.estado == 'pendiente' %}
               <button type="button" class="btn-ghost btn-aprobar-solicitud"
@@ -713,7 +713,7 @@
           </div>
 
           {# PASO 2 #}
-          <div id="step-2" class="wizard-step" style="display:none;">
+          <div id="step-2" class="wizard-step" class="d-none">
             <div style="font-family:var(--font-mono); font-size:.65rem; letter-spacing:.13em;
                         text-transform:uppercase; color:var(--navy);
                         border-bottom:1px solid rgba(9,77,146,.18);
@@ -773,7 +773,7 @@
           </div>
 
           {# PASO 3 #}
-          <div id="step-3" class="wizard-step" style="display:none;">
+          <div id="step-3" class="wizard-step" class="d-none">
             <div style="font-family:var(--font-mono); font-size:.65rem; letter-spacing:.13em;
                         text-transform:uppercase; color:var(--navy);
                         border-bottom:1px solid rgba(9,77,146,.18);
@@ -811,7 +811,7 @@
           </div>
 
           {# PASO 4 — RESUMEN con scroll interno #}
-          <div id="step-4" class="wizard-step" style="display:none;">
+          <div id="step-4" class="wizard-step" class="d-none">
             <div style="font-family:var(--font-mono); font-size:.65rem; letter-spacing:.13em;
                         text-transform:uppercase; color:var(--navy);
                         border-bottom:1px solid rgba(9,77,146,.18);
@@ -860,7 +860,7 @@
         {# Footer SIEMPRE fijo al fondo #}
         <div class="modal-footer" style="flex-shrink:0; border-top:1px solid var(--border-color);">
           <button type="button" class="btn-outline-mine" id="btn-cancel" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn-outline-mine" id="btn-prev" style="display:none;">
+          <button type="button" class="btn-outline-mine" id="btn-prev" class="d-none">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="15 18 9 12 15 6"/>
             </svg>

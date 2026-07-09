@@ -4,6 +4,15 @@
    ═══════════════════════════════════════════ */
 $(document).ready(function () {
   if ($('#almacenes-table').length) {
+    // Extraer y remover la fila de estado vacío (evita warning TN/4)
+    var emptyStateAlmacenes = '';
+    $('#almacenes-table tbody tr').each(function () {
+      if ($(this).find('td').length === 1 && $(this).find('td').attr('colspan')) {
+        emptyStateAlmacenes = $(this).find('td').html();
+        $(this).remove();
+      }
+    });
+
     $('#almacenes-table').DataTable({
       responsive: true,
       dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6"f>>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
@@ -18,6 +27,9 @@ $(document).ready(function () {
       pageLength: 10,
       lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
       drawCallback: function (settings) {
+        if (settings.aiDisplay.length === 0 && emptyStateAlmacenes) {
+          $(this).find('.dataTables_empty').html(emptyStateAlmacenes);
+        }
         // Re-initialize Bootstrap tooltips inside the table after redraw
         var tooltipTriggerList = this.api().table().container().querySelectorAll('[data-bs-toggle="tooltip"]');
         var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => {
@@ -28,6 +40,15 @@ $(document).ready(function () {
   }
 
   if ($('#estantes-table').length) {
+    // Extraer y remover la fila de estado vacío (evita warning TN/4)
+    var emptyStateEstantes = '';
+    $('#estantes-table tbody tr').each(function () {
+      if ($(this).find('td').length === 1 && $(this).find('td').attr('colspan')) {
+        emptyStateEstantes = $(this).find('td').html();
+        $(this).remove();
+      }
+    });
+
     $('#estantes-table').DataTable({
       responsive: true,
       dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6"f>>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
@@ -42,6 +63,9 @@ $(document).ready(function () {
       pageLength: 10,
       lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
       drawCallback: function (settings) {
+        if (settings.aiDisplay.length === 0 && emptyStateEstantes) {
+          $(this).find('.dataTables_empty').html(emptyStateEstantes);
+        }
         // Re-initialize Bootstrap tooltips inside the table after redraw
         var tooltipTriggerList = this.api().table().container().querySelectorAll('[data-bs-toggle="tooltip"]');
         var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => {

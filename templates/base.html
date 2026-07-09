@@ -7,14 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mina inventory</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600;700&display=swap"
     rel="stylesheet">
   <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=6">
 {% block css %}{% endblock css %}
 </head>
 
@@ -55,11 +55,11 @@
     </div>
   </div>
 
-  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'js/accesibilidad.js' %}"></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="{% static 'js/datatables.min.js' %}"></script>
-  <script src="{% static 'js/datatables-init.js' %}"></script>
+  <script defer src="{% static 'js/bootstrap.bundle.min.js' %}?v=3"></script>
+  <script defer src="{% static 'js/accesibilidad.js' %}?v=3"></script>
+  <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
+  <script defer src="{% static 'js/datatables-init.js' %}?v=3"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var overlay = document.getElementById('page-loading-overlay');

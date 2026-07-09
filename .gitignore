@@ -5,13 +5,8 @@ db.sqlite3
 db.sqlite3-journal
 media
 
-# Django Migrations
-**/migrations/*.py
-!**/migrations/__init__.py
-
 # Assets
 node_modules/
-
 
 # Environments
 .env
@@ -29,6 +24,20 @@ __pycache__/
 *.pyd
 .Python
 
+# Static files recolectados (se regeneran con collectstatic)
+staticfiles/
 
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
 
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Empaquetado
+*.egg-info/
 

@@ -21,7 +21,7 @@
       </div>
 
       <div class="left-content img-container-center">
-        <img src="{% static 'img/fondo.png' %}" alt="Campus SENA Centro Minero" />
+        <img loading="lazy" src="{% static 'img/fondo.png' %}" alt="Campus SENA Centro Minero" />
       </div>
 
       <div class="left-content">
@@ -32,7 +32,7 @@
     <div class="right-panel">
       <div class="logo-row">
         <div class="logo-box">
-          <img src="{% static 'img/Logo-del-sena-Verde-150x150-removebg-preview.png' %}" alt="SENA" />
+          <img loading="lazy" src="{% static 'img/Logo-del-sena-Verde-150x150-removebg-preview.png' %}" alt="SENA" />
         </div>
         <div>
           <div class="logo-sup">Centro Minero · SENA</div>
@@ -73,7 +73,7 @@
           <span class="field-lbl">Documento</span>
           <input type="hidden" id="tipo_documento" name="tipo_documento" value="CC" />
           <div class="input-group-mine">
-            <div style="position:relative;">
+            <div class="extracted-style-394">
               <button type="button" class="sel-btn" id="doc-tipo-btn">CC ▾</button>
               <div class="doc-dropdown" id="docDropdown">
                 <a href="#" data-value="CC">CC – Cédula de Ciudadanía</a>
@@ -102,7 +102,7 @@
       <div class="version-text">MINE Inventory</div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'js/usuario.js' %}"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="{% static 'js/usuario.js' %}?v=3"></script>
   </body>
 </html>

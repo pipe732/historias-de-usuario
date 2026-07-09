@@ -6,42 +6,38 @@
 <!-- ══ CABECERA ══ -->
 <div class="d-flex align-items-center justify-content-between mb-4">
   <div>
-    <h5 style="font-family:var(--font-ui); font-weight:700; font-size:1rem;
-               color:var(--text-main); letter-spacing:.03em; margin:0;">
+    <h5 class="extracted-style-13">
       Reportes
     </h5>
-    <p style="font-family:var(--font-ui); font-size:.8rem; color:var(--text-muted); margin:0;">
+    <p class="extracted-style-14">
       Genera y descarga reportes en PDF o Excel de cada módulo
     </p>
   </div>
 </div>
 
 <!-- CSRF token oculto para JS -->
-<form style="display:none">{% csrf_token %}</form>
+<form class="extracted-style-57">{% csrf_token %}</form>
 
 <!-- ══ TOAST ══ -->
-<div id="toastWrap" style="position:fixed;top:1.2rem;right:1.4rem;z-index:99998;"></div>
+<div class="extracted-style-329" id="toastWrap"></div>
 
 <!-- ══ MÓDULOS ══ -->
 <div class="row g-3 mb-5">
   {% for slug, label, icon, desc in modulos %}
   <div class="col-12 col-sm-6 col-lg-4">
-    <div class="card h-100" style="border-radius:var(--radius-lg); transition:box-shadow .2s;"
+    <div class="card h-100 extracted-style-330"
          onmouseover="this.style.boxShadow='0 6px 24px rgba(27,32,33,.13)'"
          onmouseout="this.style.boxShadow=''">
-      <div class="card-body d-flex flex-column gap-3" style="padding:1.3rem;">
+      <div class="card-body d-flex flex-column gap-3 extracted-style-331">
 
         <!-- Ícono + nombre -->
         <div class="d-flex align-items-center gap-3">
-          <div style="width:42px;height:42px;border-radius:10px;
-                      background:rgba(9,77,146,.08);border:1px solid rgba(9,77,146,.14);
-                      display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="bi {{ icon }}" style="font-size:1.15rem;color:var(--navy);"></i>
+          <div class="extracted-style-332">
+            <i class="bi {{ icon }} extracted-style-333"></i>
           </div>
           <div>
-            <div style="font-family:var(--font-ui);font-weight:700;font-size:.95rem;
-                        color:var(--text-main);">{{ label }}</div>
-            <div style="font-family:var(--font-ui);font-size:.75rem;color:var(--text-muted);">
+            <div class="extracted-style-334">{{ label }}</div>
+            <div class="extracted-style-335">
               {{ desc }}
             </div>
           </div>
@@ -49,22 +45,12 @@
 
         <!-- Botones de descarga -->
         <div class="d-flex gap-2 mt-auto">
-          <button class="btn-reporte flex-fill"
-                  data-modulo="{{ slug }}" data-formato="pdf"
-                  style="background:rgba(152,71,62,.08);border:1px solid rgba(152,71,62,.2);
-                         color:var(--rust);border-radius:var(--radius-sm);padding:.42rem .6rem;
-                         font-family:var(--font-ui);font-weight:700;font-size:.8rem;
-                         cursor:pointer;transition:background .15s;display:flex;
-                         align-items:center;justify-content:center;gap:.35rem;">
+          <button class="btn-reporte flex-fill extracted-style-336"
+                  data-modulo="{{ slug }}" data-formato="pdf">
             <i class="bi bi-file-earmark-pdf"></i> PDF
           </button>
-          <button class="btn-reporte flex-fill"
-                  data-modulo="{{ slug }}" data-formato="excel"
-                  style="background:rgba(9,77,146,.07);border:1px solid rgba(9,77,146,.18);
-                         color:var(--navy);border-radius:var(--radius-sm);padding:.42rem .6rem;
-                         font-family:var(--font-ui);font-weight:700;font-size:.8rem;
-                         cursor:pointer;transition:background .15s;display:flex;
-                         align-items:center;justify-content:center;gap:.35rem;">
+          <button class="btn-reporte flex-fill extracted-style-337"
+                  data-modulo="{{ slug }}" data-formato="excel">
             <i class="bi bi-file-earmark-excel"></i> Excel
           </button>
         </div>
@@ -79,19 +65,16 @@
 <div class="card table-card">
   <div class="card-header d-flex align-items-center justify-content-between">
     <span class="card-title">
-      <i class="bi bi-clock-history" style="color:var(--rust);"></i>
+      <i class="bi bi-clock-history extracted-style-338"></i>
       Historial de reportes generados
     </span>
-    <span id="badgeHistorial"
-          style="font-family:var(--font-mono);font-size:.72rem;
-                 background:rgba(9,77,146,.1);color:var(--navy);
-                 padding:.18rem .6rem;border-radius:20px;border:1px solid rgba(9,77,146,.2);">
+    <span class="extracted-style-339" id="badgeHistorial">
       {{ historial|length }} registro{{ historial|length|pluralize:",s" }}
     </span>
   </div>
 
   <div class="table-responsive">
-    <table class="table-app" style="width:100%;border-collapse:collapse;font-size:.9rem;">
+    <table class="table-app w-100" style="border-collapse:collapse;font-size:.9rem;">
       <thead>
         <tr>
           <th>#</th>
@@ -106,35 +89,31 @@
       <tbody id="tbodyHistorial">
         {% for r in historial %}
         <tr>
-          <td><span style="font-family:var(--font-mono);font-size:.78rem;color:var(--text-muted);">#{{ r.pk }}</span></td>
-          <td style="font-weight:600;">{{ r.get_modulo_display }}</td>
+          <td><span class="extracted-style-340">#{{ r.pk }}</span></td>
+          <td class="extracted-style-25">{{ r.get_modulo_display }}</td>
           <td>
             {% if r.formato == 'pdf' %}
-              <span style="background:rgba(152,71,62,.1);color:var(--rust);font-family:var(--font-mono);
-                           font-size:.72rem;padding:.15rem .55rem;border-radius:20px;
-                           border:1px solid rgba(152,71,62,.2);">PDF</span>
+              <span class="extracted-style-341">PDF</span>
             {% else %}
-              <span style="background:rgba(9,77,146,.08);color:var(--navy);font-family:var(--font-mono);
-                           font-size:.72rem;padding:.15rem .55rem;border-radius:20px;
-                           border:1px solid rgba(9,77,146,.18);">EXCEL</span>
+              <span class="extracted-style-342">EXCEL</span>
             {% endif %}
           </td>
-          <td style="font-family:var(--font-mono);font-size:.78rem;color:var(--text-muted);">
+          <td class="extracted-style-340">
             {{ r.nombre_archivo }}
           </td>
           <td>{{ r.generado_por }}</td>
-          <td style="font-family:var(--font-mono);">{{ r.total_registros }}</td>
-          <td style="font-family:var(--font-mono);font-size:.82rem;color:var(--text-muted);">
+          <td class="extracted-style-225">{{ r.total_registros }}</td>
+          <td class="extracted-style-343">
             {{ r.fecha_generado|date:"d/m/Y H:i" }}
           </td>
         </tr>
         {% empty %}
         <tr id="rowEmpty">
-          <td colspan="7" style="text-align:center;padding:3rem 1rem;">
-            <i class="bi bi-clock-history" style="font-size:2rem;opacity:.2;display:block;margin-bottom:.5rem;"></i>
-            <p style="font-family:var(--font-ui);color:var(--text-muted);font-size:.88rem;margin:0;">
+          <td colspan="7" class="text-center" style="padding:3rem 1rem;">
+            <i class="bi bi-clock-history extracted-style-344"></i>
+            <p class="extracted-style-345">
               Aún no se han generado reportes.<br>
-              <span style="font-size:.8rem;">Selecciona un módulo arriba para empezar.</span>
+              <span class="extracted-style-51">Selecciona un módulo arriba para empezar.</span>
             </p>
           </td>
         </tr>
@@ -154,8 +133,7 @@
   function showSpinner(btn, label) {
     btn.disabled = true;
     btn._original = btn.innerHTML;
-    btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status"
-                          style="width:12px;height:12px;border-width:2px;"></span> ${label}…`;
+    btn.innerHTML = `<span class="spinner-border spinner-border-sm extracted-style-346" role="status"></span> ${label}…`;
   }
   function hideSpinner(btn) {
     btn.disabled = false;
@@ -169,11 +147,7 @@
     const icon  = type === 'ok' ? 'bi-check-circle' : 'bi-exclamation-circle';
     const el = document.createElement('div');
     el.innerHTML = `
-      <div style="background:${color};color:#fff;padding:.65rem 1rem;
-                  border-radius:var(--radius-md);box-shadow:0 4px 18px rgba(0,0,0,.25);
-                  font-family:var(--font-ui);font-size:.88rem;font-weight:600;
-                  display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;
-                  animation:slideIn .2s ease;">
+      <div class="extracted-style-347">
         <i class="bi ${icon}"></i> ${msg}
       </div>`;
     document.getElementById('toastWrap').prepend(el);
@@ -186,23 +160,19 @@
     if (empty) empty.remove();
 
     const badge = data.formato === 'pdf'
-      ? `<span style="background:rgba(152,71,62,.1);color:var(--rust);font-family:var(--font-mono);
-                      font-size:.72rem;padding:.15rem .55rem;border-radius:20px;
-                      border:1px solid rgba(152,71,62,.2);">PDF</span>`
-      : `<span style="background:rgba(9,77,146,.08);color:var(--navy);font-family:var(--font-mono);
-                      font-size:.72rem;padding:.15rem .55rem;border-radius:20px;
-                      border:1px solid rgba(9,77,146,.18);">EXCEL</span>`;
+      ? `<span class="extracted-style-348">PDF</span>`
+      : `<span class="extracted-style-349">EXCEL</span>`;
 
     const tr = document.createElement('tr');
     tr.style.animation = 'fadeIn .35s ease';
     tr.innerHTML = `
-      <td><span style="font-family:var(--font-mono);font-size:.78rem;color:var(--text-muted);">#${data.id}</span></td>
-      <td style="font-weight:600;">${data.modulo_label}</td>
+      <td><span class="extracted-style-340">#${data.id}</span></td>
+      <td class="extracted-style-25">${data.modulo_label}</td>
       <td>${badge}</td>
-      <td style="font-family:var(--font-mono);font-size:.78rem;color:var(--text-muted);">${data.filename}</td>
+      <td class="extracted-style-340">${data.filename}</td>
       <td>${data.generado_por}</td>
-      <td style="font-family:var(--font-mono);">${data.total}</td>
-      <td style="font-family:var(--font-mono);font-size:.82rem;color:var(--text-muted);">${data.fecha}</td>`;
+      <td class="extracted-style-225">${data.total}</td>
+      <td class="extracted-style-343">${data.fecha}</td>`;
 
     const tbody = document.getElementById('tbodyHistorial');
     tbody.prepend(tr);

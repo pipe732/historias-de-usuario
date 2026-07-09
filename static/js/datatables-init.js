@@ -9,6 +9,18 @@ window.registrarExportacion = function (modulo, formato, totalRegistros) {
     if (match) csrfToken = match[1];
   }
 
+  // Mostrar estado de carga usando SweetAlert2
+  if (typeof Swal !== 'undefined') {
+    Swal.fire({
+      title: 'Procesando...',
+      text: 'Registrando exportación',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+  }
+
   $.ajax({
     url: '/reportes/registrar-exportacion/',
     type: 'POST',
@@ -19,9 +31,13 @@ window.registrarExportacion = function (modulo, formato, totalRegistros) {
       csrfmiddlewaretoken: csrfToken
     },
     success: function (response) {
+      if (typeof Swal !== 'undefined') Swal.close();
       console.log('Exportación registrada en historial:', response);
     },
     error: function (xhr, status, error) {
+      if (typeof Swal !== 'undefined') {
+        Swal.fire('Error', 'No se pudo registrar la exportación', 'error');
+      }
       console.error('Error al registrar exportación:', error);
     }
   });
@@ -99,6 +115,15 @@ $(document).ready(function () {
     else if (id.includes('almacen') || id.includes('estante')) moduloName = 'almacenamiento';
     else if (id.includes('usuario')) moduloName = 'usuarios';
 
+    // Extraer y remover la fila de estado vacío (evita warning TN/4)
+    var emptyStateHtml = '';
+    $(this).find('tbody tr').each(function () {
+      if ($(this).find('td').length === 1 && $(this).find('td').attr('colspan')) {
+        emptyStateHtml = $(this).find('td').html();
+        $(this).remove();
+      }
+    });
+
     $(this).DataTable({
       responsive: true,
       dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6"f>>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
@@ -110,6 +135,9 @@ $(document).ready(function () {
       lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
       order: [],
       drawCallback: function (settings) {
+        if (settings.aiDisplay.length === 0 && emptyStateHtml) {
+          $(this).find('.dataTables_empty').html(emptyStateHtml);
+        }
         var tooltipTriggerList = this.api().table().container().querySelectorAll('[data-bs-toggle="tooltip"]');
         var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => {
           return bootstrap.Tooltip.getOrCreateInstance(tooltipTriggerEl);

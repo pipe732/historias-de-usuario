@@ -5,37 +5,51 @@
 $(document).ready(function () {
   var childRows = {};
 
-  // Extraer y remover las filas de detalle antes de inicializar la tabla
+  // ─── PASO 1: extraer las filas de detalle ANTES de que DataTables
+  //            las cuente como filas de datos (evita el warning TN/4).
   $('#devoluciones-table tbody tr.detail-row').each(function () {
     var id = $(this).attr('id');
-    childRows[id] = $(this).html();
-    $(this).remove();
+    childRows[id] = $(this).clone();   // guardamos el nodo completo
+    $(this).remove();                  // lo sacamos del DOM
   });
 
-  // Inicializar DataTable
+  // Extraer y remover la fila de estado vacío (evita warning TN/4)
+  var emptyStateHtml = '';
+  $('#devoluciones-table tbody tr').each(function () {
+    if ($(this).find('td').length === 1 && $(this).find('td').attr('colspan')) {
+      emptyStateHtml = $(this).find('td').html();
+      $(this).remove();
+    }
+  });
+
+  // ─── PASO 2: inicializar DataTable sobre el tbody ya limpio
   var table = $('#devoluciones-table').DataTable({
     responsive: true,
-    dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6"f>>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
+    dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6"f>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
     buttons: window.obtenerBotonesDataTable('devoluciones'),
     language: {
       url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
     },
     order: [],
     columnDefs: [
-      { orderable: false, targets: [0, 4, 6] } // expand (0), items count (4), actions (6) no ordenables
+      // col 0 = chevron expand, col 4 = ítems count, col 6 = acciones
+      { orderable: false, targets: [0, 4, 6] }
     ],
     pageLength: 10,
     lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
     drawCallback: function (settings) {
-      // Re-inicializar tooltips dentro de la tabla
-      var tooltipTriggerList = this.api().table().container().querySelectorAll('[data-bs-toggle="tooltip"]');
-      var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => {
-        return bootstrap.Tooltip.getOrCreateInstance(tooltipTriggerEl);
+      if (settings.aiDisplay.length === 0 && emptyStateHtml) {
+        $(this).find('.dataTables_empty').html(emptyStateHtml);
+      }
+      var tooltipTriggerList = this.api().table().container()
+        .querySelectorAll('[data-bs-toggle="tooltip"]');
+      [...tooltipTriggerList].forEach(function (el) {
+        bootstrap.Tooltip.getOrCreateInstance(el);
       });
     }
   });
 
-  // Manejar clic en el botón de expandir
+  // ─── PASO 3: manejar clic en el botón de expandir
   $('#devoluciones-table').on('click', '.btn-toggle-details', function (e) {
     e.preventDefault();
     var btn = $(this);
@@ -48,31 +62,27 @@ $(document).ready(function () {
       tr.removeClass('shown');
       btn.find('.row-chevron').css('transform', 'rotate(0deg)');
     } else {
-      var content = childRows[targetId];
-      row.child(content).show();
-      row.child().find('td').attr('colspan', 7).css('padding', '0');
+      var $detail = childRows[targetId];
+      if ($detail) {
+        row.child($detail.find('td').first().html()).show();
+        row.child().find('td').attr('colspan', 7).css('padding', '0');
+      }
       tr.addClass('shown');
       btn.find('.row-chevron').css('transform', 'rotate(90deg)');
     }
   });
 
-  // Manejar clic delegados en el botón de Aceptar devolución (para que funcione con paginación/búsqueda de DataTable)
+  // ─── Clic delegado: Aceptar devolución
   $('#devoluciones-table').on('click', '.btn-aceptar-click', function (e) {
     e.preventDefault();
     var btn = $(this);
-    var pk = btn.attr('data-pk');
-    var prestamoPk = btn.attr('data-prestamo-pk');
-    var usuario = btn.attr('data-usuario');
-    abrirAceptar(pk, prestamoPk, usuario);
+    abrirAceptar(btn.attr('data-pk'), btn.attr('data-prestamo-pk'), btn.attr('data-usuario'));
   });
 
-  // Manejar clic delegados en el botón de Rechazar devolución (para que funcione con paginación/búsqueda de DataTable)
+  // ─── Clic delegado: Rechazar devolución
   $('#devoluciones-table').on('click', '.btn-rechazar-click', function (e) {
     e.preventDefault();
     var btn = $(this);
-    var pk = btn.attr('data-pk');
-    var prestamoPk = btn.attr('data-prestamo-pk');
-    var usuario = btn.attr('data-usuario');
-    abrirRechazar(pk, prestamoPk, usuario);
+    abrirRechazar(btn.attr('data-pk'), btn.attr('data-prestamo-pk'), btn.attr('data-usuario'));
   });
 });

@@ -283,7 +283,7 @@
       </div>
 
       <!-- Pestaña 2: Contraseña -->
-      <div class="modal-tab-panel" id="tab-password" style="display:none;">
+      <div class="modal-tab-panel" id="tab-password" class="d-none">
         <form method="post" action="{% url 'perfil' %}" novalidate>
           {% csrf_token %}
           <input type="hidden" name="accion" value="cambiar_password">
@@ -357,7 +357,7 @@
       </div>
 
       <!-- Pestaña 3: Notificaciones -->
-      <div class="modal-tab-panel" id="tab-config" style="display:none;">
+      <div class="modal-tab-panel" id="tab-config" class="d-none">
         <form method="post" action="{% url 'perfil' %}" novalidate>
           {% csrf_token %}
           <input type="hidden" name="accion" value="guardar_config">
