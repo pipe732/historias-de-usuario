@@ -95,16 +95,15 @@
   </div>
 
   <div class="table-responsive">
-    <tableborder class="table-app datatable-disabled w-100"-collapse: collapse; font-size: 0.9rem"
-    >
+    <table class="table-app datatable-disabled w-100" style="border-collapse: collapse; font-size: 0.9rem">
       <thead>
         <tr>
           <th>Nombre</th>
           <th>Descripción</th>
-          <th class="text-center"width: 100px">Color</th>
-          <th class="text-center"width: 80px">Usado en</th>
-          <th class="text-center"width: 80px">Activo</th>
-          <th class="text-center"width: 120px">Acciones</th>
+          <th class="text-center" style="width: 100px">Color</th>
+          <th class="text-center" style="width: 80px">Usado en</th>          
+          <th class="text-center" style="width: 80px">Activo</th>
+          <th class="text-center" style="width: 120px">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -122,7 +121,7 @@
             ></span>
             {% else %}—{% endif %}
           </td>
-          <td class="text-center"font-family: var(--font-mono); font-size: 0.85rem">
+          <td class="text-center" style="font-family: var(--font-mono); font-size: 0.85rem">
             {{ tipo.mantenimientos.count }}
           </td>
           <td class="text-center">
@@ -184,7 +183,7 @@
     <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-outline-secondary">Anterior</a>
     {% endif %}
 
-    <span class="d-flex"align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+    <span class="d-flex" style="align-items: center; gap: 0.5rem; font-size: 0.9rem;">
       Página <strong>{{ page_obj.number }}</strong> de <strong>{{ page_obj.paginator.num_pages }}</strong>
     </span>
 
