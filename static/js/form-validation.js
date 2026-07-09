@@ -17,6 +17,12 @@
     '[type="radio"]',
     '.dt-search input',           /* DataTables search */
     '.dataTables_filter input',
+    '.dt-length select',          /* DataTables length */
+    '.dataTables_length select',
+    '.dt-container input',        /* Broad DataTables escape */
+    '.dt-container select',
+    '.dataTables_wrapper input',
+    '.dataTables_wrapper select',
     '[id^="dt-"]',
     '.sol-del-btn',
     '.btn-close',
@@ -171,6 +177,10 @@
   function isValidatable(field) {
     var tag = field.tagName && field.tagName.toLowerCase();
     if (!tag || !['input', 'select', 'textarea'].includes(tag)) return false;
+    
+    /* Skip DataTables explicitly (their layouts break easily) */
+    if (field.closest('.dt-container') || field.closest('.dataTables_wrapper')) return false;
+
     for (var i = 0; i < SKIP_SELECTORS.length; i++) {
       try { if (field.matches(SKIP_SELECTORS[i])) return false; } catch (ex) {}
     }

@@ -117,9 +117,55 @@
     color: var(--text-muted);
     margin-top: 2px;
   }
+  @keyframes bell-ring {
+    0%, 100% { transform: rotate(0); }
+    20%, 60% { transform: rotate(-15deg); }
+    40%, 80% { transform: rotate(15deg); }
+  }
+  @keyframes badge-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+  .bell-ring-anim { animation: bell-ring .6s ease-in-out; }
+  .badge-pulse-anim { animation: badge-pulse .6s ease-in-out; }
 </style>
 
 <script>
+  window.localNotifications = window.localNotifications || [];
+
+  window.addNotification = function(title, desc, icon, color) {
+    window.localNotifications.unshift({
+      titulo: title,
+      desc: desc,
+      icono: icon || 'info-circle',
+      color: color || 'var(--navy)'
+    });
+    
+    var notifBtn = document.getElementById('aside-notif-btn');
+    var bellBadge = document.getElementById('aside-notif-badge');
+    
+    if(notifBtn) {
+       notifBtn.classList.add('bell-ring-anim');
+       setTimeout(function() { notifBtn.classList.remove('bell-ring-anim'); }, 1500);
+       
+       var badge = document.getElementById('aside-notif-badge');
+       if (badge) {
+         var current = parseInt(badge.textContent) || 0;
+         badge.textContent = current + 1;
+         badge.style.display = 'inline-flex';
+       }
+    }
+    
+    if (window._loadNotifications) window._loadNotifications();
+  };
+
+  /* Override global alert */
+  var originalAlert = window.alert;
+  window.alert = function(msg) {
+    window.addNotification('Alerta del sistema', msg, 'exclamation-triangle-fill', '#ef4444');
+  };
+
   document.addEventListener('DOMContentLoaded', function () {
     var notifBtn = document.getElementById('aside-notif-btn');
     var notifPanel = document.getElementById('aside-notif-panel');
@@ -127,20 +173,19 @@
     var notifRefresh = document.getElementById('aside-notif-refresh');
     var refreshIcon = document.getElementById('aside-refresh-icon');
 
-    function toggleNotifPanel() {
+    function toggleNotifPanel(forceOpen) {
       if (!notifPanel || !notifBtn) return;
       var isHidden = notifPanel.classList.contains('d-none');
-      if (isHidden) {
+      if (isHidden || forceOpen === true) {
         notifPanel.classList.remove('d-none');
         notifPanel.classList.add('d-flex');
         notifBtn.setAttribute('aria-expanded', 'true');
         loadNotifications();
-      } else {
-        notifPanel.classList.remove('d-flex');
-        notifPanel.classList.add('d-none');
-        notifBtn.setAttribute('aria-expanded', 'false');
+      } else if (!forceOpen) {
+        closeNotifPanel();
       }
     }
+    window._toggleNotifPanel = toggleNotifPanel;
 
     function closeNotifPanel() {
       if (!notifPanel || !notifBtn) return;
@@ -170,7 +215,10 @@
           loading.classList.add('d-none');
           if (refreshIcon) refreshIcon.style.animation = '';
 
-          var total = data.total || 0;
+          var serverItems = data.items || [];
+          var allItems = window.localNotifications.concat(serverItems);
+          var total = allItems.length;
+
           if (total > 0) {
             if (bellBadge) {
               bellBadge.textContent = total;
@@ -188,9 +236,9 @@
           var now = new Date();
           if (ts) ts.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-          if (data.items && data.items.length > 0) {
+          if (total > 0) {
             empty.classList.add('d-none');
-            data.items.forEach(function (item) {
+            allItems.forEach(function (item) {
               var row = document.createElement('a');
               row.href = item.url || '#';
               row.className = 'aside-notif-row';
@@ -215,10 +263,29 @@
         .catch(function (err) {
           console.error("Error loading notifications:", err);
           loading.classList.add('d-none');
-          empty.classList.remove('d-none');
+          
+          /* Mostrar al menos las locales si falló la red */
+          if (window.localNotifications.length > 0) {
+            window.localNotifications.forEach(function (item) {
+              var row = document.createElement('a');
+              row.href = item.url || '#';
+              row.className = 'aside-notif-row';
+              row.innerHTML =
+                '<div class="flex-shrink-0"><i class="aside-notif-row-icon bi bi-' + (item.icono || 'bell') + '"></i></div>' +
+                '<div class="aside-notif-row-body">' +
+                  '<div class="aside-notif-row-title">' + escapeHtml(item.titulo) + '</div>' +
+                  '<div class="aside-notif-row-desc">' + escapeHtml(item.desc) + '</div>' +
+                '</div>';
+              if (item.color) row.querySelector('.aside-notif-row-icon').style.color = item.color;
+              list.appendChild(row);
+            });
+          } else {
+            empty.classList.remove('d-none');
+          }
           if (refreshIcon) refreshIcon.style.animation = '';
         });
     }
+    window._loadNotifications = loadNotifications;
 
     function escapeHtml(str) {
       if (!str) return '';
@@ -249,6 +316,39 @@
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') closeNotifPanel();
+    });
+
+    /* Scrape global Django messages and push them locally */
+    document.querySelectorAll('.alert-dismissible, .scrape-notif').forEach(function(alertEl) {
+      // First try to find a span which usually contains the message
+      var span = alertEl.querySelector('span:not(.btn-close):not([aria-hidden])');
+      var text = span ? span.textContent.trim() : '';
+
+      if (!text || text.length < 2) {
+        // Fallback to direct text nodes
+        text = Array.from(alertEl.childNodes)
+          .filter(node => node.nodeType === 3)
+          .map(node => node.textContent.trim())
+          .join(' ');
+      }
+      
+      if (!text || text.length < 2) {
+         // Final fallback if structured differently
+         text = alertEl.textContent.replace(/Cerrar|×/gi, '').trim().replace(/\s+/g, ' ');
+      }
+
+      if (text) {
+        var isError = alertEl.classList.contains('alert-danger') || alertEl.classList.contains('error');
+        var isWarning = alertEl.classList.contains('warning-notif');
+        
+        var title = isError ? 'Aviso del sistema' : (isWarning ? 'Acción requerida' : 'Operación exitosa');
+        var icon = isError ? 'exclamation-octagon-fill' : (isWarning ? 'exclamation-triangle-fill' : 'check-circle-fill');
+        var color = isError ? '#ef4444' : (isWarning ? '#c4900a' : '#22c55e');
+
+        window.addNotification(title, text, icon, color);
+        // Completely remove original alert from DOM to defeat !important CSS classes (like .d-flex)
+        alertEl.remove();
+      }
     });
 
     // Initial load for badge count
