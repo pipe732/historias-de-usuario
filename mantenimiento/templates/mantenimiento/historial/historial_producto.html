@@ -25,7 +25,7 @@ Historial — {{ producto.nombre }}
   </div>
 
   <div class="table-responsive">
-    <tableborder class="table-app datatable-disabled w-100"-collapse: collapse; font-size: 0.9rem">
+    <table class="table-app datatable-disabled w-100" style="border-collapse: collapse; font-size: 0.9rem">
       <thead>
         <tr>
           <th>Fecha</th>
@@ -47,7 +47,7 @@ Historial — {{ producto.nombre }}
           </td>
           <td>
             {% if m.tipo_mantenimiento %}
-              <span class="badge-state extracted-style-86"#6c757d' }}; color:#fff;">
+              <span class="badge-state extracted-style-86" style="background:{{ m.tipo_mantenimiento.color|default:'#6c757d' }}; color:#fff;">
                 {{ m.tipo_mantenimiento.nombre }}
               </span>
             {% else %}
