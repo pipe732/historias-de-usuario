@@ -35,37 +35,33 @@
 </div>
 
 {# ══ KPI CARDS ══ #}
-<div class="row g-3 mb-4">
-  <div class="col-6 col-md-3">
-    <div class="card h-100 p-3">
-      <div class="font-monospace text-uppercase text-muted mb-1 extracted-style-315">Total
-      </div>
-      <div class="font-monospace fw-bold lh-1 extracted-style-316">{{ total_prestamos }}</div>
-      <div class="text-muted mt-1 extracted-style-317">solicitados</div>
+<div class="row g-2 mb-4 flex-nowrap overflow-auto" style="padding-bottom: 0.5rem;">
+  <div class="col" style="min-width: 120px;">
+    <div class="card h-100 p-2">
+      <div class="font-monospace text-uppercase text-muted mb-1 extracted-style-315" style="font-size: 0.75rem;">Total</div>
+      <div class="font-monospace fw-bold lh-1 extracted-style-316" style="font-size: 1.5rem;">{{ total_prestamos }}</div>
+      <div class="text-muted mt-1 extracted-style-317" style="font-size: 0.7rem;">solicitados</div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="card h-100 p-3">
-      <div class="font-monospace text-uppercase text-muted mb-1 extracted-style-315">Activos
-      </div>
-      <div class="font-monospace fw-bold text-primary lh-1 extracted-style-316">{{ total_activos }}</div>
-      <div class="text-muted mt-1 extracted-style-317">en tu poder</div>
+  <div class="col" style="min-width: 120px;">
+    <div class="card h-100 p-2">
+      <div class="font-monospace text-uppercase text-muted mb-1 extracted-style-315" style="font-size: 0.75rem;">Activos</div>
+      <div class="font-monospace fw-bold text-primary lh-1 extracted-style-316" style="font-size: 1.5rem;">{{ total_activos }}</div>
+      <div class="text-muted mt-1 extracted-style-317" style="font-size: 0.7rem;">en tu poder</div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="card h-100 p-3 {% if proximos_vencer > 0 %}border-warning{% endif %}">
-      <div class="font-monospace text-uppercase text-muted mb-1 extracted-style-315">Próx.
-        vencer</div>
-      <div class="font-monospace fw-bold lh-1 {% if proximos_vencer > 0 %}text-warning{% endif %} prestamo_usuario__style-1">{{ proximos_vencer }}</div>
-      <div class="text-muted mt-1 extracted-style-317">en 3 días</div>
+  <div class="col" style="min-width: 120px;">
+    <div class="card h-100 p-2 {% if proximos_vencer > 0 %}border-warning{% endif %}">
+      <div class="font-monospace text-uppercase text-muted mb-1 extracted-style-315" style="font-size: 0.75rem;">Próx. vencer</div>
+      <div class="font-monospace fw-bold lh-1 {% if proximos_vencer > 0 %}text-warning{% endif %} extracted-style-316" style="font-size: 1.5rem;">{{ proximos_vencer }}</div>
+      <div class="text-muted mt-1 extracted-style-317" style="font-size: 0.7rem;">en 3 días</div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="card h-100 p-3 {% if vencidos_count > 0 %}border-danger{% endif %}">
-      <div class="font-monospace text-uppercase text-muted mb-1 extracted-style-315">
-        Vencidos</div>
-      <div class="font-monospace fw-bold lh-1 {% if vencidos_count > 0 %}text-danger{% endif %} prestamo_usuario__style-2">{{ vencidos_count }}</div>
-      <div class="text-muted mt-1 extracted-style-317">requieren atención</div>
+  <div class="col" style="min-width: 120px;">
+    <div class="card h-100 p-2 {% if vencidos_count > 0 %}border-danger{% endif %}">
+      <div class="font-monospace text-uppercase text-muted mb-1 extracted-style-315" style="font-size: 0.75rem;">Vencidos</div>
+      <div class="font-monospace fw-bold lh-1 {% if vencidos_count > 0 %}text-danger{% endif %} extracted-style-316" style="font-size: 1.5rem;">{{ vencidos_count }}</div>
+      <div class="text-muted mt-1 extracted-style-317" style="font-size: 0.7rem;">requieren atención</div>
     </div>
   </div>
 </div>
@@ -169,7 +165,7 @@
 
         {# ── Fila principal ── #}
         <tr
-          class="pu-row {% if p.estado == 'pendiente' %}table-warning{% elif p.urgencia == 'vencido' or p.estado == 'vencido' %}table-danger{% endif %}"
+          class="pu-row"
           data-estado="{{ p.estado }}">
 
           {# Chevron #}
@@ -201,26 +197,19 @@
 
           <td>
             {% if p.estado == 'pendiente' %}
-            <span class="badge bg-warning-subtle text-warning-emphasis d-inline-flex align-items-center gap-1">
-              <span class="rounded-circle bg-warning d-inline-block extracted-style-319"></span>
-              Pendiente
-            </span>
+            <span class="badge-state badge-pendiente">Pendiente</span>
             {% elif p.estado == 'activo' %}
-            <span class="badge bg-success-subtle text-success-emphasis d-inline-flex align-items-center gap-1">
-              <span class="rounded-circle bg-success d-inline-block extracted-style-319"></span>
-              Activo
-            </span>
+            <span class="badge-state badge-aprobada">Activo</span>
             {% elif p.estado == 'parcial' %}
-            <span class="badge bg-warning-subtle text-warning-emphasis">Parcial</span>
+            <span class="badge-state badge-pendiente">Parcial</span>
             {% elif p.estado == 'devuelto' %}
-            <span class="badge bg-primary-subtle text-primary d-inline-flex align-items-center gap-1">
-              <span class="rounded-circle bg-primary d-inline-block extracted-style-319"></span>
-              Devuelto
-            </span>
+            <span class="badge-state badge-aprobada">Devuelto</span>
             {% elif p.estado == 'vencido' %}
-            <span class="badge bg-danger-subtle text-danger">Vencido</span>
+            <span class="badge-state badge-rechazada">Vencido</span>
             {% elif p.estado == 'rechazado' %}
-            <span class="badge bg-danger-subtle text-danger">Rechazado</span>
+            <span class="badge-state badge-rechazada">Rechazado</span>
+            {% else %}
+            <span class="badge-state">{{ p.estado }}</span>
             {% endif %}
           </td>
 

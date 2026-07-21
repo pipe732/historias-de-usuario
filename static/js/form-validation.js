@@ -37,8 +37,8 @@
     var parent = field.parentElement;
     if (!parent) return;
 
-    /* No wrappear dentro de input-groups de Bootstrap (se ve mal) */
-    if (parent.classList.contains('input-group')) {
+    /* No wrappear dentro de input-groups de Bootstrap o personalizados (se ve mal) */
+    if (parent.classList.contains('input-group') || parent.classList.contains('input-group-mine')) {
       parent.classList.add('fv-wrap');
       return;
     }
@@ -130,11 +130,17 @@
     var icon = getIcon(field);
     if (!icon) return;
 
+    var wrap = field.closest('.fv-wrap');
+
     if (valid === true) {
       icon.className = 'fv-icon fv-icon--ok fv-icon--pop';
       icon.innerHTML = SVG_CHECK;
       field.classList.remove('fv-invalid');
       field.classList.add('fv-valid');
+      if (wrap && wrap.classList.contains('input-group-mine')) {
+        wrap.classList.remove('fv-invalid');
+        wrap.classList.add('fv-valid');
+      }
       /* Quitar clase de animación al finalizar */
       icon.addEventListener('animationend', function () {
         icon.classList.remove('fv-icon--pop');
@@ -144,11 +150,18 @@
       icon.innerHTML = SVG_X;
       field.classList.remove('fv-valid');
       field.classList.add('fv-invalid');
+      if (wrap && wrap.classList.contains('input-group-mine')) {
+        wrap.classList.remove('fv-valid');
+        wrap.classList.add('fv-invalid');
+      }
     } else {
       /* Neutro: borrar */
       icon.className = 'fv-icon';
       icon.innerHTML = '';
       field.classList.remove('fv-valid', 'fv-invalid');
+      if (wrap && wrap.classList.contains('input-group-mine')) {
+        wrap.classList.remove('fv-valid', 'fv-invalid');
+      }
     }
   }
 

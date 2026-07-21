@@ -4,7 +4,6 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
-from django.core.management import call_command
 from django.conf import settings
 from usuario.decorators import admin_required
 
@@ -70,6 +69,16 @@ def configuracion_view(request):
                     request,
                     f"Error al sincronizar datos desde la nube: {e}. Se cambió de entorno pero la BD local podría estar incompleta."
                 )
+        elif almacenamiento == "nube" and almacenamiento_actual == "local":
+            try:
+                from migrar_db import migrate_local_to_cloud
+                migrate_local_to_cloud()
+                sincronizado_ok = True
+            except Exception as e:
+                messages.error(
+                    request,
+                    f"Error al sincronizar datos hacia la nube: {e}. Se cambió de entorno pero la BD en la nube podría estar incompleta."
+                )
 
         _actualizar_env("DB_ENGINE", almacenamiento)
         _forzar_recarga()
@@ -78,7 +87,7 @@ def configuracion_view(request):
             "Local (SQLite)" if almacenamiento == "local" else "Nube (Neon PostgreSQL)"
         )
 
-        if almacenamiento == "local" and almacenamiento_actual == "nube" and sincronizado_ok:
+        if sincronizado_ok:
             messages.success(
                 request,
                 f"Base de datos cambiada a {nombre_bd} y sincronizada con éxito. Sesión mantenida activa."
@@ -110,7 +119,6 @@ def probar_conexion_neon(request):
     try:
         import psycopg2
         import environ
-        from django.conf import settings
         env = environ.Env()
         environ.Env.read_env(settings.BASE_DIR / ".env")
 

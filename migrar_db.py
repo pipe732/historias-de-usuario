@@ -112,5 +112,75 @@ def migrate():
     
     print("\nMigration finished successfully!")
 
+def migrate_local_to_cloud():
+    database_url = read_env("DATABASE_URL")
+    if not database_url:
+        print("Error: DATABASE_URL not found in .env")
+        raise Exception("DATABASE_URL not found")
+        
+    print("Connecting to Neon Tech PostgreSQL...")
+    pg_conn = psycopg2.connect(database_url)
+    pg_cursor = pg_conn.cursor()
+    
+    print(f"Connecting to local SQLite database at {SQLITE_PATH}...")
+    lite_conn = sqlite3.connect(str(SQLITE_PATH))
+    lite_cursor = lite_conn.cursor()
+    
+    # Disable foreign key checks in PG for this session
+    try:
+        pg_cursor.execute("SET session_replication_role = 'replica';")
+    except Exception as e:
+        print(f"Warning: Could not set session_replication_role: {e}")
+        pg_conn.rollback()
+
+    lite_cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
+    tables = [row[0] for row in lite_cursor.fetchall()]
+    
+    print(f"Found {len(tables)} tables to migrate to cloud.")
+    
+    for table in tables:
+        print(f"Migrating table: {table}...")
+        
+        try:
+            pg_cursor.execute(f'DELETE FROM "{table}";')
+        except Exception as e:
+            print(f"  Warning: Table {table} delete failed: {e}")
+            pg_conn.rollback()
+            continue
+            
+        lite_cursor.execute(f'SELECT * FROM "{table}";')
+        columns = [desc[0] for desc in lite_cursor.description]
+        rows = lite_cursor.fetchall()
+        
+        if not rows:
+            print(f"  No records to copy.")
+            continue
+            
+        col_names = ", ".join([f'"{col}"' for col in columns])
+        placeholders = ", ".join(["%s" for _ in columns])
+        insert_query = f'INSERT INTO "{table}" ({col_names}) VALUES ({placeholders});'
+        
+        try:
+            pg_cursor.executemany(insert_query, rows)
+            print(f"  Successfully copied {len(rows)} rows.")
+        except Exception as e:
+            print(f"  Error inserting into {table}: {e}")
+            pg_conn.rollback()
+            continue
+            
+    # Reset role
+    try:
+        pg_cursor.execute("SET session_replication_role = 'origin';")
+    except Exception:
+        pg_conn.rollback()
+        
+    pg_conn.commit()
+    pg_cursor.close()
+    pg_conn.close()
+    lite_cursor.close()
+    lite_conn.close()
+    
+    print("\nMigration to cloud finished successfully!")
+
 if __name__ == "__main__":
     migrate()
