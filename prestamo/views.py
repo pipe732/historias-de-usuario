@@ -57,6 +57,8 @@ def prestamo_usuario_view(request):
 
     productos_disponibles = Producto.objects.filter(stock__gt=0).order_by('nombre')
 
+    pendientes_aprobacion = all_prestamos.filter(estado='pendiente').count()
+
     context = {
         'usuario':               usuario,
         'all_prestamos':         all_prestamos,
@@ -65,6 +67,7 @@ def prestamo_usuario_view(request):
         'vencidos_count':        vencidos_count,
         'proximos_vencer':       proximos_vencer,
         'productos_disponibles': productos_disponibles,
+        'pendientes_aprobacion': pendientes_aprobacion,
     }
 
 
@@ -434,6 +437,8 @@ def prestamos_view(request):
         fecha_vencimiento__gte=hoy,
     ).count()
 
+    prestamos_pendientes = Prestamo.objects.filter(estado='pendiente').count()
+
     context = {
         'form':                 form,
         'prestamos':            prestamos,
@@ -443,6 +448,7 @@ def prestamos_view(request):
         'productos_json':       productos_json,
         'total_prestamos':      total_prestamos,
         'prestamos_activos':    prestamos_activos,
+        'prestamos_pendientes': prestamos_pendientes,
         'prestamos_devueltos':  prestamos_devueltos,
         'prestamos_vencidos':   prestamos_vencidos,
         'proximos_vencer':      proximos_vencer,

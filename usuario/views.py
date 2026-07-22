@@ -6,7 +6,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password, make_password
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from django.conf import settings
 from django.utils.crypto import get_random_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -150,7 +152,8 @@ def registro_view(request):
     ctx_base = {
         'roles':           ROLES,
         'tipo_documento':  'CC',
-        'username':        '',
+        'first_name':      '',
+        'last_name':       '',
         'email':           '',
         'documento':       '',
         'numero_ficha':    '',
@@ -158,7 +161,8 @@ def registro_view(request):
     }
 
     if request.method == 'POST':
-        username        = request.POST.get('username', '').strip()
+        first_name      = request.POST.get('first_name', '').strip()
+        last_name       = request.POST.get('last_name', '').strip()
         email           = request.POST.get('email', '').strip().lower()
         tipo_documento  = request.POST.get('tipo_documento', '').strip().upper()
         documento       = request.POST.get('documento', '').strip()
@@ -170,7 +174,8 @@ def registro_view(request):
 
         ctx = {
             **ctx_base,
-            'username':        username,
+            'first_name':      first_name,
+            'last_name':       last_name,
             'email':           email,
             'tipo_documento':  tipo_documento,
             'documento':       documento,
@@ -178,7 +183,7 @@ def registro_view(request):
             'nombre_programa': nombre_programa,
         }
 
-        if not all([username, email, tipo_documento, documento, password1, password2]):
+        if not all([first_name, last_name, email, tipo_documento, documento, password1, password2]):
             messages.error(request, 'Completa todos los campos obligatorios.')
             return render(request, 'registro.html', ctx)
 
@@ -203,6 +208,7 @@ def registro_view(request):
             messages.error(request, 'El correo ya está registrado.')
             return render(request, 'registro.html', ctx)
 
+        username = f"{first_name} {last_name}".strip()
         usuario = Usuario(
             numero_documento=documento,
             nombre_completo=username,
@@ -265,20 +271,21 @@ def olvido_contrasena_view(request):
         )
 
         try:
-            send_mail(
+            html_content = render_to_string('email_recuperacion.html', {
+                'nombre': usuario.nombre_completo,
+                'link': link,
+            })
+            text_content = strip_tags(html_content)
+
+            correo = EmailMultiAlternatives(
                 subject='Recuperación de contraseña – SENA Centro Minero',
-                message=(
-                    f'Hola {usuario.nombre_completo},\n\n'
-                    f'Haz clic en el siguiente enlace para cambiar tu contraseña:\n\n'
-                    f'{link}\n\n'
-                    'Este enlace expira en 15 minutos.\n\n'
-                    'Si no solicitaste esto, ignora este mensaje.\n\n'
-                    'SENA – Centro Minero · Regional Boyacá'
-                ),
+                body=text_content,
                 from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[email],
-                fail_silently=False,
+                to=[email],
             )
+            correo.attach_alternative(html_content, "text/html")
+            correo.send(fail_silently=False)
+
             messages.success(request, 'Te enviamos un enlace a tu correo. Tienes 15 minutos para usarlo.')
         except Exception as e:
             # Registrar el error real en consola/logs para poder diagnosticarlo

@@ -35,39 +35,33 @@
 </div>
 
 {# ══ KPI CARDS ══ #}
-<div class="row g-3 mb-4">
-  <div class="col-6 col-md-3">
-    <div class="card h-100 p-3">
-      <div class="font-monospace text-uppercase text-muted mb-1" style="font-size:.62rem; letter-spacing:.12em;">Total
-      </div>
-      <div class="font-monospace fw-bold lh-1" style="font-size:1.55rem;">{{ total_prestamos }}</div>
-      <div class="text-muted mt-1" style="font-size:.72rem;">solicitados</div>
+<div class="row g-2 mb-4 flex-nowrap overflow-auto" style="padding-bottom: 0.5rem;">
+  <div class="col" style="min-width: 120px;">
+    <div class="card h-100 p-2">
+      <div class="font-monospace text-uppercase text-muted mb-1 extracted-style-315" style="font-size: 0.75rem;">Total</div>
+      <div class="font-monospace fw-bold lh-1 extracted-style-316" style="font-size: 1.5rem;">{{ total_prestamos }}</div>
+      <div class="text-muted mt-1 extracted-style-317" style="font-size: 0.7rem;">solicitados</div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="card h-100 p-3">
-      <div class="font-monospace text-uppercase text-muted mb-1" style="font-size:.62rem; letter-spacing:.12em;">Activos
-      </div>
-      <div class="font-monospace fw-bold text-primary lh-1" style="font-size:1.55rem;">{{ total_activos }}</div>
-      <div class="text-muted mt-1" style="font-size:.72rem;">en tu poder</div>
+  <div class="col" style="min-width: 120px;">
+    <div class="card h-100 p-2">
+      <div class="font-monospace text-uppercase text-muted mb-1 extracted-style-315" style="font-size: 0.75rem;">Activos</div>
+      <div class="font-monospace fw-bold text-primary lh-1 extracted-style-316" style="font-size: 1.5rem;">{{ total_activos }}</div>
+      <div class="text-muted mt-1 extracted-style-317" style="font-size: 0.7rem;">en tu poder</div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="card h-100 p-3 {% if proximos_vencer > 0 %}border-warning{% endif %}">
-      <div class="font-monospace text-uppercase text-muted mb-1" style="font-size:.62rem; letter-spacing:.12em;">Próx.
-        vencer</div>
-      <div class="font-monospace fw-bold lh-1 {% if proximos_vencer > 0 %}text-warning{% endif %}"
-        style="font-size:1.55rem;">{{ proximos_vencer }}</div>
-      <div class="text-muted mt-1" style="font-size:.72rem;">en 3 días</div>
+  <div class="col" style="min-width: 120px;">
+    <div class="card h-100 p-2 {% if proximos_vencer > 0 %}border-warning{% endif %}">
+      <div class="font-monospace text-uppercase text-muted mb-1 extracted-style-315" style="font-size: 0.75rem;">Próx. vencer</div>
+      <div class="font-monospace fw-bold lh-1 {% if proximos_vencer > 0 %}text-warning{% endif %} extracted-style-316" style="font-size: 1.5rem;">{{ proximos_vencer }}</div>
+      <div class="text-muted mt-1 extracted-style-317" style="font-size: 0.7rem;">en 3 días</div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="card h-100 p-3 {% if vencidos_count > 0 %}border-danger{% endif %}">
-      <div class="font-monospace text-uppercase text-muted mb-1" style="font-size:.62rem; letter-spacing:.12em;">
-        Vencidos</div>
-      <div class="font-monospace fw-bold lh-1 {% if vencidos_count > 0 %}text-danger{% endif %}"
-        style="font-size:1.55rem;">{{ vencidos_count }}</div>
-      <div class="text-muted mt-1" style="font-size:.72rem;">requieren atención</div>
+  <div class="col" style="min-width: 120px;">
+    <div class="card h-100 p-2 {% if vencidos_count > 0 %}border-danger{% endif %}">
+      <div class="font-monospace text-uppercase text-muted mb-1 extracted-style-315" style="font-size: 0.75rem;">Vencidos</div>
+      <div class="font-monospace fw-bold lh-1 {% if vencidos_count > 0 %}text-danger{% endif %} extracted-style-316" style="font-size: 1.5rem;">{{ vencidos_count }}</div>
+      <div class="text-muted mt-1 extracted-style-317" style="font-size: 0.7rem;">requieren atención</div>
     </div>
   </div>
 </div>
@@ -109,20 +103,20 @@
     <div class="d-flex gap-2 flex-wrap align-items-center">
       <button class="btn btn-sm btn-primary pu-filter-btn" data-filter="todos" onclick="puFiltrar('todos', this)">
         Todos
-        <span class="badge bg-primary-subtle text-primary ms-1 font-monospace" style="font-size:.65rem;">{{ total_prestamos }}</span>
+        <span class="badge bg-primary-subtle text-primary ms-1 font-monospace extracted-style-318">{{ total_prestamos }}</span>
       </button>
       <button class="btn btn-sm btn-outline-secondary pu-filter-btn" data-filter="activo"
         onclick="puFiltrar('activo', this)">
         Activos
         {% if total_activos %}
-        <span class="badge bg-primary-subtle text-primary ms-1 font-monospace" style="font-size:.65rem;">{{ total_activos }}</span>
+        <span class="badge bg-primary-subtle text-primary ms-1 font-monospace extracted-style-318">{{ total_activos }}</span>
         {% endif %}
       </button>
       {% if pendientes_aprobacion %}
       <button class="btn btn-sm btn-outline-secondary pu-filter-btn" data-filter="pendiente"
         onclick="puFiltrar('pendiente', this)">
         Pendientes
-        <span class="badge bg-warning-subtle text-warning-emphasis ms-1 font-monospace" style="font-size:.65rem;">{{ pendientes_aprobacion }}</span>
+        <span class="badge bg-warning-subtle text-warning-emphasis ms-1 font-monospace extracted-style-318">{{ pendientes_aprobacion }}</span>
       </button>
       {% endif %}
       <button class="btn btn-sm btn-outline-secondary pu-filter-btn" data-filter="devuelto"
@@ -131,7 +125,7 @@
       <button class="btn btn-sm btn-outline-secondary pu-filter-btn" data-filter="vencido"
         onclick="puFiltrar('vencido', this)">
         Vencidos
-        <span class="badge bg-danger-subtle text-danger ms-1 font-monospace" style="font-size:.65rem;">{{ vencidos_count }}</span>
+        <span class="badge bg-danger-subtle text-danger ms-1 font-monospace extracted-style-318">{{ vencidos_count }}</span>
       </button>
       {% endif %}
     </div>
@@ -149,8 +143,7 @@
       </svg>
       Registro de préstamos
     </span>
-    <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace"
-      style="font-size:.72rem;">
+    <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace extracted-style-317">
       {{ total_prestamos }} registro{{ total_prestamos|pluralize:",s" }}
     </span>
   </div>
@@ -159,7 +152,7 @@
     <table class="table table-hover table-sm align-middle mb-0 datatable-disabled" id="pu-tabla">
       <thead class="table-light">
         <tr>
-          <th style="width:36px;"></th>
+          <th class="extracted-style-250"></th>
           <th class="font-monospace small">#</th>
           <th class="small">Herramientas</th>
           <th class="small">Estado</th>
@@ -172,15 +165,15 @@
 
         {# ── Fila principal ── #}
         <tr
-          class="pu-row {% if p.estado == 'pendiente' %}table-warning{% elif p.urgencia == 'vencido' or p.estado == 'vencido' %}table-danger{% endif %}"
+          class="pu-row"
           data-estado="{{ p.estado }}">
 
           {# Chevron #}
           <td class="ps-3">
             <button type="button" data-bs-toggle="collapse" data-bs-target="#pu-detail-{{ p.pk }}"
               class="btn btn-sm btn-link p-0 text-muted">
-              <svg class="pu-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2.5" style="transition:transform .2s;">
+              <svg class="pu-chevron extracted-style-20" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
             </button>
@@ -195,8 +188,7 @@
               {% for item in p.items.all %}
               <span
                 class="badge rounded-pill fw-semibold
-                           {% if item.devuelto %}text-success-emphasis bg-success-subtle{% else %}text-primary bg-primary-subtle{% endif %}"
-                style="font-size:.72rem;">
+                           {% if item.devuelto %}text-success-emphasis bg-success-subtle{% else %}text-primary bg-primary-subtle{% endif %} extracted-style-317">
                 {{ item.producto.nombre }} ×{{ item.cantidad }}
               </span>
               {% endfor %}
@@ -205,26 +197,19 @@
 
           <td>
             {% if p.estado == 'pendiente' %}
-            <span class="badge bg-warning-subtle text-warning-emphasis d-inline-flex align-items-center gap-1">
-              <span class="rounded-circle bg-warning d-inline-block" style="width:5px;height:5px;"></span>
-              Pendiente
-            </span>
+            <span class="badge-state badge-pendiente">Pendiente</span>
             {% elif p.estado == 'activo' %}
-            <span class="badge bg-success-subtle text-success-emphasis d-inline-flex align-items-center gap-1">
-              <span class="rounded-circle bg-success d-inline-block" style="width:5px;height:5px;"></span>
-              Activo
-            </span>
+            <span class="badge-state badge-aprobada">Activo</span>
             {% elif p.estado == 'parcial' %}
-            <span class="badge bg-warning-subtle text-warning-emphasis">Parcial</span>
+            <span class="badge-state badge-pendiente">Parcial</span>
             {% elif p.estado == 'devuelto' %}
-            <span class="badge bg-primary-subtle text-primary d-inline-flex align-items-center gap-1">
-              <span class="rounded-circle bg-primary d-inline-block" style="width:5px;height:5px;"></span>
-              Devuelto
-            </span>
+            <span class="badge-state badge-aprobada">Devuelto</span>
             {% elif p.estado == 'vencido' %}
-            <span class="badge bg-danger-subtle text-danger">Vencido</span>
+            <span class="badge-state badge-rechazada">Vencido</span>
             {% elif p.estado == 'rechazado' %}
-            <span class="badge bg-danger-subtle text-danger">Rechazado</span>
+            <span class="badge-state badge-rechazada">Rechazado</span>
+            {% else %}
+            <span class="badge-state">{{ p.estado }}</span>
             {% endif %}
           </td>
 
@@ -240,7 +225,7 @@
                            {% else %}text-muted{% endif %}">
               {{ p.fecha_vencimiento|date:"d/m/Y" }}
               {% if p.dias_restantes is not None and p.dias_restantes >= 0 %}
-              <span class="opacity-75" style="font-size:.68rem;">({{ p.dias_restantes }}d)</span>
+              <span class="opacity-75 extracted-style-260">({{ p.dias_restantes }}d)</span>
               {% endif %}
             </span>
             {% else %}
@@ -282,8 +267,7 @@
 
                   {# Ítems #}
                   <div class="col-md-6">
-                    <div class="font-monospace text-uppercase text-muted mb-2"
-                      style="font-size:.62rem; letter-spacing:.1em;">
+                    <div class="font-monospace text-uppercase text-muted mb-2 extracted-style-320">
                       Herramientas del préstamo
                     </div>
                     {% for item in p.items.all %}
@@ -292,7 +276,7 @@
                                 {% if item.devuelto %}bg-success-subtle border-success-subtle{% else %}bg-primary-subtle border-primary-subtle{% endif %}">
                       <div class="flex-grow-1">
                         <div class="fw-semibold small">{{ item.producto.nombre }}</div>
-                        <div class="font-monospace text-muted" style="font-size:.7rem;">
+                        <div class="font-monospace text-muted extracted-style-321">
                           {{ item.producto.codigo_sku }}
                           {% if item.serial_entregado %}· Serial: <strong>{{ item.serial_entregado }}</strong>{% endif %}
                         </div>
@@ -303,8 +287,7 @@
                       </div>
                       <span
                         class="badge fw-bold
-                                   {% if item.devuelto %}bg-success-subtle text-success-emphasis{% else %}bg-primary-subtle text-primary{% endif %}"
-                        style="font-size:.7rem;">
+                                   {% if item.devuelto %}bg-success-subtle text-success-emphasis{% else %}bg-primary-subtle text-primary{% endif %} extracted-style-321">
                         {% if item.devuelto %}✓ Devuelto{% else %}En préstamo{% endif %}
                       </span>
                     </div>
@@ -313,20 +296,17 @@
 
                   {# Info adicional #}
                   <div class="col-md-3">
-                    <div class="font-monospace text-uppercase text-muted mb-2"
-                      style="font-size:.62rem; letter-spacing:.1em;">
+                    <div class="font-monospace text-uppercase text-muted mb-2 extracted-style-320">
                       Detalles
                     </div>
                     <div class="d-flex flex-column gap-2 small">
                       <div>
-                        <div class="text-muted text-uppercase fw-semibold"
-                          style="font-size:.72rem; letter-spacing:.07em;">Fecha préstamo</div>
+                        <div class="text-muted text-uppercase fw-semibold extracted-style-322">Fecha préstamo</div>
                         <div class="font-monospace">{{ p.fecha_prestamo|date:"d/m/Y H:i" }}</div>
                       </div>
                       {% if p.fecha_vencimiento %}
                       <div>
-                        <div class="text-muted text-uppercase fw-semibold"
-                          style="font-size:.72rem; letter-spacing:.07em;">Vencimiento</div>
+                        <div class="text-muted text-uppercase fw-semibold extracted-style-322">Vencimiento</div>
                         <div class="font-monospace
                                     {% if p.urgencia == 'vencido' %}text-danger fw-bold
                                     {% elif p.urgencia == 'proximo' %}text-warning fw-semibold{% endif %}">
@@ -336,15 +316,13 @@
                       {% endif %}
                       {% if p.observaciones %}
                       <div>
-                        <div class="text-muted text-uppercase fw-semibold"
-                          style="font-size:.72rem; letter-spacing:.07em;">Observaciones</div>
+                        <div class="text-muted text-uppercase fw-semibold extracted-style-322">Observaciones</div>
                         <div>{{ p.observaciones }}</div>
                       </div>
                       {% endif %}
                       {% if p.motivo_rechazo %}
                       <div>
-                        <div class="text-muted text-uppercase fw-semibold"
-                          style="font-size:.72rem; letter-spacing:.07em;">Motivo rechazo</div>
+                        <div class="text-muted text-uppercase fw-semibold extracted-style-322">Motivo rechazo</div>
                         <div class="text-danger">{{ p.motivo_rechazo }}</div>
                       </div>
                       {% endif %}
@@ -395,8 +373,7 @@
 {% endif %}
 
 {# FAB móvil #}
-<button class="btn btn-primary d-md-none position-fixed rounded-circle d-flex align-items-center justify-content-center"
-  style="bottom:1.5rem; right:1.5rem; width:52px; height:52px; z-index:1000;" data-bs-toggle="modal"
+<button class="btn btn-primary d-md-none position-fixed rounded-circle d-flex align-items-center justify-content-center extracted-style-323" data-bs-toggle="modal"
   data-bs-target="#modalSolicitar" title="Nueva solicitud">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
     <line x1="12" y1="5" x2="12" y2="19" />
@@ -435,8 +412,7 @@
         <div id="sol-step-1">
           <div class="modal-body">
             <div
-              class="text-uppercase fw-semibold text-primary border-bottom border-primary-subtle pb-2 mb-3 font-monospace"
-              style="font-size:.65rem; letter-spacing:.13em;">
+              class="text-uppercase fw-semibold text-primary border-bottom border-primary-subtle pb-2 mb-3 font-monospace extracted-style-324">
               ¿Qué herramientas necesitas?
             </div>
 
@@ -452,12 +428,11 @@
                   </select>
                   <div class="sol-stock-info d-none mt-1 px-2 py-1 rounded small d-flex align-items-center gap-2"></div>
                 </div>
-                <div class="col-auto" style="width:90px;">
+                <div class="col-auto extracted-style-296">
                   <input type="number" name="cantidad[]" class="form-control text-center" min="1" value="1">
                 </div>
                 <div class="col-auto">
-                  <button type="button" class="btn btn-outline-secondary sol-del-btn disabled"
-                    style="width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center;">
+                  <button type="button" class="btn btn-outline-secondary sol-del-btn disabled extracted-style-325">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                       stroke-width="2.5">
                       <line x1="18" y1="6" x2="6" y2="18" />
@@ -502,8 +477,7 @@
         <div id="sol-step-2" class="d-none">
           <div class="modal-body">
             <div
-              class="text-uppercase fw-semibold text-primary border-bottom border-primary-subtle pb-2 mb-3 font-monospace"
-              style="font-size:.65rem; letter-spacing:.13em;">
+              class="text-uppercase fw-semibold text-primary border-bottom border-primary-subtle pb-2 mb-3 font-monospace extracted-style-324">
               Detalles de la solicitud
             </div>
 
@@ -518,7 +492,7 @@
                 </label>
                 <textarea name="motivo" class="form-control" id="sol-motivo" rows="3"
                   placeholder="Ej: Práctica de taller — módulo de soldadura, grupo 3A…"></textarea>
-                <div id="sol-motivo-err" class="d-none text-danger mt-1" style="font-size:.75rem;">
+                <div id="sol-motivo-err" class="d-none text-danger mt-1 extracted-style-179">
                   Mínimo 10 caracteres.
                 </div>
               </div>
@@ -526,7 +500,7 @@
 
             {# Resumen visual #}
             <div class="rounded p-3 bg-primary-subtle border border-primary-subtle mt-3">
-              <div class="text-uppercase text-muted font-monospace mb-2" style="font-size:.62rem; letter-spacing:.1em;">
+              <div class="text-uppercase text-muted font-monospace mb-2 extracted-style-320">
                 Tu solicitud incluye
               </div>
               <div id="sol-resumen" class="d-flex flex-wrap gap-1"></div>
@@ -627,10 +601,10 @@
         : n;
 
       return '<div class="d-flex flex-column align-items-center flex-fill position-relative mb-2">' +
-        '<div class="rounded-circle border d-flex align-items-center justify-content-center font-monospace position-relative ' + circleClass + '" style="width:26px;height:26px;font-size:10px;z-index:1;">' +
+        '<div class="rounded-circle border d-flex align-items-center justify-content-center font-monospace position-relative extracted-style-326 ' + circleClass + '">' +
         inner +
         '</div>' +
-        '<div class="' + labelClass + ' text-center" style="font-size:10px;">' + s.label + '</div>' +
+        '<div class="extracted-style-327 ' + labelClass + ' text-center">' + s.label + '</div>' +
         '</div>';
     }).join('');
   }
@@ -690,11 +664,11 @@
       '<select name="producto[]" class="form-select sol-prod-sel">' + solGetOpts() + '</select>' +
       '<div class="sol-stock-info d-none mt-1 px-2 py-1 rounded small d-flex align-items-center gap-2"></div>' +
       '</div>' +
-      '<div class="col-auto" style="width:90px;">' +
+      '<div class="col-auto extracted-style-296">' +
       '<input type="number" name="cantidad[]" class="form-control text-center" min="1" value="1">' +
       '</div>' +
       '<div class="col-auto">' +
-      '<button type="button" class="btn btn-outline-secondary sol-del-btn" style="width:36px;height:36px;padding:0;display:flex;align-items:center;justify-content:center;">' +
+      '<button type="button" class="btn btn-outline-secondary sol-del-btn extracted-style-328">' +
       '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
       '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>' +
       '</svg>' +

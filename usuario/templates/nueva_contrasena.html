@@ -41,8 +41,8 @@
 
     <div class="icon-badge">🗝</div>
 
-    <div class="page-title" style="text-align:center;">Nueva contraseña</div>
-    <div class="page-sub" style="text-align:center;">
+    <div class="page-title" class="text-center">Nueva contraseña</div>
+    <div class="page-sub" class="text-center">
       Escribe tu nueva contraseña. Debe tener al menos 8 caracteres.
     </div>
 
@@ -68,7 +68,7 @@
       <div class="field-wrap">
         <span class="field-lbl">Confirmar contraseña</span>
         <input type="password" id="password2" name="password2" class="mine-input full"
-               placeholder="Repite la contraseña" required />
+               placeholder="confirma la contraseña" required />
       </div>
 
       <button type="submit" class="btn-submit">Guardar contraseña ✓</button>
@@ -84,5 +84,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'js/usuario.js' %}"></script>
+  <script defer src="{% static 'js/form-validation.js' %}?v=1"></script>
 </body>
 </html>

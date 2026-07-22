@@ -5,14 +5,15 @@ from django.utils import timezone
 from .models import Devolucion
 from prestamo.models import Prestamo, ItemPrestamo
 from common.mixins import sesion_requerida
-from inventario.models import Proveedor, Inventario, Movimientos, Detalle_Movimientos
+from inventario.models import Proveedor, Inventario, Movimientos
 from inventario.forms import ProveedorForm, InventarioForm, MovimientosForm
-
 
 
 @sesion_requerida
 def lista_inventario_detalle(request):
-    """Vista de los registros de Inventario (estantes/cantidades), separada de Producto."""
+    """Vista de los registros de Inventario (estantes/cantidades),
+    separada de Producto.
+    """
     registros = Inventario.objects.select_related("producto").all()
 
     if request.method == "POST":
@@ -35,7 +36,11 @@ def lista_inventario_detalle(request):
 
 @sesion_requerida
 def lista_movimientos(request):
-    movimientos = Movimientos.objects.select_related("inventario", "proveedor").all().order_by("-fecha_movimiento")
+    movimientos = (
+        Movimientos.objects.select_related("inventario", "proveedor")
+        .all()
+        .order_by("-fecha_movimiento")
+    )
 
     if request.method == "POST":
         form = MovimientosForm(request.POST)
@@ -48,7 +53,10 @@ def lista_movimientos(request):
                 inv.cantidad += movimiento.cantidad
             elif movimiento.tipo_de_movimiento == "salida":
                 if movimiento.cantidad > inv.cantidad:
-                    messages.error(request, "No hay suficiente stock en este inventario para esa salida.")
+                    messages.error(
+                        request,
+                        "No hay suficiente stock en este inventario para esa salida.",
+                    )
                     movimiento.delete()
                     return redirect("inventario:lista_movimientos")
                 inv.cantidad -= movimiento.cantidad
@@ -87,17 +95,10 @@ def lista_proveedores(request):
         "proveedores": proveedores,
         "form": form,
     }
-    return render(request, "proveedores.html", context)   
-
-from common.mixins import sesion_requerida   
-
-
-
-@sesion_requerida 
+    return render(request, "proveedores.html", context)
 
 
 @sesion_requerida
-
 def devoluciones_view(request):
     edit_id = None
 
@@ -146,6 +147,7 @@ def devoluciones_view(request):
                     prestamo=prestamo,
                     motivo=motivo,
                     devolucion_total=devolucion_total,
+                    estado="aprobada",
                 )
                 items = ItemPrestamo.objects.filter(pk__in=items_ids, prestamo=prestamo)
                 devolucion.items.set(items)

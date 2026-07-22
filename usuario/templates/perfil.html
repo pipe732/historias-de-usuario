@@ -6,11 +6,10 @@
 <!-- ══ CABECERA ══ -->
 <div class="d-flex align-items-center justify-content-between mb-4">
   <div>
-    <h5 style="font-family:var(--font-ui);font-weight:700;font-size:1rem;
-               color:var(--text-main);letter-spacing:.03em;margin:0;">
+    <h5 class="perfil__style-1">
       Mi Perfil
     </h5>
-    <p style="font-family:var(--font-ui);font-size:.8rem;color:var(--text-muted);margin:0;">
+    <p class="perfil__style-2">
       Información personal y configuración de la cuenta
     </p>
   </div>
@@ -25,15 +24,12 @@
 
 {% if messages %}
   {% for message in messages %}
-  <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 mb-3"
-       style="background:rgba(58,122,66,.1);border:1px solid rgba(58,122,66,.25);
-              border-radius:var(--radius-md);color:var(--text-main);font-family:var(--font-ui);"
-       role="alert">
+  <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 mb-3 perfil__style-3" role="alert">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3a7a42" stroke-width="2.2">
       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
     </svg>
     {{ message }}
-    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" style="filter:opacity(.4);"></button>
+    <button type="button" class="btn-close ms-auto perfil__style-4" data-bs-dismiss="alert"></button>
   </div>
   {% endfor %}
 {% endif %}
@@ -44,7 +40,7 @@
   <!-- Columna izquierda: avatar + datos clave -->
   <div class="col-12 col-md-4">
     <div class="card h-100">
-      <div class="card-body" style="padding:2rem 1.5rem;text-align:center;">
+      <div class="card-body perfil__style-5">
 
         <div id="avatar-display"
              style="width:88px;height:88px;border-radius:50%;
@@ -57,18 +53,16 @@
           {{ usuario.nombre_completo|slice:":2"|upper }}
         </div>
 
-        <div style="font-family:var(--font-ui);font-weight:700;font-size:1.05rem;
-                    color:var(--text-main);margin-bottom:.2rem;">
+        <div class="perfil__style-6">
           {{ usuario.nombre_completo }}
         </div>
-        <div style="font-family:var(--font-mono);font-size:.78rem;color:var(--text-muted);
-                    margin-bottom:.85rem;">
+        <div class="perfil__style-7">
           {{ usuario.rol }}
         </div>
 
-        <hr style="border-color:var(--border-color);margin:.75rem 0;">
+        <hr class="perfil__style-8">
 
-        <div style="text-align:left;">
+        <div class="perfil__style-9">
           {% include "partials/_perfil_dato.html" with icono="envelope" label="Correo" valor=usuario.correo %}
           {% include "partials/_perfil_dato.html" with icono="telephone" label="Teléfono" valor=usuario.telefono|default:"—" %}
           {% include "partials/_perfil_dato.html" with icono="card-text" label="Documento" valor=usuario.get_tipo_documento_display|add:" · "|add:usuario.numero_documento %}
@@ -100,19 +94,16 @@
       <div class="card-body">
         <div class="row g-3 text-center">
           <div class="col-4">
-            <div style="font-family:var(--font-mono);font-size:1.6rem;font-weight:800;color:var(--navy);">—</div>
-            <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;
-                        color:var(--text-muted);font-weight:600;">Préstamos</div>
+            <div class="perfil__style-10">—</div>
+            <div class="perfil__style-11">Préstamos</div>
           </div>
           <div class="col-4">
-            <div style="font-family:var(--font-mono);font-size:1.6rem;font-weight:800;color:var(--sage);">—</div>
-            <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;
-                        color:var(--text-muted);font-weight:600;">Devoluciones</div>
+            <div class="perfil__style-12">—</div>
+            <div class="perfil__style-13">Devoluciones</div>
           </div>
           <div class="col-4">
-            <div style="font-family:var(--font-mono);font-size:1.6rem;font-weight:800;color:var(--rust);">—</div>
-            <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;
-                        color:var(--text-muted);font-weight:600;">Vencidos</div>
+            <div class="perfil__style-14">—</div>
+            <div class="perfil__style-15">Vencidos</div>
           </div>
         </div>
       </div>
@@ -128,10 +119,10 @@
           </svg>
           Notificaciones
         </span>
-        <button class="btn-ghost" id="btn-abrir-config" style="font-size:.75rem;">Configurar</button>
+        <button class="btn-ghost perfil__style-16" id="btn-abrir-config">Configurar</button>
       </div>
-      <div class="card-body" style="padding:1rem 1.2rem;">
-        <div style="display:flex;flex-direction:column;gap:.65rem;">
+      <div class="card-body perfil__style-17">
+        <div class="perfil__style-18">
           {% include "partials/_notif_row.html" with activa=cfg_notif_prestamos label="Nuevos préstamos asignados" %}
           {% include "partials/_notif_row.html" with activa=cfg_notif_vencimientos label="Préstamos próximos a vencer" %}
           {% include "partials/_notif_row.html" with activa=cfg_notif_devoluciones label="Devoluciones pendientes de revisión" %}
@@ -150,8 +141,8 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
 
-      <div class="modal-header" style="padding:.9rem 1.35rem;">
-        <div style="display:flex;align-items:center;gap:.85rem;">
+      <div class="modal-header perfil__style-19">
+        <div class="perfil__style-20">
           <div style="width:36px;height:36px;border-radius:50%;
                       background:rgba(152,71,62,.35);color:var(--cream);
                       display:flex;align-items:center;justify-content:center;
@@ -165,33 +156,22 @@
       </div>
 
       <!-- Pestañas -->
-      <div style="display:flex;border-bottom:1px solid var(--border-color);
-                  padding:0 1.35rem;background:rgba(9,77,146,.02);">
+      <div class="perfil__style-21">
         {% for tab_id, tab_label, tab_icon in tab_list %}
-        <button type="button"
-                class="modal-tab {% if forloop.first %}modal-tab--active{% endif %}"
-                data-tab="{{ tab_id }}"
-                style="padding:.65rem .9rem;border:none;background:transparent;
-                       font-family:var(--font-ui);font-size:.82rem;font-weight:600;
-                       cursor:pointer;display:flex;align-items:center;gap:.4rem;
-                       border-bottom:2px solid transparent;margin-bottom:-1px;
-                       transition:color .15s,border-color .15s;">
+        <button type="button" class="modal-tab {% if forloop.first %}modal-tab--active{% endif %} perfil__style-22" data-tab="{{ tab_id }}">
           {{ tab_label }}
         </button>
         {% endfor %}
       </div>
 
       <!-- Pestaña 1: Datos personales -->
-      <div class="modal-tab-panel" id="tab-datos" style="display:block;">
+      <div class="modal-tab-panel perfil__style-23" id="tab-datos">
         <form method="post" action="{% url 'perfil' %}" novalidate>
           {% csrf_token %}
           <input type="hidden" name="accion" value="editar_perfil">
-          <div class="modal-body" style="padding:1.5rem;">
+          <div class="modal-body perfil__style-24">
 
-            <div style="font-family:var(--font-mono);font-size:.65rem;letter-spacing:.13em;
-                        text-transform:uppercase;color:var(--navy);
-                        border-bottom:1px solid rgba(9,77,146,.18);
-                        padding-bottom:.4rem;margin-bottom:1.1rem;">
+            <div class="perfil__style-25">
               Información personal
             </div>
 
@@ -200,16 +180,12 @@
               <!-- Documento (solo lectura) -->
               <div class="col-md-6">
                 <label class="form-label">Tipo de documento</label>
-                <input type="text" class="form-control"
-                       value="{{ usuario.get_tipo_documento_display }}"
-                       disabled style="background:rgba(0,0,0,.03);cursor:not-allowed;">
+                <input type="text" class="form-control perfil__style-26" value="{{ usuario.get_tipo_documento_display }}" disabled>
               </div>
               <div class="col-md-6">
                 <label class="form-label">Número de documento</label>
-                <input type="text" class="form-control"
-                       value="{{ usuario.numero_documento }}"
-                       disabled style="background:rgba(0,0,0,.03);cursor:not-allowed;">
-                <div style="font-size:.7rem;color:var(--text-muted);margin-top:.2rem;">
+                <input type="text" class="form-control perfil__style-27" value="{{ usuario.numero_documento }}" disabled>
+                <div class="perfil__style-28">
                   El documento no puede modificarse.
                 </div>
               </div>
@@ -253,17 +229,33 @@
               <!-- Número de ficha -->
               <div class="col-md-5">
                 <label class="form-label">Número de ficha</label>
-                <input type="text" name="numero_ficha" class="form-control"
-                       value="{{ usuario.numero_ficha|default:'' }}"
-                       placeholder="Ej: 2758369" maxlength="20">
+                <select name="numero_ficha" class="form-select">
+                  <option value="">-- Seleccionar Ficha --</option>
+                  <option value="2758369" {% if usuario.numero_ficha == "2758369" %}selected{% endif %}>2758369</option>
+                  <option value="2827435" {% if usuario.numero_ficha == "2827435" %}selected{% endif %}>2827435</option>
+                  <option value="2895642" {% if usuario.numero_ficha == "2895642" %}selected{% endif %}>2895642</option>
+                  <option value="2910384" {% if usuario.numero_ficha == "2910384" %}selected{% endif %}>2910384</option>
+                  <option value="3021948" {% if usuario.numero_ficha == "3021948" %}selected{% endif %}>3021948</option>
+                  <option value="3196477" {% if usuario.numero_ficha == "3196477" %}selected{% endif %}>3196477</option>
+                  <option value="ADMIN-001" {% if usuario.numero_ficha == "ADMIN-001" %}selected{% endif %}>ADMIN-001</option>
+                </select>
               </div>
 
               <!-- Nombre del programa -->
               <div class="col-md-7">
                 <label class="form-label">Nombre del programa</label>
-                <input type="text" name="nombre_programa" class="form-control"
-                       value="{{ usuario.nombre_programa|default:'' }}"
-                       placeholder="Ej: Análisis y Desarrollo de Software" maxlength="200">
+                <select name="nombre_programa" class="form-select">
+                  <option value="">-- Seleccionar Programa --</option>
+                  <option value="Análisis y Desarrollo de Software (ADSO)" {% if usuario.nombre_programa == "Análisis y Desarrollo de Software (ADSO)" %}selected{% endif %}>Análisis y Desarrollo de Software (ADSO)</option>
+                  <option value="Sistemas" {% if usuario.nombre_programa == "Sistemas" %}selected{% endif %}>Sistemas</option>
+                  <option value="Electricidad Industrial" {% if usuario.nombre_programa == "Electricidad Industrial" %}selected{% endif %}>Electricidad Industrial</option>
+                  <option value="Mantenimiento Electromecánico" {% if usuario.nombre_programa == "Mantenimiento Electromecánico" %}selected{% endif %}>Mantenimiento Electromecánico</option>
+                  <option value="Supervisión de Labores Mineras" {% if usuario.nombre_programa == "Supervisión de Labores Mineras" %}selected{% endif %}>Supervisión de Labores Mineras</option>
+                  <option value="Topografía" {% if usuario.nombre_programa == "Topografía" %}selected{% endif %}>Topografía</option>
+                  <option value="Soldadura" {% if usuario.nombre_programa == "Soldadura" %}selected{% endif %}>Soldadura</option>
+                  <option value="Gestión Ambiental" {% if usuario.nombre_programa == "Gestión Ambiental" %}selected{% endif %}>Gestión Ambiental</option>
+                  <option value="Administración" {% if usuario.nombre_programa == "Administración" %}selected{% endif %}>Administración</option>
+                </select>
               </div>
 
             </div>
@@ -283,24 +275,18 @@
       </div>
 
       <!-- Pestaña 2: Contraseña -->
-      <div class="modal-tab-panel" id="tab-password" style="display:none;">
+      <div class="modal-tab-panel" id="tab-password" class="d-none">
         <form method="post" action="{% url 'perfil' %}" novalidate>
           {% csrf_token %}
           <input type="hidden" name="accion" value="cambiar_password">
-          <div class="modal-body" style="padding:1.5rem;">
+          <div class="modal-body perfil__style-29">
 
-            <div style="font-family:var(--font-mono);font-size:.65rem;letter-spacing:.13em;
-                        text-transform:uppercase;color:var(--navy);
-                        border-bottom:1px solid rgba(9,77,146,.18);
-                        padding-bottom:.4rem;margin-bottom:1.1rem;">
+            <div class="perfil__style-30">
               Cambiar contraseña
             </div>
 
-            <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:1.2rem;
-                        padding:.75rem 1rem;border-radius:var(--radius-md);
-                        background:rgba(9,77,146,.05);border:1px solid rgba(9,77,146,.14);
-                        font-family:var(--font-ui);font-size:.82rem;color:var(--navy);">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+            <div class="perfil__style-31">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="perfil__style-32">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
               </svg>
@@ -322,11 +308,10 @@
                 <input type="password" name="password_nueva" id="pw-nueva"
                        class="form-control {% if errores.password_nueva %}is-invalid{% endif %}"
                        placeholder="Mínimo 8 caracteres" required minlength="8">
-                <div id="strength-bar" style="height:3px;border-radius:2px;margin-top:.4rem;
-                                               background:var(--border-color);overflow:hidden;">
+                <div id="strength-bar" class="perfil__style-33">
                   <div id="strength-fill" style="height:100%;width:0;transition:width .3s,background .3s;"></div>
                 </div>
-                <div id="strength-label" style="font-size:.7rem;color:var(--text-muted);margin-top:.2rem;"></div>
+                <div id="strength-label" class="perfil__style-34"></div>
                 {% if errores.password_nueva %}
                 <div class="form-error">{{ errores.password_nueva }}</div>
                 {% endif %}
@@ -336,7 +321,7 @@
                 <input type="password" name="password_confirma" id="pw-confirma"
                        class="form-control {% if errores.password_confirma %}is-invalid{% endif %}"
                        placeholder="Repite la contraseña" required>
-                <div id="match-label" style="font-size:.7rem;margin-top:.2rem;"></div>
+                <div id="match-label" class="perfil__style-35"></div>
                 {% if errores.password_confirma %}
                 <div class="form-error">{{ errores.password_confirma }}</div>
                 {% endif %}
@@ -357,32 +342,24 @@
       </div>
 
       <!-- Pestaña 3: Notificaciones -->
-      <div class="modal-tab-panel" id="tab-config" style="display:none;">
+      <div class="modal-tab-panel" id="tab-config" class="d-none">
         <form method="post" action="{% url 'perfil' %}" novalidate>
           {% csrf_token %}
           <input type="hidden" name="accion" value="guardar_config">
-          <div class="modal-body" style="padding:1.5rem;">
+          <div class="modal-body perfil__style-36">
 
-            <div style="font-family:var(--font-mono);font-size:.65rem;letter-spacing:.13em;
-                        text-transform:uppercase;color:var(--navy);
-                        border-bottom:1px solid rgba(9,77,146,.18);
-                        padding-bottom:.4rem;margin-bottom:1.1rem;">
+            <div class="perfil__style-37">
               Preferencias de notificaciones
             </div>
 
-            <div style="display:flex;flex-direction:column;gap:.5rem;">
+            <div class="perfil__style-38">
               {% for notif_name, notif_label, notif_desc, notif_val in notificaciones_lista %}
-              <div style="display:flex;align-items:center;justify-content:space-between;
-                          padding:.9rem 1rem;border-radius:var(--radius-md);
-                          border:1px solid var(--border-color);
-                          background:rgba(9,77,146,.02);gap:1rem;">
+              <div class="perfil__style-39">
                 <div>
-                  <div style="font-family:var(--font-ui);font-weight:600;font-size:.88rem;
-                               color:var(--text-main);">{{ notif_label }}</div>
-                  <div style="font-family:var(--font-ui);font-size:.76rem;color:var(--text-muted);
-                               margin-top:.1rem;">{{ notif_desc }}</div>
+                  <div class="perfil__style-40">{{ notif_label }}</div>
+                  <div class="perfil__style-41">{{ notif_desc }}</div>
                 </div>
-                <label class="toggle-switch" style="flex-shrink:0;">
+                <label class="toggle-switch perfil__style-42">
                   <input type="checkbox" name="{{ notif_name }}"
                          {% if notif_val %}checked{% endif %}>
                   <span class="toggle-slider"></span>
@@ -436,9 +413,11 @@
 .toggle-switch input:checked + .toggle-slider::before { transform:translateX(18px); }
 </style>
 <script>
-(function () {
+document.addEventListener('DOMContentLoaded', function () {
 
-  const modal = new bootstrap.Modal(document.getElementById('modalPerfil'));
+  const modalEl = document.getElementById('modalPerfil');
+  if (!modalEl) return;
+  const modal = new bootstrap.Modal(modalEl);
 
   document.getElementById('btn-abrir-perfil').addEventListener('click', function () {
     activarTab('tab-datos');
@@ -537,6 +516,6 @@
     });
   }
 
-})();
+});
 </script>
 {% endblock js %}

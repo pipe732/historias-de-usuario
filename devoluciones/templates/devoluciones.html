@@ -7,27 +7,21 @@
 {% if messages %}
   {% for message in messages %}
     {% if message.tags == 'warning' %}
-      <div class="alert alert-dismissible fade show d-flex align-items-center gap-2"
-           style="background:rgba(196,144,10,.12); border:1px solid rgba(196,144,10,.3);
-                  border-radius:var(--radius-md); color:#7a5500; font-family:var(--font-ui);"
-           role="alert">
+      <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 devoluciones__style-1" role="alert">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c4900a" stroke-width="2.2">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
           <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
         </svg>
         {{ message }}
-        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" style="filter:opacity(.4);"></button>
+        <button type="button" class="btn-close ms-auto devoluciones__style-2" data-bs-dismiss="alert"></button>
       </div>
     {% else %}
-      <div class="alert alert-dismissible fade show d-flex align-items-center gap-2"
-           style="background:rgba(113,129,109,.13); border:1px solid rgba(113,129,109,.25);
-                  border-radius:var(--radius-md); color:var(--text-main); font-family:var(--font-ui);"
-           role="alert">
+      <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 devoluciones__style-3" role="alert">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#71816D" stroke-width="2.2">
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
         </svg>
         {{ message }}
-        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" style="filter:opacity(.4);"></button>
+        <button type="button" class="btn-close ms-auto devoluciones__style-4" data-bs-dismiss="alert"></button>
       </div>
     {% endif %}
   {% endfor %}
@@ -36,11 +30,10 @@
 <!-- ══ CABECERA ══ -->
 <div class="d-flex align-items-center justify-content-between">
   <div>
-    <h5 style="font-family:var(--font-ui); font-weight:700; font-size:1rem;
-               color:var(--text-main); letter-spacing:.03em; margin:0;">
+    <h5 class="devoluciones__style-5">
       Devoluciones
     </h5>
-    <p style="font-family:var(--font-ui); font-size:.8rem; color:var(--text-muted); margin:0;">
+    <p class="devoluciones__style-6">
       Gestión de devoluciones de productos
     </p>
   </div>
@@ -67,10 +60,7 @@
       </svg>
       Devoluciones registradas
     </span>
-    <span style="font-family:var(--font-mono); font-size:.72rem;
-                 background:rgba(152,71,62,.08); color:var(--rust);
-                 padding:.18rem .6rem; border-radius:20px;
-                 border:1px solid rgba(152,71,62,.18);">
+    <span class="devoluciones__style-7">
       {{ devoluciones|length }} registro{{ devoluciones|length|pluralize }}
     </span>
   </div>
@@ -79,23 +69,20 @@
     <table class="table-app datatable-custom" id="devoluciones-table" style="width:100%; border-collapse:collapse; font-size:.9rem;">
       <thead>
         <tr>
-          <th style="width:46px;"></th>
+          <th class="devoluciones__style-8"></th>
           <th>#</th>
           <th>Préstamo</th>
           <th>Tipo</th>
           <th>Ítems</th>
           <th>Fecha</th>
           {# ── CAMBIO: columna acciones más ancha para los dos botones ── #}
-          <th style="width:160px; text-align:center;">Acciones</th>
+          <th class="devoluciones__style-9">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for d in devoluciones %}
-        <tr style="cursor:pointer;" 
-            onclick="if(!event.target.closest('button') && !event.target.closest('form')) this.querySelector('.btn-toggle-details').click();"
-            onmouseover="this.style.background='rgba(9,77,146,.02)'" 
-            onmouseout="this.style.background='transparent'">
-          <td style="text-align:center;">
+        <tr class="devoluciones__style-10" onclick="if(!event.target.closest('button') && !event.target.closest('form')) { $(this).find('.btn-toggle-details').trigger('click'); }" onmouseover="this.style.background='rgba(9,77,146,.02)'" onmouseout="this.style.background='transparent'">
+          <td class="text-center">
             <button type="button"
                     class="btn-toggle-details"
                     style="width:24px; height:24px; border-radius:50%;
@@ -103,116 +90,80 @@
                            color:var(--navy); cursor:pointer; display:inline-flex;
                            align-items:center; justify-content:center; padding:0;"
                     data-target-detail="detail-{{ d.pk }}">
-              <svg class="row-chevron" width="10" height="10" viewBox="0 0 24 24"
-                   fill="none" stroke="currentColor" stroke-width="2.5"
-                   style="transition:transform .2s;">
+              <svg class="row-chevron devoluciones__style-11" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="9 18 15 12 9 6"/>
               </svg>
             </button>
           </td>
-          <td><span style="font-family:var(--font-mono); font-size:.78rem; color:var(--text-muted);">#{{ d.pk }}</span></td>
-          <td><span style="font-family:var(--font-mono); font-weight:700; color:var(--navy); font-size:.88rem;">Préstamo #{{ d.prestamo.pk }}</span></td>
+          <td><span class="devoluciones__style-12">#{{ d.pk }}</span></td>
+          <td><span class="devoluciones__style-13">Préstamo #{{ d.prestamo.pk }}</span></td>
           <td>
             {% if d.devolucion_total %}
-              <span style="font-size:.75rem; background:rgba(22,163,74,.1); color:#15803d;
-                           padding:.2rem .55rem; border-radius:20px; font-weight:600;">Total</span>
+              <span class="devoluciones__style-14">Total</span>
             {% else %}
-              <span style="font-size:.75rem; background:rgba(234,179,8,.1); color:#92400e;
-                           padding:.2rem .55rem; border-radius:20px; font-weight:600;">Parcial</span>
+              <span class="devoluciones__style-15">Parcial</span>
             {% endif %}
           </td>
-          <td style="font-weight:600;">{{ d.items.count }} ítem{{ d.items.count|pluralize }}</td>
-          <td style="font-family:var(--font-mono); font-size:.82rem; color:var(--text-muted);">
+          <td class="devoluciones__style-16">{{ d.items.count }} ítem{{ d.items.count|pluralize }}</td>
+          <td class="devoluciones__style-17">
             {{ d.fecha_creacion|date:"d/m/Y" }}
           </td>
 
           {% comment %} {# ══════════════════════════════════════════════════════
              CAMBIO PRINCIPAL: botones Aceptar y Rechazar
           ══════════════════════════════════════════════════════ #} {% endcomment %}
-          <td style="text-align:center;">
-            <div style="display:flex; align-items:center; justify-content:center; gap:.35rem;">
+          <td class="text-center">
+            <div class="devoluciones__style-18">
 
-              {# ── Botón ACEPTAR ── #}
-              <button type="button"
-                      class="btn-dev-accion btn-dev-aceptar btn-aceptar-click"
-                      data-pk="{{ d.pk }}"
-                      data-prestamo-pk="{{ d.prestamo.pk }}"
-                      data-usuario="{{ d.prestamo.usuario }}"
-                      title="Aceptar devolución">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2.5">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                Aceptar
-              </button>
-
-              {# ── Botón RECHAZAR ── #}
-              <button type="button"
-                      class="btn-dev-accion btn-dev-rechazar btn-rechazar-click"
-                      data-pk="{{ d.pk }}"
-                      data-prestamo-pk="{{ d.prestamo.pk }}"
-                      data-usuario="{{ d.prestamo.usuario }}"
-                      title="Rechazar devolución">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2.5">
-                  <line x1="18" y1="6" x2="6" y2="18"/>
-                  <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-                Rechazar
-              </button>
+              <span class="badge {% if d.estado == 'aprobada' %}bg-success{% elif d.estado == 'rechazada' %}bg-danger{% else %}bg-secondary{% endif %}">{{ d.estado|title }}</span>
 
             </div>
           </td>
         </tr>
 
         <!-- DETALLE DESPLEGABLE -->
-        <tr class="detail-row d-none" id="detail-{{ d.pk }}" style="background:rgba(9,77,146,.02);">
-          <td colspan="7" style="padding:0; border:none;">
-            <div style="padding:1rem 1.4rem; border-bottom:1px solid var(--border-color);">
-              <p style="font-family:var(--font-mono); font-size:.62rem; letter-spacing:.12em;
-                         text-transform:uppercase; color:var(--text-muted); margin-bottom:.75rem;">
+        <tr class="detail-row d-none devoluciones__style-19" id="detail-{{ d.pk }}">
+          <td colspan="7" class="devoluciones__style-20">
+            <div class="devoluciones__style-21">
+              <p class="devoluciones__style-22">
                 Detalle completo
               </p>
-              <div class="row g-3" style="font-family:var(--font-ui);">
+              <div class="row g-3 devoluciones__style-23">
                 <div class="col-6 col-md-2">
-                  <div style="font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); font-weight:600; margin-bottom:.18rem;">Préstamo</div>
-                  <div style="font-weight:700; color:var(--navy); font-family:var(--font-mono);">#{{ d.prestamo.pk }}</div>
+                  <div class="devoluciones__style-24">Préstamo</div>
+                  <div class="devoluciones__style-25">#{{ d.prestamo.pk }}</div>
                 </div>
                 <div class="col-6 col-md-3">
-                  <div style="font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); font-weight:600; margin-bottom:.18rem;">Usuario</div>
-                  <div style="font-weight:600; color:var(--text-main); font-size:.85rem;">{{ d.prestamo.usuario }}</div>
+                  <div class="devoluciones__style-26">Usuario</div>
+                  <div class="devoluciones__style-27">{{ d.prestamo.usuario }}</div>
                 </div>
                 <div class="col-6 col-md-2">
-                  <div style="font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); font-weight:600; margin-bottom:.18rem;">Tipo</div>
+                  <div class="devoluciones__style-28">Tipo</div>
                   {% if d.devolucion_total %}
-                    <div style="font-weight:700; color:#15803d; font-size:.85rem;">Total</div>
+                    <div class="devoluciones__style-29">Total</div>
                   {% else %}
-                    <div style="font-weight:700; color:#92400e; font-size:.85rem;">Parcial</div>
+                    <div class="devoluciones__style-30">Parcial</div>
                   {% endif %}
                 </div>
                 <div class="col-6 col-md-2">
-                  <div style="font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); font-weight:600; margin-bottom:.18rem;">Fecha Registro</div>
-                  <div style="font-family:var(--font-mono); font-size:.83rem; color:var(--text-main);">{{ d.fecha_creacion|date:"d/m/Y H:i" }}</div>
+                  <div class="devoluciones__style-31">Fecha Registro</div>
+                  <div class="devoluciones__style-32">{{ d.fecha_creacion|date:"d/m/Y H:i" }}</div>
                 </div>
                 <div class="col-12">
-                  <div style="font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); font-weight:600; margin-bottom:.25rem;">Motivo / Observaciones</div>
-                  <div style="color:var(--text-main); font-size:.88rem;">{{ d.motivo }}</div>
+                  <div class="devoluciones__style-33">Motivo / Observaciones</div>
+                  <div class="devoluciones__style-34">{{ d.motivo }}</div>
                 </div>
                 <div class="col-12">
-                  <div style="font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:var(--navy); font-weight:700; margin-bottom:.6rem; border-bottom:1px solid rgba(9,77,146,.1); padding-bottom:.2rem;">
+                  <div class="devoluciones__style-35">
                     Detalle de herramientas reintegradas
                   </div>
-                  <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:.6rem;">
+                  <div class="devoluciones__style-36">
                     {% for item in d.items.all %}
-                      <div style="padding:.65rem .85rem; border-radius:var(--radius-md); background:#fff; border:1px solid rgba(9,77,146,.15); display:flex; align-items:center; gap:.75rem; box-shadow: 0 2px 4px rgba(0,0,0,.02);">
-                        <div style="flex:1;">
-                           <div style="font-weight:600; font-size:.88rem; color:var(--text-main);">{{ item.producto.nombre }}</div>
-                           <div style="font-family:var(--font-mono); font-size:.75rem; color:var(--text-muted); margin-top:.1rem;">
-                             <span style="background:rgba(0,0,0,.05); padding:1px 4px; border-radius:3px;">{{ item.producto.codigo_sku }}</span>
-                             {% if item.serial_entregado %} · <span style="color:var(--navy); opacity:.8;">SN: {{ item.serial_entregado }}</span>{% endif %}
-                           </div>
+                      <div class="devoluciones__style-37">
+                        <div class="devoluciones__style-38">
+                           <div class="devoluciones__style-39">{{ item.producto.nombre }}</div>
                         </div>
-                        <div style="font-family:var(--font-mono); font-weight:700; color:var(--navy);">×{{ item.cantidad }}</div>
+                        <div class="devoluciones__style-43">×{{ item.cantidad }}</div>
                       </div>
                     {% endfor %}
                   </div>
@@ -224,16 +175,14 @@
 
         {% empty %}
         <tr>
-          <td colspan="7" style="text-align:center; padding:3.5rem 1rem;">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none"
-                 stroke="var(--text-muted)" stroke-width="1.3"
-                 style="opacity:.35; display:block; margin:0 auto .75rem;">
+          <td colspan="7" class="devoluciones__style-44">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.3" class="devoluciones__style-45">
               <path d="M22 12H16L14 15H10L8 12H2"/>
               <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
             </svg>
-            <p style="font-family:var(--font-ui); color:var(--text-muted); font-size:.88rem; margin:0;">
+            <p class="devoluciones__style-46">
               No hay devoluciones registradas aún.<br>
-              <span style="font-size:.8rem;">Usa <strong>Nueva Devolución</strong> para agregar una.</span>
+              <span class="devoluciones__style-47">Usa <strong>Nueva Devolución</strong> para agregar una.</span>
             </p>
           </td>
         </tr>
@@ -281,10 +230,10 @@
 ══════════════════════════════════════ -->
 <div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content" style="border:none;border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 20px 60px rgba(27,32,33,.18);">
+    <div class="modal-content devoluciones__style-48">
 
-      <div class="modal-header" style="padding:.9rem 1.35rem;">
-        <div style="display:flex;align-items:center;gap:.75rem;">
+      <div class="modal-header devoluciones__style-49">
+        <div class="devoluciones__style-50">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" stroke-width="2.2" opacity=".7">
             <polyline points="1 4 1 10 7 10"/>
             <path d="M3.51 15a9 9 0 1 0 .49-3.51"/>
@@ -294,11 +243,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <div class="modal-body" style="padding:0;">
-        <div style="padding:16px 24px 0;" id="dev-wiz-progress-wrap">
-          <div id="dev-wiz-progress-bar" style="display:flex;align-items:center;gap:0;margin-bottom:20px;"></div>
+      <div class="modal-body devoluciones__style-51">
+        <div class="devoluciones__style-52" id="dev-wiz-progress-wrap">
+          <div id="dev-wiz-progress-bar" class="devoluciones__style-53"></div>
         </div>
-        <div id="dev-wiz-panel" style="padding:0 24px 24px;"></div>
+        <div id="dev-wiz-panel" class="devoluciones__style-54"></div>
       </div>
 
     </div>
@@ -306,7 +255,7 @@
 </div>
 
 <!-- FORM oculto para POST -->
-<form method="post" id="form-devolucion-final" novalidate style="display:none;">
+<form method="post" action="{% url 'devoluciones' %}" id="form-devolucion-final" novalidate class="d-none">
   {% csrf_token %}
   <input type="hidden" name="action" value="crear">
   <input type="hidden" name="prestamo_id" id="fin-prestamo-id">
@@ -316,191 +265,13 @@
 </form>
 
 
-<!-- ══════════════════════════════════════
-     MODAL ACEPTAR DEVOLUCIÓN
-══════════════════════════════════════ -->
-<div class="modal fade" id="modalAceptarDevolucion" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:.7; margin-right:.4rem;">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-          </svg>
-          Aceptar Devolución <span id="acp-id" style="opacity:.5; font-size:.85rem;"></span>
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body" style="padding:1.5rem;">
 
-        <!-- Info de la devolución -->
-        <div style="padding:.85rem 1rem; border-radius:var(--radius-md);
-                    background:rgba(22,163,74,.06); border:1px solid rgba(22,163,74,.2);
-                    margin-bottom:1.2rem;">
-          <div style="display:flex; align-items:center; gap:.65rem;">
-            <div style="width:36px; height:36px; border-radius:50%; background:rgba(22,163,74,.15);
-                         display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            </div>
-            <div>
-              <div style="font-family:var(--font-ui); font-size:.9rem; font-weight:700; color:#15803d;">
-                Confirmar recepción
-              </div>
-              <div style="font-family:var(--font-ui); font-size:.78rem; color:var(--text-muted); margin-top:.1rem;">
-                Préstamo <span id="acp-prestamo" style="font-family:var(--font-mono); font-weight:700; color:var(--navy);"></span>
-                · Usuario: <span id="acp-usuario"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p style="font-family:var(--font-ui); font-size:.88rem; color:var(--text-muted); margin-bottom:1.1rem;">
-          Al aceptar, se confirmará que las herramientas fueron recibidas correctamente y el préstamo quedará como <strong>Devuelto</strong>.
-        </p>
-
-        <div style="font-family:var(--font-mono); font-size:.65rem; letter-spacing:.13em;
-                    text-transform:uppercase; color:var(--navy);
-                    border-bottom:1px solid rgba(9,77,146,.18);
-                    padding-bottom:.4rem; margin-bottom:.85rem;">
-          Observaciones de recepción (opcional)
-        </div>
-        <form method="post" id="form-aceptar-devolucion">
-          {% csrf_token %}
-          <input type="hidden" name="action" value="aceptar_devolucion">
-          <input type="hidden" name="devolucion_id" id="acp-dev-id">
-          <textarea name="observaciones_recepcion"
-                    class="form-control"
-                    rows="3"
-                    placeholder="Ej: Herramientas recibidas en buen estado…"
-                    style="font-family:var(--font-ui); font-size:.88rem; resize:none;"></textarea>
-        </form>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-outline-mine" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button"
-                class="btn-primary-mine"
-                style="background:rgba(22,163,74,.85);"
-                onclick="confirmarAceptar()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          Confirmar recepción
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- ══════════════════════════════════════
-     MODAL RECHAZAR DEVOLUCIÓN
-══════════════════════════════════════ -->
-<div class="modal fade" id="modalRechazarDevolucion" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:.7; margin-right:.4rem;">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="15" y1="9" x2="9" y2="15"/>
-            <line x1="9" y1="9" x2="15" y2="15"/>
-          </svg>
-          Rechazar Devolución <span id="rch-id" style="opacity:.5; font-size:.85rem;"></span>
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body" style="padding:1.5rem;">
-
-        <!-- Info de la devolución -->
-        <div style="padding:.85rem 1rem; border-radius:var(--radius-md);
-                    background:rgba(152,71,62,.06); border:1px solid rgba(152,71,62,.2);
-                    margin-bottom:1.2rem;">
-          <div style="display:flex; align-items:center; gap:.65rem;">
-            <div style="width:36px; height:36px; border-radius:50%; background:rgba(152,71,62,.12);
-                         display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--rust)" stroke-width="2.5">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </div>
-            <div>
-              <div style="font-family:var(--font-ui); font-size:.9rem; font-weight:700; color:var(--rust);">
-                Rechazar devolución
-              </div>
-              <div style="font-family:var(--font-ui); font-size:.78rem; color:var(--text-muted); margin-top:.1rem;">
-                Préstamo <span id="rch-prestamo" style="font-family:var(--font-mono); font-weight:700; color:var(--navy);"></span>
-                · Usuario: <span id="rch-usuario"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <form method="post" id="form-rechazar-devolucion" novalidate>
-          {% csrf_token %}
-          <input type="hidden" name="action" value="rechazar_devolucion">
-          <input type="hidden" name="devolucion_id" id="rch-dev-id">
-
-          <div style="font-family:var(--font-mono); font-size:.65rem; letter-spacing:.13em;
-                      text-transform:uppercase; color:var(--rust);
-                      border-bottom:1px solid rgba(152,71,62,.18);
-                      padding-bottom:.4rem; margin-bottom:.85rem;">
-            Motivo del rechazo *
-          </div>
-
-          <!-- ══ ALERTA INLINE de validación (visible solo cuando falta el motivo) ══ -->
-          <div id="rch-motivo-err"
-               style="display:none; align-items:center; gap:.5rem;
-                      padding:.55rem .85rem; border-radius:var(--radius-sm);
-                      background:rgba(152,71,62,.08); border:1px solid rgba(152,71,62,.28);
-                      color:var(--rust); font-family:var(--font-ui); font-size:.82rem;
-                      margin-bottom:.75rem; animation: shakeX .35s ease;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink:0;">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-            <span>El motivo del rechazo es obligatorio (mínimo 10 caracteres).</span>
-          </div>
-
-          <textarea name="motivo_rechazo"
-                    id="rch-motivo-textarea"
-                    class="form-control"
-                    rows="4"
-                    placeholder="Explica por qué se rechaza la devolución… (obligatorio)"
-                    style="font-family:var(--font-ui); font-size:.88rem; resize:none;"
-                    oninput="rchLimpiarError()"></textarea>
-          <div style="font-size:.72rem; color:var(--text-muted); margin-top:.3rem;">
-            Mínimo 10 caracteres. El usuario será informado del motivo.
-          </div>
-        </form>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-outline-mine" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button"
-                class="btn-primary-mine"
-                style="background:var(--rust);"
-                onclick="confirmarRechazar()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-          Confirmar rechazo
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 {% endblock %}
 
 
 {% block js %}
-<script src="{% static 'js/devoluciones.js' %}"></script>
-<script src="{% static 'js/tables/devoluciones_table.js' %}"></script>
+<script src="{% static 'js/devoluciones.js' %}?v=1.1"></script>
+<script src="{% static 'js/tables/devoluciones_table.js' %}?v=1.1"></script>
 {% endblock js %}

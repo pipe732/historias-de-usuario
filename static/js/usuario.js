@@ -246,14 +246,15 @@ if (regForm) {
   const area = document.getElementById('msg-area');
 
   regForm.addEventListener('submit', function (e) {
-    const nombre = document.getElementById('username')?.value.trim();
-    const email  = document.getElementById('email')?.value.trim();
-    const doc    = document.getElementById('documento')?.value.trim();
-    const p1     = document.getElementById('password1')?.value;
-    const p2     = document.getElementById('password2')?.value;
+    const firstName = document.getElementById('first_name')?.value.trim();
+    const lastName  = document.getElementById('last_name')?.value.trim();
+    const email     = document.getElementById('email')?.value.trim();
+    const doc       = document.getElementById('documento')?.value.trim();
+    const p1        = document.getElementById('password1')?.value;
+    const p2        = document.getElementById('password2')?.value;
     if (area) area.innerHTML = '';
 
-    if (!nombre || !email || !doc || !p1 || !p2) {
+    if (!firstName || !lastName || !email || !doc || !p1 || !p2) {
       e.preventDefault();
       showError(area, 'Por favor completa todos los campos.');
       return;
@@ -304,9 +305,9 @@ if (newPassForm) {
     }
   });
 }
-// Solo dígitos en número de ficha
+// Solo dígitos en número de ficha (si es campo de texto)
 const fichaInput = document.getElementById('numero_ficha');
-if (fichaInput) {
+if (fichaInput && fichaInput.tagName === 'INPUT') {
   fichaInput.addEventListener('keypress', (e) => {
     if (!/\d/.test(e.key)) e.preventDefault();
   });
