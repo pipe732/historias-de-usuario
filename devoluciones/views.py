@@ -147,6 +147,7 @@ def devoluciones_view(request):
                     prestamo=prestamo,
                     motivo=motivo,
                     devolucion_total=devolucion_total,
+                    estado="aprobada",
                 )
                 items = ItemPrestamo.objects.filter(pk__in=items_ids, prestamo=prestamo)
                 devolucion.items.set(items)
