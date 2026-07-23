@@ -81,7 +81,7 @@
       </thead>
       <tbody>
         {% for d in devoluciones %}
-        <tr class="devoluciones__style-10" onclick="if(!event.target.closest('button') && !event.target.closest('form')) this.querySelector('.btn-toggle-details').click();" onmouseover="this.style.background='rgba(9,77,146,.02)'" onmouseout="this.style.background='transparent'">
+        <tr class="devoluciones__style-10" onclick="if(!event.target.closest('button') && !event.target.closest('form')) { $(this).find('.btn-toggle-details').trigger('click'); }" onmouseover="this.style.background='rgba(9,77,146,.02)'" onmouseout="this.style.background='transparent'">
           <td class="text-center">
             <button type="button"
                     class="btn-toggle-details"
@@ -115,34 +115,7 @@
           <td class="text-center">
             <div class="devoluciones__style-18">
 
-              {# ── Botón ACEPTAR ── #}
-              <button type="button"
-                      class="btn-dev-accion btn-dev-aceptar btn-aceptar-click"
-                      data-pk="{{ d.pk }}"
-                      data-prestamo-pk="{{ d.prestamo.pk }}"
-                      data-usuario="{{ d.prestamo.usuario }}"
-                      title="Aceptar devolución">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2.5">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                Aceptar
-              </button>
-
-              {# ── Botón RECHAZAR ── #}
-              <button type="button"
-                      class="btn-dev-accion btn-dev-rechazar btn-rechazar-click"
-                      data-pk="{{ d.pk }}"
-                      data-prestamo-pk="{{ d.prestamo.pk }}"
-                      data-usuario="{{ d.prestamo.usuario }}"
-                      title="Rechazar devolución">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2.5">
-                  <line x1="18" y1="6" x2="6" y2="18"/>
-                  <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-                Rechazar
-              </button>
+              <span class="badge {% if d.estado == 'aprobada' %}bg-success{% elif d.estado == 'rechazada' %}bg-danger{% else %}bg-secondary{% endif %}">{{ d.estado|title }}</span>
 
             </div>
           </td>
@@ -189,10 +162,6 @@
                       <div class="devoluciones__style-37">
                         <div class="devoluciones__style-38">
                            <div class="devoluciones__style-39">{{ item.producto.nombre }}</div>
-                           <div class="devoluciones__style-40">
-                             <span class="devoluciones__style-41">{{ item.producto.codigo_sku }}</span>
-                             {% if item.serial_entregado %} · <span class="devoluciones__style-42">SN: {{ item.serial_entregado }}</span>{% endif %}
-                           </div>
                         </div>
                         <div class="devoluciones__style-43">×{{ item.cantidad }}</div>
                       </div>
@@ -286,7 +255,7 @@
 </div>
 
 <!-- FORM oculto para POST -->
-<form method="post" id="form-devolucion-final" novalidate class="d-none">
+<form method="post" action="{% url 'devoluciones' %}" id="form-devolucion-final" novalidate class="d-none">
   {% csrf_token %}
   <input type="hidden" name="action" value="crear">
   <input type="hidden" name="prestamo_id" id="fin-prestamo-id">
@@ -296,160 +265,13 @@
 </form>
 
 
-<!-- ══════════════════════════════════════
-     MODAL ACEPTAR DEVOLUCIÓN
-══════════════════════════════════════ -->
-<div class="modal fade" id="modalAceptarDevolucion" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="devoluciones__style-55">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-          </svg>
-          Aceptar Devolución <span id="acp-id" class="devoluciones__style-56"></span>
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body devoluciones__style-57">
 
-        <!-- Info de la devolución -->
-        <div class="devoluciones__style-58">
-          <div class="devoluciones__style-59">
-            <div style="width:36px; height:36px; border-radius:50%; background:rgba(22,163,74,.15);
-                         display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            </div>
-            <div>
-              <div class="devoluciones__style-60">
-                Confirmar recepción
-              </div>
-              <div class="devoluciones__style-61">
-                Préstamo <span id="acp-prestamo" class="devoluciones__style-62"></span>
-                · Usuario: <span id="acp-usuario"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p class="devoluciones__style-63">
-          Al aceptar, se confirmará que las herramientas fueron recibidas correctamente y el préstamo quedará como <strong>Devuelto</strong>.
-        </p>
-
-        <div class="devoluciones__style-64">
-          Observaciones de recepción (opcional)
-        </div>
-        <form method="post" id="form-aceptar-devolucion">
-          {% csrf_token %}
-          <input type="hidden" name="action" value="aceptar_devolucion">
-          <input type="hidden" name="devolucion_id" id="acp-dev-id">
-          <textarea name="observaciones_recepcion" class="form-control devoluciones__style-65" rows="3" placeholder="Ej: Herramientas recibidas en buen estado…"></textarea>
-        </form>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-outline-mine" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn-primary-mine devoluciones__style-66" onclick="confirmarAceptar()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          Confirmar recepción
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- ══════════════════════════════════════
-     MODAL RECHAZAR DEVOLUCIÓN
-══════════════════════════════════════ -->
-<div class="modal fade" id="modalRechazarDevolucion" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="devoluciones__style-67">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="15" y1="9" x2="9" y2="15"/>
-            <line x1="9" y1="9" x2="15" y2="15"/>
-          </svg>
-          Rechazar Devolución <span id="rch-id" class="devoluciones__style-68"></span>
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body devoluciones__style-69">
-
-        <!-- Info de la devolución -->
-        <div class="devoluciones__style-70">
-          <div class="devoluciones__style-71">
-            <div style="width:36px; height:36px; border-radius:50%; background:rgba(152,71,62,.12);
-                         display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--rust)" stroke-width="2.5">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </div>
-            <div>
-              <div class="devoluciones__style-72">
-                Rechazar devolución
-              </div>
-              <div class="devoluciones__style-73">
-                Préstamo <span id="rch-prestamo" class="devoluciones__style-74"></span>
-                · Usuario: <span id="rch-usuario"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <form method="post" id="form-rechazar-devolucion" novalidate>
-          {% csrf_token %}
-          <input type="hidden" name="action" value="rechazar_devolucion">
-          <input type="hidden" name="devolucion_id" id="rch-dev-id">
-
-          <div class="devoluciones__style-75">
-            Motivo del rechazo *
-          </div>
-
-          <!-- ══ ALERTA INLINE de validación (visible solo cuando falta el motivo) ══ -->
-          <div id="rch-motivo-err" class="devoluciones__style-76">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="devoluciones__style-77">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-            <span>El motivo del rechazo es obligatorio (mínimo 10 caracteres).</span>
-          </div>
-
-          <textarea name="motivo_rechazo" id="rch-motivo-textarea" class="form-control devoluciones__style-78" rows="4" placeholder="Explica por qué se rechaza la devolución… (obligatorio)" oninput="rchLimpiarError()"></textarea>
-          <div class="devoluciones__style-79">
-            Mínimo 10 caracteres. El usuario será informado del motivo.
-          </div>
-        </form>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-outline-mine" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn-primary-mine devoluciones__style-80" onclick="confirmarRechazar()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-          Confirmar rechazo
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 {% endblock %}
 
 
 {% block js %}
-<script src="{% static 'js/devoluciones.js' %}"></script>
-<script src="{% static 'js/tables/devoluciones_table.js' %}"></script>
+<script src="{% static 'js/devoluciones.js' %}?v=1.1"></script>
+<script src="{% static 'js/tables/devoluciones_table.js' %}?v=1.1"></script>
 {% endblock js %}
