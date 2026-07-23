@@ -142,8 +142,9 @@ def inventario(request):
                 form_modal_errors = True  # Mantiene el flujo para regresar al modal principal
 
     # Consultar herramientas y categorías para la vista
-    productos = Producto.objects.all()
+    productos = Producto.objects.select_related('estante__almacen').all()
     categorias = Categoria.objects.all()
+    almacenes = Almacen.objects.all()
 
     from usuario.models import Usuario
     usuarios_sistema = Usuario.objects.all().order_by('nombre_completo')
@@ -175,6 +176,7 @@ def inventario(request):
     context = {
         "productos": productos,
         "categorias": categorias,
+        "almacenes": almacenes,
         "total": total_productos,
         "form_filtro": form_filtro,
         "form_modal_errors": form_modal_errors,
