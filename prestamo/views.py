@@ -512,11 +512,11 @@ def usuario_solicitar_prestamo(request):
             errores.append(f'Cantidad inválida para "{producto.nombre}".')
             continue
         if producto.stock <= 0:
-            errores.append(f'"{producto.nombre}" no tiene stock disponible.')
+            errores.append(f'No se pudo realizar el préstamo: "{producto.nombre}" no tiene stock disponible.')
         elif cantidad > producto.stock:
             errores.append(
-                f'Stock insuficiente para "{producto.nombre}": '
-                f'solo hay {producto.stock} disponibles.'
+                f'No se pudo realizar el préstamo: stock insuficiente para "{producto.nombre}" '
+                f'(solicitaste {cantidad}, pero solo hay {producto.stock} disponible{"s" if producto.stock > 1 else ""}).'
             )
         else:
             items_validated.append((producto, cantidad))
@@ -526,26 +526,32 @@ def usuario_solicitar_prestamo(request):
             messages.error(request, e)
         return redirect('prestamo_usuario')
 
-    prestamo = Prestamo()
-    prestamo.usuario          = doc
-    prestamo.nombre_usuario   = usuario.nombre_completo
-    prestamo.observaciones    = motivo
-    prestamo.motivo_solicitud = motivo
-    prestamo.estado           = 'pendiente'
+    from django.db import transaction
 
-    try:
-        prestamo.fecha_vencimiento = datetime.date.fromisoformat(fecha_str) if fecha_str else None
-    except ValueError:
-        prestamo.fecha_vencimiento = None
+    with transaction.atomic():
+        prestamo = Prestamo()
+        prestamo.usuario          = doc
+        prestamo.nombre_usuario   = usuario.nombre_completo
+        prestamo.observaciones    = motivo
+        prestamo.motivo_solicitud = motivo
+        prestamo.estado           = 'pendiente'
 
-    prestamo.save()
+        try:
+            prestamo.fecha_vencimiento = datetime.date.fromisoformat(fecha_str) if fecha_str else None
+        except ValueError:
+            prestamo.fecha_vencimiento = None
 
-    for producto, cantidad in items_validated:
-        ItemPrestamo.objects.create(
-            prestamo=prestamo,
-            producto=producto,
-            cantidad=cantidad,
-        )
+        prestamo.save()
+
+        items_a_crear = [
+            ItemPrestamo(
+                prestamo=prestamo,
+                producto=producto,
+                cantidad=cantidad,
+            )
+            for producto, cantidad in items_validated
+        ]
+        ItemPrestamo.objects.bulk_create(items_a_crear)
 
     messages.success(
         request,

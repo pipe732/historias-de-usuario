@@ -11,6 +11,7 @@
  ═══════════════════════════════════════════════════════ */
 
 :root {
+  --acc-font-scale: 1;
   --cream: #EFECCA;
   --sage: #71816D;
   --rust: #98473E;
@@ -32,6 +33,10 @@
   --radius-lg: .85rem;
   --shadow-sm: 0 2px 8px rgba(27, 32, 33, .06);
   --shadow-md: 0 8px 24px rgba(27, 32, 33, .08);
+}
+
+html {
+  font-size: calc(100% * var(--acc-font-scale, 1)) !important;
 }
 
 /* --- Global Font Overrides --- */
@@ -78,18 +83,7 @@ th,
   font-family: var(--font-ui) !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --cream: #1e1e1e;
-    --bg-body: #121212;
-    --bg-surface: #1e1e1e;
-    --text-main: #f5f5f5;
-    --text-muted: #a0aab2;
-    --border-color: rgba(255, 255, 255, 0.1);
-    --navy: #052c54;
-    --dark: #121212;
-  }
-}
+/* El tema claro es predeterminado; el modo oscuro se activa explícitamente desde el widget de accesibilidad */
 
 /* ════════════════════════════════════
    FORM VALIDATION ICONS  (fv-wrap)
@@ -255,7 +249,7 @@ body {
   background: var(--bg-body);
   color: var(--text-main);
   font-family: var(--font-ui);
-  font-size: 15px;
+  font-size: calc(0.9375rem * var(--acc-font-scale, 1));
 }
 
 /* ── FOOTER oculto ── */
@@ -1096,22 +1090,22 @@ body.light-mode .loan-days-ok {
   /* colores base (modo normal / light) */
   --ap-bg: #1B2021;
   --ap-head-bg: var(--navy);
-  --ap-head-color: var(--cream);
-  --ap-btn-color: rgba(239, 236, 202, .68);
-  --ap-btn-hover-bg: rgba(255, 255, 255, .06);
-  --ap-btn-hover-c: var(--cream);
-  --ap-btn-active-bg: rgba(9, 77, 146, .25);
-  --ap-btn-active-c: var(--cream);
-  --ap-divider: rgba(255, 255, 255, .07);
-  --ap-border: rgba(255, 255, 255, .08);
-  --ap-ico-bg: rgba(9, 77, 146, .22);
-  --ap-ico-border: rgba(9, 77, 146, .28);
-  --ap-ico-color: rgba(239, 236, 202, .72);
-  --ap-reset-bg: rgba(239, 236, 202, .04);
-  --ap-reset-border: rgba(239, 236, 202, .1);
-  --ap-reset-color: rgba(239, 236, 202, .38);
-  --ap-reset-hover-bg: rgba(239, 236, 202, .1);
-  --ap-reset-hover-c: var(--cream);
+  --ap-head-color: #EFECCA;
+  --ap-btn-color: rgba(239, 236, 202, .88);
+  --ap-btn-hover-bg: rgba(255, 255, 255, .08);
+  --ap-btn-hover-c: #FFFFFF;
+  --ap-btn-active-bg: rgba(9, 77, 146, .35);
+  --ap-btn-active-c: #FFFFFF;
+  --ap-divider: rgba(255, 255, 255, .1);
+  --ap-border: rgba(255, 255, 255, .12);
+  --ap-ico-bg: rgba(9, 77, 146, .3);
+  --ap-ico-border: rgba(9, 77, 146, .4);
+  --ap-ico-color: #EFECCA;
+  --ap-reset-bg: rgba(239, 236, 202, .06);
+  --ap-reset-border: rgba(239, 236, 202, .15);
+  --ap-reset-color: rgba(239, 236, 202, .7);
+  --ap-reset-hover-bg: rgba(239, 236, 202, .15);
+  --ap-reset-hover-c: #FFFFFF;
   background: var(--ap-bg);
   border-radius: var(--radius-lg);
   border: 1px solid var(--ap-border);
@@ -1286,7 +1280,7 @@ body.light-mode {
   --text-muted: #71816D;
   --border-color: rgba(27, 32, 33, .09);
   background: #faf8f4 !important;
-  color: #1B2021 !important;
+  color: #1B2021;
 }
 
 body.light-mode main {
@@ -6842,130 +6836,144 @@ body.dark-mode .card:hover {
 
 /* ============================================================
    ASIDE TWO-MODE THEME
-   Light mode  -> navy blue background, white text
-   Dark mode   -> cream background, dark text
+   Light mode  -> Light white background, dark text
+   Dark mode   -> Dark surface background, light text
    ============================================================ */
 
 /* --- LIGHT MODE (default) --- */
 aside {
-  background: #1B2021 !important;
-  border-right: none !important;
+  background: #FFFFFF !important;
+  border-right: 1px solid rgba(27, 32, 33, .09) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
 aside .aside-brand-name {
-  color: #fff !important;
+  color: #1B2021 !important;
 }
 
 aside .aside-brand-sub {
-  color: rgba(255, 255, 255, .5) !important;
+  color: #71816D !important;
 }
 
 aside .nav-link {
-  color: rgba(255, 255, 255, .75) !important;
+  color: rgba(27, 32, 33, .78) !important;
 }
 
 aside .nav-link:hover {
-  color: #fff !important;
-  background: rgba(255, 255, 255, .10) !important;
+  color: #04294f !important;
+  background: rgba(27, 32, 33, .05) !important;
 }
 
 aside .nav-link.active {
-  color: #fff !important;
-  background: rgba(255, 255, 255, .15) !important;
-  border-left: 3px solid #fff !important;
+  color: #04294f !important;
+  background: rgba(4, 41, 79, .08) !important;
+  border-left: 3px solid #04294f !important;
   font-weight: 600 !important;
 }
 
 aside .nav-icon {
-  stroke: rgba(255, 255, 255, .7) !important;
+  stroke: rgba(27, 32, 33, .7) !important;
 }
 
 aside .nav-link:hover .nav-icon,
 aside .nav-link.active .nav-icon {
-  stroke: #fff !important;
+  stroke: #04294f !important;
 }
 
 aside .bi {
-  color: rgba(255, 255, 255, .7) !important;
+  color: rgba(27, 32, 33, .7) !important;
 }
 
 aside .nav-link.active .bi {
-  color: #fff !important;
+  color: #04294f !important;
 }
 
 aside .extracted-style-354,
-aside .extracted-style-355 {
-  color: rgba(255, 255, 255, .38) !important;
+aside .extracted-style-355,
+aside span.text-uppercase {
+  color: #71816D !important;
 }
 
 aside .bi-chevron-down {
-  color: rgba(255, 255, 255, .35) !important;
+  color: rgba(27, 32, 33, .45) !important;
 }
 
 aside hr {
-  border-color: rgba(255, 255, 255, .12) !important;
+  border-color: rgba(27, 32, 33, .09) !important;
+}
+
+aside .dropup > button {
+  background: rgba(27, 32, 33, .04) !important;
+  border: 1px solid rgba(27, 32, 33, .1) !important;
+  color: #1B2021 !important;
 }
 
 /* --- DARK MODE --- */
 body.dark-mode aside {
-  background: #EFECCA !important;
-  border-right: 1px solid rgba(27, 32, 33, .12) !important;
+  background: #182225 !important;
+  border-right: 1px solid rgba(239, 236, 202, .08) !important;
 }
 
 body.dark-mode aside .aside-brand-name {
-  color: #98473E !important;
+  color: #EFECCA !important;
 }
 
 body.dark-mode aside .aside-brand-sub {
-  color: rgba(27, 32, 33, .5) !important;
+  color: rgba(239, 236, 202, .55) !important;
 }
 
 body.dark-mode aside .nav-link {
-  color: rgba(27, 32, 33, .75) !important;
+  color: rgba(239, 236, 202, .8) !important;
 }
 
 body.dark-mode aside .nav-link:hover {
-  color: #98473E !important;
-  background: rgba(152, 71, 62, .09) !important;
+  color: #EFECCA !important;
+  background: rgba(239, 236, 202, .08) !important;
 }
 
 body.dark-mode aside .nav-link.active {
-  color: #98473E !important;
-  background: rgba(152, 71, 62, .12) !important;
-  border-left: 3px solid #98473E !important;
+  color: #EFECCA !important;
+  background: rgba(239, 236, 202, .15) !important;
+  border-left: 3px solid #EFECCA !important;
   font-weight: 600 !important;
 }
 
 body.dark-mode aside .nav-icon {
-  stroke: rgba(27, 32, 33, .65) !important;
+  stroke: rgba(239, 236, 202, .7) !important;
 }
 
 body.dark-mode aside .nav-link:hover .nav-icon,
 body.dark-mode aside .nav-link.active .nav-icon {
-  stroke: #98473E !important;
+  stroke: #EFECCA !important;
 }
 
 body.dark-mode aside .bi {
-  color: rgba(27, 32, 33, .65) !important;
+  color: rgba(239, 236, 202, .7) !important;
 }
 
 body.dark-mode aside .nav-link.active .bi {
-  color: #98473E !important;
+  color: #EFECCA !important;
 }
 
 body.dark-mode aside .extracted-style-354,
-body.dark-mode aside .extracted-style-355 {
-  color: rgba(27, 32, 33, .38) !important;
+body.dark-mode aside .extracted-style-355,
+body.dark-mode aside span.text-uppercase {
+  color: rgba(239, 236, 202, .5) !important;
 }
 
 body.dark-mode aside .bi-chevron-down {
-  color: rgba(27, 32, 33, .35) !important;
+  color: rgba(239, 236, 202, .4) !important;
 }
 
 body.dark-mode aside hr {
-  border-color: rgba(27, 32, 33, .12) !important;
+  border-color: rgba(239, 236, 202, .1) !important;
+}
+
+body.dark-mode aside .dropup > button {
+  background: rgba(239, 236, 202, .08) !important;
+  border: 1px solid rgba(239, 236, 202, .12) !important;
+  color: rgba(239, 236, 202, .9) !important;
 }
 
 /* ========================================== */
