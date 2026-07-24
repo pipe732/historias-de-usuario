@@ -6,138 +6,58 @@
   var fontSize  = parseInt(localStorage.getItem('acc_fs') || '100');
   var contrast  = localStorage.getItem('acc_contrast') === 'true';
   var darkMode  = localStorage.getItem('acc_dark')     === 'true';
-  var lightMode = localStorage.getItem('acc_light')    === 'true';
+  // El modo claro es predeterminado a menos que acc_dark sea true
+  var lightMode = localStorage.getItem('acc_light')    !== 'false' && !darkMode;
   var antigravity = localStorage.getItem('acc_antigravity') === 'true';
 
-  document.documentElement.style.fontSize = fontSize + '%';
-
   /* ══════════════════════════════════════════
-     INYECTAR estilos CSS helper en <head>
-     Usa aside[data-acc-dark] para máxima
-     especificidad sobre las clases de Bootstrap
+     APLICAR TAMAÑO DE LETRA DE ACCESIBILIDAD
   ══════════════════════════════════════════ */
-  var helperStyle = document.createElement('style');
-  helperStyle.id  = 'acc-helper-styles';
-  helperStyle.textContent = [
-    'aside[data-acc-dark] { background:#fff !important; border-right:1px solid rgba(27,32,33,.14) !important; }',
-    'aside[data-acc-dark]::-webkit-scrollbar-thumb { background:rgba(27,32,33,.15) !important; }',
-    'aside[data-acc-dark] .aside-header   { color:rgba(27,32,33,.4) !important; border-bottom-color:rgba(27,32,33,.08) !important; }',
-    'aside[data-acc-dark] .aside-brand-name { color:#1B2021 !important; }',
-    'aside[data-acc-dark] .aside-brand-sub  { color:rgba(27,32,33,.4) !important; }',
-    'aside[data-acc-dark] hr { border-color:rgba(27,32,33,.1) !important; opacity:1 !important; }',
-    'aside[data-acc-dark] .bi-chevron-down { color:#1B2021 !important; opacity:.25 !important; }',
-    'aside[data-acc-dark] .nav-icon { opacity:.42; }',
-    /* clases helper que reemplazan text-white-50 y text-white de Bootstrap */
-    'aside[data-acc-dark] ._al { color:rgba(27,32,33,.58) !important; }',
-    'aside[data-acc-dark] ._al:hover { color:#1B2021 !important; background:rgba(27,32,33,.06) !important; }',
-    'aside[data-acc-dark] ._al:hover .nav-icon { opacity:.85; }',
-    'aside[data-acc-dark] ._aa { color:#1B2021 !important; }',
-    'aside[data-acc-dark] ._ab { background:rgba(27,32,33,.08) !important; }',
-    /* nav-bottom */
-    'aside[data-acc-dark] .nav-bottom { border-top-color:rgba(27,32,33,.1) !important; }',
-    /* Submenús colores especiales */
-    'aside[data-acc-dark] .text-info    { color:rgba(9,77,146,.75) !important; }',
-    'aside[data-acc-dark] .text-warning { color:rgba(130,85,10,.85) !important; }',
-    /* Dropdown usuario */
-    'aside[data-acc-dark] .dropdown-menu       { background:#fff !important; border-color:rgba(27,32,33,.1) !important; }',
-    'aside[data-acc-dark] .dropdown-item       { color:rgba(27,32,33,.75) !important; }',
-    'aside[data-acc-dark] .dropdown-item:hover { background:rgba(27,32,33,.05) !important; color:#1B2021 !important; }',
-    'aside[data-acc-dark] .dropdown-item.text-danger { color:#98473E !important; }',
-    'aside[data-acc-dark] .dropdown-divider    { border-color:rgba(27,32,33,.08) !important; }',
-    'aside[data-acc-dark] .dropdown-item-text  { color:rgba(27,32,33,.35) !important; }',
-  ].join('\n');
-  document.head.appendChild(helperStyle);
+  function applyFontSize(size) {
+    fontSize = size;
+    localStorage.setItem('acc_fs', size);
+    var scale = size / 100;
+    document.documentElement.style.fontSize = size + '%';
+    document.documentElement.style.setProperty('--acc-font-scale', scale);
+
+    var fontStyle = document.getElementById('acc-font-scale-style');
+    if (!fontStyle) {
+      fontStyle = document.createElement('style');
+      fontStyle.id = 'acc-font-scale-style';
+      document.head.appendChild(fontStyle);
+    }
+    fontStyle.textContent = 'body { font-size: calc(0.9375rem * ' + scale + ') !important; }';
+  }
+
+  applyFontSize(fontSize);
 
   /* ══════════════════════════════════════════
-     ASIDE: aplicar / quitar tema blanco
+     ASIDE: los estilos de aside para modo claro y oscuro 
+     están definidos directamente en style.css
   ══════════════════════════════════════════ */
   function applyAsideDark() {
     var aside = document.querySelector('aside');
-    if (!aside) return;
-
-    /* Marca que activa todos los selectores CSS helper */
-    aside.setAttribute('data-acc-dark', '1');
-
-    /* Botón usuario — style inline con rgba(255…) */
-    var btn = aside.querySelector('.dropup > button');
-    if (btn) {
-      btn.style.cssText = btn.style.cssText
-        .replace(/background:[^;]+;?/gi, '')
-        .replace(/border:[^;]+;?/gi, '')
-        .replace(/color:[^;]+;?/gi, '');
-      btn.style.setProperty('background', 'rgba(27,32,33,.06)', 'important');
-      btn.style.setProperty('border',     '1px solid rgba(27,32,33,.13)', 'important');
-      btn.style.setProperty('color',      'rgba(27,32,33,.78)', 'important');
-    }
-
-    /* Badge "pronto" — style inline con rgba(255…) */
-    aside.querySelectorAll('.badge[style]').forEach(function (el) {
-      el.style.setProperty('background', 'rgba(27,32,33,.08)', 'important');
-      el.style.setProperty('color',      'rgba(27,32,33,.45)', 'important');
-    });
-
-    /* Etiquetas de sección — style inline color rgba(255…) */
-    aside.querySelectorAll('span.text-uppercase[style]').forEach(function (el) {
-      el.style.setProperty('color', 'rgba(27,32,33,.38)', 'important');
-    });
-
-    /* Reemplazar clases Bootstrap */
-    aside.querySelectorAll('.text-white-50').forEach(function (el) {
-      el.classList.replace('text-white-50', '_al');
-    });
-    aside.querySelectorAll('.text-white').forEach(function (el) {
-      el.classList.replace('text-white', '_aa');
-    });
-    aside.querySelectorAll('.bg-white.bg-opacity-10').forEach(function (el) {
-      el.classList.remove('bg-white', 'bg-opacity-10');
-      el.classList.add('_ab');
-    });
+    if (aside) aside.setAttribute('data-acc-dark', '1');
   }
 
   function resetAsideDark() {
     var aside = document.querySelector('aside');
-    if (!aside) return;
-
-    aside.removeAttribute('data-acc-dark');
-
-    var btn = aside.querySelector('.dropup > button');
-    if (btn) {
-      btn.style.setProperty('background', 'rgba(255,255,255,.05)', 'important');
-      btn.style.setProperty('border',     '1px solid rgba(255,255,255,.07)', 'important');
-      btn.style.setProperty('color',      'rgba(239,236,202,.85)', 'important');
-    }
-
-    aside.querySelectorAll('.badge[style]').forEach(function (el) {
-      el.style.setProperty('background', 'rgba(255,255,255,.1)', 'important');
-      el.style.setProperty('color',      'rgba(255,255,255,.5)', 'important');
-    });
-
-    aside.querySelectorAll('span.text-uppercase[style]').forEach(function (el) {
-      el.style.setProperty('color', 'rgba(255,255,255,.25)', 'important');
-    });
-
-    aside.querySelectorAll('._al').forEach(function (el) {
-      el.classList.replace('_al', 'text-white-50');
-    });
-    aside.querySelectorAll('._aa').forEach(function (el) {
-      el.classList.replace('_aa', 'text-white');
-    });
-    aside.querySelectorAll('._ab').forEach(function (el) {
-      el.classList.remove('_ab');
-      el.classList.add('bg-white', 'bg-opacity-10');
-    });
+    if (aside) aside.removeAttribute('data-acc-dark');
   }
 
   /* ══════════════════════════════════════════
      APLICAR ESTADO GUARDADO
-     (script está al final del body → DOM listo)
   ══════════════════════════════════════════ */
-  if (contrast)  document.body.classList.add('high-contrast');
-  if (lightMode) document.body.classList.add('light-mode');
+  if (contrast) document.body.classList.add('high-contrast');
   if (antigravity) document.body.classList.add('antigravity-active');
   if (darkMode) {
     document.body.classList.add('dark-mode');
+    document.body.classList.remove('light-mode');
     applyAsideDark();
+  } else {
+    document.body.classList.add('light-mode');
+    document.body.classList.remove('dark-mode');
+    resetAsideDark();
   }
 
   /* ══════════════════════════════════════════
@@ -156,7 +76,6 @@
 
   /* ══════════════════════════════════════════
      REPINTAR panel para recalcular CSS vars
-     (necesario cuando cambia body.dark-mode)
   ══════════════════════════════════════════ */
   function repaintPanel() {
     var p = document.getElementById('acc-panel');
@@ -185,42 +104,58 @@
       if (widget && !widget.contains(e.target)) panel.classList.remove('acc-open');
     });
 
-    document.getElementById('acc-btn-contrast').addEventListener('click', function () {
-      contrast = !contrast;
-      document.body.classList.toggle('high-contrast', contrast);
-      localStorage.setItem('acc_contrast', contrast);
-      syncButtons();
-    });
+    var contrastBtn = document.getElementById('acc-btn-contrast');
+    if (contrastBtn) {
+      contrastBtn.addEventListener('click', function () {
+        contrast = !contrast;
+        document.body.classList.toggle('high-contrast', contrast);
+        localStorage.setItem('acc_contrast', contrast);
+        syncButtons();
+      });
+    }
 
-    document.getElementById('acc-btn-dark').addEventListener('click', function () {
-      darkMode = !darkMode;
-      if (darkMode) {
-        lightMode = false;
-        document.body.classList.remove('light-mode');
-        localStorage.setItem('acc_light', 'false');
-        applyAsideDark();
-      } else {
-        resetAsideDark();
-      }
-      document.body.classList.toggle('dark-mode', darkMode);
-      localStorage.setItem('acc_dark', darkMode);
-      syncButtons();
-      repaintPanel();
-    });
+    var darkBtn = document.getElementById('acc-btn-dark');
+    if (darkBtn) {
+      darkBtn.addEventListener('click', function () {
+        darkMode = !darkMode;
+        if (darkMode) {
+          lightMode = false;
+          document.body.classList.remove('light-mode');
+          document.body.classList.add('dark-mode');
+          localStorage.setItem('acc_light', 'false');
+          localStorage.setItem('acc_dark', 'true');
+          applyAsideDark();
+        } else {
+          lightMode = true;
+          document.body.classList.add('light-mode');
+          document.body.classList.remove('dark-mode');
+          localStorage.setItem('acc_light', 'true');
+          localStorage.setItem('acc_dark', 'false');
+          resetAsideDark();
+        }
+        syncButtons();
+        repaintPanel();
+      });
+    }
 
-    document.getElementById('acc-btn-light').addEventListener('click', function () {
-      lightMode = !lightMode;
-      if (lightMode) {
-        darkMode = false;
-        document.body.classList.remove('dark-mode');
-        localStorage.setItem('acc_dark', 'false');
-        resetAsideDark();
-      }
-      document.body.classList.toggle('light-mode', lightMode);
-      localStorage.setItem('acc_light', lightMode);
-      syncButtons();
-      repaintPanel();
-    });
+    var lightBtn = document.getElementById('acc-btn-light');
+    if (lightBtn) {
+      lightBtn.addEventListener('click', function () {
+        lightMode = !lightMode;
+        if (lightMode) {
+          darkMode = false;
+          document.body.classList.remove('dark-mode');
+          document.body.classList.add('light-mode');
+          localStorage.setItem('acc_dark', 'false');
+          localStorage.setItem('acc_light', 'true');
+          resetAsideDark();
+        } else {
+          localStorage.setItem('acc_light', 'false');
+        }
+        syncButtons();
+        repaintPanel();
+      });
+    }
 
     var antiBtn = document.getElementById('acc-btn-antigravity');
     if (antiBtn) {
@@ -232,32 +167,37 @@
       });
     }
 
-    document.getElementById('acc-btn-plus').addEventListener('click', function () {
-      if (fontSize >= 140) return;
-      fontSize += 10;
-      document.documentElement.style.fontSize = fontSize + '%';
-      localStorage.setItem('acc_fs', fontSize);
-    });
+    var plusBtn = document.getElementById('acc-btn-plus');
+    if (plusBtn) {
+      plusBtn.addEventListener('click', function () {
+        if (fontSize >= 150) return;
+        applyFontSize(fontSize + 10);
+      });
+    }
 
-    document.getElementById('acc-btn-minus').addEventListener('click', function () {
-      if (fontSize <= 70) return;
-      fontSize -= 10;
-      document.documentElement.style.fontSize = fontSize + '%';
-      localStorage.setItem('acc_fs', fontSize);
-    });
+    var minusBtn = document.getElementById('acc-btn-minus');
+    if (minusBtn) {
+      minusBtn.addEventListener('click', function () {
+        if (fontSize <= 70) return;
+        applyFontSize(fontSize - 10);
+      });
+    }
 
-    document.getElementById('acc-btn-reset').addEventListener('click', function () {
-      fontSize = 100; contrast = false; darkMode = false; lightMode = false; antigravity = false;
-      document.body.classList.remove('high-contrast', 'dark-mode', 'light-mode', 'antigravity-active');
-      document.documentElement.style.fontSize = '100%';
-      resetAsideDark();
-      localStorage.removeItem('acc_fs');
-      localStorage.removeItem('acc_contrast');
-      localStorage.removeItem('acc_dark');
-      localStorage.removeItem('acc_light');
-      localStorage.removeItem('acc_antigravity');
-      syncButtons();
-    });
+    var resetBtn = document.getElementById('acc-btn-reset');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        contrast = false; darkMode = false; lightMode = true; antigravity = false;
+        document.body.classList.remove('high-contrast', 'dark-mode', 'antigravity-active');
+        document.body.classList.add('light-mode');
+        applyFontSize(100);
+        resetAsideDark();
+        localStorage.removeItem('acc_contrast');
+        localStorage.setItem('acc_dark', 'false');
+        localStorage.setItem('acc_light', 'true');
+        localStorage.removeItem('acc_antigravity');
+        syncButtons();
+      });
+    }
 
     syncButtons();
   }
