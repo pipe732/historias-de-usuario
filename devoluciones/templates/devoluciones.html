@@ -28,7 +28,7 @@
 {% endif %}
 
 <!-- ══ CABECERA ══ -->
-<div class="d-flex align-items-center justify-content-between">
+<div class="d-flex align-items-center justify-content-between mb-4">
   <div>
     <h5 class="devoluciones__style-5">
       Devoluciones
@@ -49,8 +49,33 @@
   </button>
 </div>
 
+<!-- ══ FILTROS DEVOLUCIONES ══ -->
+<div class="card p-3 border-0 shadow-sm mb-4 bg-white">
+  <div class="row g-2 align-items-center">
+    <div class="col-12 col-md-7">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+        <input type="text" id="devoluciones-busqueda" data-no-validate autocomplete="off" class="form-control bg-light border-start-0" placeholder="Buscar devolución por préstamo, usuario o motivo…">
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <select id="devoluciones-estado" data-no-validate class="form-select form-select-sm bg-light">
+        <option value="">-- Todos los Estados --</option>
+        <option value="aprobada">Aprobada</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="rechazada">Rechazada</option>
+      </select>
+    </div>
+    <div class="col-12 col-md-1">
+      <button type="button" id="btn-limpiar-filtros-dev" class="btn btn-outline-secondary btn-sm w-100 d-flex align-items-center justify-content-center" title="Limpiar filtros">
+        <i class="bi bi-brush"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ TABLA ══ -->
-<div class="card table-card">
+<div class="card table-card p-3">
   <div class="card-header d-flex align-items-center justify-content-between">
     <span class="card-title">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -60,13 +85,13 @@
       </svg>
       Devoluciones registradas
     </span>
-    <span class="devoluciones__style-7">
+    <span class="badge-count">
       {{ devoluciones|length }} registro{{ devoluciones|length|pluralize }}
     </span>
   </div>
 
   <div class="table-responsive">
-    <table class="table-app datatable-custom" id="devoluciones-table" style="width:100%; border-collapse:collapse; font-size:.9rem;">
+    <table class="table-app datatable-custom" id="devoluciones-table">
       <thead>
         <tr>
           <th class="devoluciones__style-8"></th>
@@ -82,42 +107,57 @@
       <tbody>
         {% for d in devoluciones %}
         <tr class="devoluciones__style-10" onclick="if(!event.target.closest('button') && !event.target.closest('form')) { $(this).find('.btn-toggle-details').trigger('click'); }" onmouseover="this.style.background='rgba(9,77,146,.02)'" onmouseout="this.style.background='transparent'">
-          <td class="text-center">
-            <button type="button"
-                    class="btn-toggle-details"
-                    style="width:24px; height:24px; border-radius:50%;
-                           background:rgba(9,77,146,.07); border:1px solid rgba(9,77,146,.14);
-                           color:var(--navy); cursor:pointer; display:inline-flex;
-                           align-items:center; justify-content:center; padding:0;"
-                    data-target-detail="detail-{{ d.pk }}">
-              <svg class="row-chevron devoluciones__style-11" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <td class="prestamo__style-37">
+            <button type="button" class="btn-toggle-details prestamo__style-38" data-target-detail="detail-{{ d.pk }}">
+              <svg class="row-chevron prestamo__style-39" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="9 18 15 12 9 6"/>
               </svg>
             </button>
           </td>
           <td><span class="devoluciones__style-12">#{{ d.pk }}</span></td>
-          <td><span class="devoluciones__style-13">Préstamo #{{ d.prestamo.pk }}</span></td>
+          <td>
+            <div class="prestamo__style-41">Préstamo #{{ d.prestamo.pk }}</div>
+            <div class="prestamo__style-42">{{ d.prestamo.usuario }}</div>
+          </td>
           <td>
             {% if d.devolucion_total %}
-              <span class="devoluciones__style-14">Total</span>
+              <span class="badge-state badge-aprobada">Total</span>
             {% else %}
-              <span class="devoluciones__style-15">Parcial</span>
+              <span class="badge-state badge-pendiente">Parcial</span>
             {% endif %}
           </td>
-          <td class="devoluciones__style-16">{{ d.items.count }} ítem{{ d.items.count|pluralize }}</td>
-          <td class="devoluciones__style-17">
+          <td>
+            <div class="prestamo__style-43">
+              {% for item in d.items.all %}
+              <span class="prestamo__style-44">
+                {{ item.producto.nombre }} ×{{ item.cantidad }}
+              </span>
+              {% empty %}
+              <span class="text-muted small">{{ d.items.count }} ítem{{ d.items.count|pluralize }}</span>
+              {% endfor %}
+            </div>
+          </td>
+          <td class="prestamo__style-47">
             {{ d.fecha_creacion|date:"d/m/Y" }}
           </td>
 
-          {% comment %} {# ══════════════════════════════════════════════════════
-             CAMBIO PRINCIPAL: botones Aceptar y Rechazar
-          ══════════════════════════════════════════════════════ #} {% endcomment %}
           <td class="text-center">
-            <div class="devoluciones__style-18">
-
-              <span class="badge {% if d.estado == 'aprobada' %}bg-success{% elif d.estado == 'rechazada' %}bg-danger{% else %}bg-secondary{% endif %}">{{ d.estado|title }}</span>
-
-            </div>
+            {% if d.estado == 'aprobada' %}
+              <span class="badge-state badge-aprobada">Aprobada</span>
+            {% elif d.estado == 'rechazada' %}
+              <span class="badge-state badge-rechazada">Rechazada</span>
+            {% else %}
+              <div class="d-inline-flex gap-1 justify-content-center">
+                <button type="button" class="btn btn-sm btn-success btn-aceptar-click px-2 py-1 d-inline-flex align-items-center gap-1"
+                        data-pk="{{ d.pk }}" data-prestamo-pk="{{ d.prestamo.pk }}" data-usuario="{{ d.prestamo.usuario }}" title="Aceptar Devolución">
+                  <i class="bi bi-check-lg"></i> Aprobar
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-danger btn-rechazar-click px-2 py-1 d-inline-flex align-items-center gap-1"
+                        data-pk="{{ d.pk }}" data-prestamo-pk="{{ d.prestamo.pk }}" data-usuario="{{ d.prestamo.usuario }}" title="Rechazar Devolución">
+                  <i class="bi bi-x-lg"></i> Rechazar
+                </button>
+              </div>
+            {% endif %}
           </td>
         </tr>
 
@@ -273,6 +313,9 @@
 
 
 {% block js %}
-<script src="{% static 'js/devoluciones.js' %}?v=1.1"></script>
-<script src="{% static 'js/tables/devoluciones_table.js' %}?v=1.3"></script>
+<script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
+<script defer src="{% static 'js/datatables-init.js' %}?v=3"></script>
+<script defer src="{% static 'js/tables/devoluciones_table.js' %}?v=3"></script>
+<script defer src="{% static 'js/devoluciones.js' %}?v=3"></script>
 {% endblock js %}

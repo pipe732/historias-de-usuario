@@ -198,7 +198,7 @@ def inventario(request):
         "kpi_total_stock": total_stock,
         "kpi_sin_stock": sin_stock,
         "kpi_stock_bajo": stock_bajo,
-        "kardex_list": MovimientoKardex.objects.select_related("producto").all()[:50] if 'MovimientoKardex' in globals() or hasattr(Producto, 'kardex_movimientos') else [],
+        "kardex_list": MovimientoKardex.objects.select_related("producto").all()[:100],
     }
 
     return render(request, "inventario.html", context)

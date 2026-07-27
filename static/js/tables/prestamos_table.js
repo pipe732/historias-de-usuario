@@ -27,7 +27,7 @@ $(document).ready(function () {
   // ─── PASO 2: inicializar DataTable sobre el tbody ya limpio
   var table = $('#prestamo-table').DataTable({
     responsive: true,
-    dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6"f>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
+    dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6">>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
     buttons: window.obtenerBotonesDataTable('prestamos'),
     language: {
       url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
@@ -48,6 +48,11 @@ $(document).ready(function () {
         bootstrap.Tooltip.getOrCreateInstance(el);
       });
     }
+  });
+
+  // ─── Real-time live filtering ───
+  $('input[name="q"]').on('keyup input', function () {
+    table.search(this.value).draw();
   });
 
   // ─── PASO 3: función toggle de detalles

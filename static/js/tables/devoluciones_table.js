@@ -27,7 +27,7 @@ $(document).ready(function () {
   // ─── PASO 2: inicializar DataTable sobre el tbody ya limpio
   var table = $('#devoluciones-table').DataTable({
     responsive: true,
-    dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6"f>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
+    dom: '<"row mb-3 align-items-center"<"col-md-6"B><"col-md-6">>t<"row mt-3 align-items-center"<"col-md-6"i><"col-md-6"p>>',
     buttons: window.obtenerBotonesDataTable('devoluciones'),
     language: {
       url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
@@ -48,6 +48,23 @@ $(document).ready(function () {
         bootstrap.Tooltip.getOrCreateInstance(el);
       });
     }
+  });
+
+  // ─── Buscador en tiempo real y Filtros ───
+  $('#devoluciones-busqueda').on('keyup input', function () {
+    table.search(this.value).draw();
+  });
+
+  $('#devoluciones-estado').on('change', function () {
+    var val = $(this).val();
+    table.column(6).search(val ? val : '', true, false).draw();
+  });
+
+  $('#btn-limpiar-filtros-dev').on('click', function (e) {
+    e.preventDefault();
+    $('#devoluciones-busqueda').val('');
+    $('#devoluciones-estado').val('');
+    table.search('').column(6).search('').draw();
   });
 
   // ─── PASO 3: función toggle de detalles

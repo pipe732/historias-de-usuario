@@ -678,6 +678,19 @@ tbody tr:last-child td {
   --bs-table-bg: transparent;
   --bs-table-color: var(--text-main);
   --bs-table-hover-bg: rgba(152, 71, 62, .04);
+  font-size: 0.81rem !important;
+}
+
+.table-app th {
+  padding: 0.62rem 0.85rem !important;
+  font-size: 0.64rem !important;
+  letter-spacing: .08em;
+}
+
+.table-app td {
+  padding: 0.68rem 0.85rem !important;
+  font-size: 0.81rem !important;
+  vertical-align: middle !important;
 }
 
 /* ════════════════════════════════════
@@ -861,13 +874,13 @@ tbody tr:last-child td {
 .badge-state {
   display: inline-flex;
   align-items: center;
-  gap: .28rem;
+  gap: .25rem;
   border-radius: 20px;
-  padding: .18rem .6rem;
-  font-size: .73rem;
-  font-weight: 700;
+  padding: .14rem .5rem;
+  font-size: .69rem;
+  font-weight: 600;
   font-family: var(--font-ui);
-  letter-spacing: .03em;
+  letter-spacing: .02em;
 }
 
 .badge-state::before {

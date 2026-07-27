@@ -51,14 +51,35 @@ def _forzar_recarga():
 
 @admin_required
 def configuracion_view(request):
-
     almacenamiento_actual = _leer_env("DB_ENGINE", default="nube")
 
     if request.method == "POST":
-        almacenamiento = request.POST.get("almacenamiento", "nube")
+        accion = request.POST.get("accion", "").strip()
 
-        # Si el usuario quiere cambiar a local y actualmente está en la nube, sincronizamos
+        # ── Botón manual: Subir todo de Local a Nube ──
+        if accion == "sincronizar_local_a_nube":
+            try:
+                from migrar_db import migrate_local_to_cloud
+                migrate_local_to_cloud()
+                messages.success(request, " Sincronización exitosa: Todos los datos locales (SQLite) se han subido a la Nube (Neon PostgreSQL).")
+            except Exception as e:
+                messages.error(request, f"Error al subir datos a la nube: {e}")
+            return redirect("configuracion")
+
+        # ── Botón manual: Descargar todo de Nube a Local ──
+        elif accion == "sincronizar_nube_a_local":
+            try:
+                from migrar_db import migrate as run_db_migration
+                run_db_migration()
+                messages.success(request, " Sincronización exitosa: Todos los datos de la Nube (Neon PostgreSQL) se han descargado a Local (SQLite).")
+            except Exception as e:
+                messages.error(request, f"Error al descargar datos de la nube: {e}")
+            return redirect("configuracion")
+
+        # ── Cambio de Entorno Activo (con sincronización automática) ──
+        almacenamiento = request.POST.get("almacenamiento", "nube")
         sincronizado_ok = False
+
         if almacenamiento == "local" and almacenamiento_actual == "nube":
             try:
                 from migrar_db import migrate as run_db_migration
@@ -67,7 +88,7 @@ def configuracion_view(request):
             except Exception as e:
                 messages.error(
                     request,
-                    f"Error al sincronizar datos desde la nube: {e}. Se cambió de entorno pero la BD local podría estar incompleta."
+                    f"Error al sincronizar datos desde la nube: {e}."
                 )
         elif almacenamiento == "nube" and almacenamiento_actual == "local":
             try:
@@ -77,28 +98,27 @@ def configuracion_view(request):
             except Exception as e:
                 messages.error(
                     request,
-                    f"Error al sincronizar datos hacia la nube: {e}. Se cambió de entorno pero la BD en la nube podría estar incompleta."
+                    f"Error al sincronizar datos hacia la nube: {e}."
                 )
+        else:
+            sincronizado_ok = True
 
         _actualizar_env("DB_ENGINE", almacenamiento)
         _forzar_recarga()
 
-        nombre_bd = (
-            "Local (SQLite)" if almacenamiento == "local" else "Nube (Neon PostgreSQL)"
-        )
+        nombre_bd = "Local (SQLite)" if almacenamiento == "local" else "Nube (Neon PostgreSQL)"
 
         if sincronizado_ok:
             messages.success(
                 request,
-                f"Base de datos cambiada a {nombre_bd} y sincronizada con éxito. Sesión mantenida activa."
+                f"Base de datos activa cambiada a {nombre_bd} y sincronizada exitosamente."
             )
             return redirect("home")
         else:
-            # Cierra sesión para que el admin entre con la nueva BD activa
             request.session.flush()
             messages.success(
                 request,
-                f" Base de datos cambiada a {nombre_bd}. Espera 3 segundos e inicia sesión nuevamente.",
+                f"Base de datos cambiada a {nombre_bd}. Inicia sesión nuevamente.",
             )
             return redirect("login")
 
@@ -107,9 +127,7 @@ def configuracion_view(request):
 
     config = Config()
     config.almacenamiento = almacenamiento_actual
-
     context = {"config": config}
-
     return render(request, "configuracion.html", context)
 
 

@@ -106,7 +106,7 @@ def crear_usuarios():
     excluidos = ['0000000000', '1052390443'] + list(docs_activos)
     Usuario.objects.exclude(numero_documento__in=excluidos).delete()
 
-    fichas_opciones = ['2758369', '2827435', '2895642', '2910384', '3021948', '3196477', '3254109', '3341902']
+    fichas_opciones = ['2758369', '2827435', '2895642', '2910384', '3021948', '3196477', '3254109', '3341902', '3410582', '3509124', '3624891', '3781245', '3890123']
     programas_opciones = [
         'Análisis y Desarrollo de Software (ADSO)',
         'Supervisión de Labores Mineras',
@@ -115,19 +115,44 @@ def crear_usuarios():
         'Topografía y Georreferenciación',
         'Soldadura y Ensayos No Destructivos',
         'Gestión Ambiental y Salud Ocupacional',
-        'Mecánica Minera y Pesada'
+        'Mecánica Minera y Pesada',
+        'Seguridad en Minería Subterránea',
+        'Operación de Maquinaria Pesada'
     ]
 
-    nombres_base = [
-        ('Víctor', 'Rojas'), ('Carlos', 'Mendoza'), ('María', 'Fernández'),
-        ('Ana', 'Gómez'), ('Andrés', 'Castro'), ('Isabella', 'Torres'),
-        ('Javier', 'Ramírez'), ('Laura', 'Sánchez'), ('Diego', 'Morales'),
-        ('Sofia', 'Vargas'), ('Camilo', 'Herrera'), ('Daniela', 'Ríos'),
-        ('Mateo', 'Suárez'), ('Valentina', 'Ortega'), ('Santiago', 'Jiménez'),
-        ('Lucía', 'Pineda'), ('Gabriel', 'Nieto'), ('Elena', 'Duarte'),
-        ('Nicolás', 'Silva'), ('Mariana', 'Acosta'), ('Alejandro', 'Paredes'),
-        ('Paula', 'Bermúdez'), ('David', 'Londoño'), ('Cynthia', 'Moreno')
+    nombres_primeros = [
+        'Víctor', 'Carlos', 'María', 'Ana', 'Andrés', 'Isabella', 'Javier', 'Laura',
+        'Diego', 'Sofia', 'Camilo', 'Daniela', 'Mateo', 'Valentina', 'Santiago', 'Lucía',
+        'Gabriel', 'Elena', 'Nicolás', 'Mariana', 'Alejandro', 'Paula', 'David', 'Cynthia',
+        'Juan', 'Felipe', 'Jorge', 'Luis', 'Esteban', 'Sebastián', 'Daniel', 'Samuel',
+        'Álvaro', 'Guillermo', 'Fernando', 'Mario', 'Oscar', 'Rodrigo', 'Iván', 'Efraín',
+        'Mauricio', 'Héctor', 'Manuel', 'Fabián', 'Leonardo', 'Gonzalo', 'Cristian', 'Julian',
+        'Natalia', 'Vanessa', 'Diana', 'Lorena', 'Carolina', 'Ximena', 'Gabriela', 'Adriana',
+        'Beatriz', 'Juliana', 'Mónica', 'Valeria', 'Patricia', 'Clara', 'Sonia', 'Verónica'
     ]
+
+    apellidos = [
+        'Rojas', 'Mendoza', 'Fernández', 'Gómez', 'Castro', 'Torres', 'Ramírez', 'Sánchez',
+        'Morales', 'Vargas', 'Herrera', 'Ríos', 'Suárez', 'Ortega', 'Jiménez', 'Pineda',
+        'Nieto', 'Duarte', 'Silva', 'Acosta', 'Paredes', 'Bermúdez', 'Londoño', 'Moreno',
+        'Zapata', 'García', 'López', 'Martínez', 'Rodríguez', 'González', 'Pérez', 'Hernández',
+        'Díaz', 'Muñoz', 'Álvarez', 'Romero', 'Gutiérrez', 'Navarro', 'Salazar', 'Molina',
+        'Beltrán', 'Ospina', 'Cardona', 'Restrepo', 'Mejía', 'Giraldo', 'Agudelo', 'Jaramillo',
+        'Bedoya', 'Castaño'
+    ]
+
+    # Generar 80 usuarios únicos
+    nombres_base = []
+    usados = set()
+    random.seed(42)
+    while len(nombres_base) < 80:
+        nom = random.choice(nombres_primeros)
+        ape1 = random.choice(apellidos)
+        ape2 = random.choice(apellidos)
+        full = f"{nom} {ape1} {ape2}"
+        if full not in usados:
+            usados.add(full)
+            nombres_base.append((nom, f"{ape1} {ape2}"))
 
     usuarios_creados = [admin_user, admin2_user]
 
@@ -135,12 +160,14 @@ def crear_usuarios():
         doc = f"1055127{i:03d}"
         if doc in docs_activos:
             continue
-        correo = f"{nom.lower()}.{ape.lower()}{i}@sena.edu.co"
-        rol = 'Administrador' if i <= 3 else 'Usuario'
+        ape_clean = ape.replace(' ', '.').lower()
+        nom_clean = nom.lower().replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u')
+        correo = f"{nom_clean}.{ape_clean}{i}@sena.edu.co"
+        rol = 'Administrador' if i <= 5 else 'Usuario'
 
         usr = Usuario.objects.create(
             numero_documento=doc,
-            tipo_documento='CC' if i % 4 != 0 else 'CE',
+            tipo_documento='CC' if i % 5 != 0 else 'CE',
             nombre_completo=f"{nom} {ape}",
             correo=correo,
             rol=rol,
@@ -150,8 +177,10 @@ def crear_usuarios():
             nombre_programa=random.choice(programas_opciones)
         )
         usuarios_creados.append(usr)
-        print(f"   [OK] Usuario ({rol}): {doc} -- {nom} {ape}")
+        if i <= 10 or i % 10 == 0:
+            print(f"   [OK] Usuario #{i} ({rol}): {doc} -- {nom} {ape}")
 
+    print(f"   [TOTAL] {len(usuarios_creados)} usuarios generados correctamente.")
     return usuarios_creados
 
 
