@@ -248,7 +248,7 @@
                                             data-bs-toggle="tooltip"
                                             data-bs-placement="top"
                                             title="Modificar información"
-                                            onclick="abrirEditar('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}', '{% if producto.descripcion %}{{ producto.descripcion|escapejs }}{% endif %}', '{{ producto.stock }}', '{% if producto.categoria %}{{ producto.categoria.pk }}{% endif %}')">
+                                            onclick="abrirEditar('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}', '{% if producto.descripcion %}{{ producto.descripcion|escapejs }}{% endif %}', '{{ producto.stock }}', '{% if producto.categoria %}{{ producto.categoria.pk }}{% endif %}', '{% if producto.estante %}{{ producto.estante.almacen.pk }}{% endif %}', '{% if producto.estante %}{{ producto.estante.pk }}{% endif %}')">
                                         <i class="bi bi-pencil"></i>
                                     </button>
                                     <button type="button"
@@ -461,6 +461,24 @@
                                        value="{{ post_stock|default:1 }}"
                                        required>
                             </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted fw-bold small uppercase mb-1">Almacén</label>
+                                <select id="crear_almacen" data-no-validate class="form-select">
+                                    <option value="">-- Selecciona almacén --</option>
+                                    {% for almacen in almacenes %}
+                                        <option value="{{ almacen.pk }}">{{ almacen.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted fw-bold small uppercase mb-1">Estante</label>
+                                <select name="estante_id" id="crear_estante" class="form-select" disabled>
+                                    <option value="">-- Selecciona almacén primero --</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <span class="badge-state badge-aprobada font-monospace" id="crear_ubicacion_badge" style="display:none;"></span>
+                            </div>
                             <div class="col-12">
                                 <label class="form-label text-muted fw-bold small uppercase mb-1">Descripción</label>
                                 <textarea name="descripcion"
@@ -533,6 +551,24 @@
                                        class="form-control"
                                        min="0"
                                        required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label text-muted fw-bold small uppercase mb-1">Almacén</label>
+                                <select id="edit_almacen" class="form-select">
+                                    <option value="">-- Sin ubicación --</option>
+                                    {% for almacen in almacenes %}
+                                        <option value="{{ almacen.pk }}">{{ almacen.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label text-muted fw-bold small uppercase mb-1">Estante</label>
+                                <select name="estante_id" id="edit_estante" class="form-select" disabled>
+                                    <option value="">-- Sin ubicación --</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <span class="badge-state badge-aprobada font-monospace" id="edit_ubicacion_badge" style="display:none;"></span>
                             </div>
                             <div class="col-12">
                                 <label class="form-label text-muted fw-bold small uppercase mb-1">Descripción</label>
@@ -666,6 +702,65 @@
         </div>
     </div>
     <script>
+  const API_ESTANTES_URL = "{% url 'inventario:api_estantes' %}";
+
+  async function cargarEstantes(almacenSelectEl, estanteSelectEl, badgeEl, estanteSeleccionadoId) {
+      const almacenId = almacenSelectEl.value;
+      estanteSelectEl.innerHTML = '<option value="">Cargando...</option>';
+      estanteSelectEl.disabled = true;
+      badgeEl.style.display = 'none';
+
+      if (!almacenId) {
+          estanteSelectEl.innerHTML = '<option value="">-- Selecciona almacén primero --</option>';
+          return;
+      }
+      try {
+          const resp = await fetch(`${API_ESTANTES_URL}?almacen_id=${almacenId}`);
+          const estantes = await resp.json();
+          estanteSelectEl.innerHTML = '<option value="">-- Sin ubicación --</option>';
+          estantes.forEach(function (est) {
+              const opt = document.createElement('option');
+              opt.value = est.pk;
+              opt.textContent = est.codigo;
+              if (estanteSeleccionadoId && String(est.pk) === String(estanteSeleccionadoId)) {
+                  opt.selected = true;
+              }
+              estanteSelectEl.appendChild(opt);
+          });
+          estanteSelectEl.disabled = false;
+          actualizarBadgeUbicacion(almacenSelectEl, estanteSelectEl, badgeEl);
+      } catch (err) {
+          estanteSelectEl.innerHTML = '<option value="">Error al cargar estantes</option>';
+      }
+  }
+
+  function actualizarBadgeUbicacion(almacenSelectEl, estanteSelectEl, badgeEl) {
+      const almacenId = almacenSelectEl.value;
+      const estanteOpt = estanteSelectEl.options[estanteSelectEl.selectedIndex];
+      if (almacenId && estanteSelectEl.value && estanteOpt) {
+          badgeEl.textContent = `AL${almacenId}-${estanteOpt.textContent}`;
+          badgeEl.style.display = 'inline-block';
+      } else {
+          badgeEl.style.display = 'none';
+      }
+  }
+
+  // --- Crear ---
+  document.getElementById('crear_almacen').addEventListener('change', function () {
+      cargarEstantes(this, document.getElementById('crear_estante'), document.getElementById('crear_ubicacion_badge'));
+  });
+  document.getElementById('crear_estante').addEventListener('change', function () {
+      actualizarBadgeUbicacion(document.getElementById('crear_almacen'), this, document.getElementById('crear_ubicacion_badge'));
+  });
+
+  // --- Editar ---
+  document.getElementById('edit_almacen').addEventListener('change', function () {
+      cargarEstantes(this, document.getElementById('edit_estante'), document.getElementById('edit_ubicacion_badge'));
+  });
+  document.getElementById('edit_estante').addEventListener('change', function () {
+      actualizarBadgeUbicacion(document.getElementById('edit_almacen'), this, document.getElementById('edit_ubicacion_badge'));
+  });
+
   // Abrir Préstamo Rápido
   function abrirPrestamo(id, sku, nombre) {
     document.getElementById('prestamo_producto_id').value = id;
@@ -684,13 +779,18 @@
   }
 
   // Abrir Edición
-  function abrirEditar(id, sku, nombre, descripcion, stock, categoriaId) {
+  function abrirEditar(id, sku, nombre, descripcion, stock, categoriaId, almacenId, estanteId) {
     document.getElementById('edit_producto_id').value = id;
     document.getElementById('edit_sku').value = sku;
     document.getElementById('edit_nombre').value = nombre;
     document.getElementById('edit_descripcion').value = descripcion;
     document.getElementById('edit_stock').value = stock;
     document.getElementById('edit_categoria').value = categoriaId || "";
+
+    const almacenSelect = document.getElementById('edit_almacen');
+    almacenSelect.value = almacenId || "";
+    cargarEstantes(almacenSelect, document.getElementById('edit_estante'), document.getElementById('edit_ubicacion_badge'), estanteId);
+
     var modal = new bootstrap.Modal(document.getElementById('modalEditarHerramienta'));
     modal.show();
   }
