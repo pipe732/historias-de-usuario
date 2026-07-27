@@ -179,14 +179,29 @@ def prestamos_view(request):
             accion_aprobacion = request.POST.get('accion_aprobacion')
 
             if accion_aprobacion == 'aprobar':
+                from inventario.models import MovimientoKardex
                 for item in prestamo.items.select_related('producto'):
                     serial_val = request.POST.get(f'serial_{item.pk}', '').strip()
                     if serial_val:
                         item.serial_entregado = serial_val
                         item.save(update_fields=['serial_entregado'])
 
+                    stock_ant = item.producto.stock
                     item.producto.stock -= item.cantidad
                     item.producto.save(update_fields=['stock', 'actualizado_en'])
+
+                    try:
+                        MovimientoKardex.objects.create(
+                            producto=item.producto,
+                            tipo_movimiento='prestamo',
+                            cantidad=item.cantidad,
+                            stock_anterior=stock_ant,
+                            stock_nuevo=item.producto.stock,
+                            usuario_nombre=f"{prestamo.nombre_usuario or prestamo.usuario}",
+                            observaciones=f"Préstamo #{prestamo.pk} aprobado"
+                        )
+                    except Exception:
+                        pass
 
                 fv = request.POST.get('fecha_vencimiento', '').strip()
                 try:
