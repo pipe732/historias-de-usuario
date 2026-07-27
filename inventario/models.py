@@ -14,7 +14,6 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre
 
-
 class Producto(models.Model):
     codigo_sku = models.CharField(max_length=50, unique=True, verbose_name="Código / SKU")
     nombre = models.CharField(max_length=200, verbose_name="Nombre")
@@ -28,6 +27,15 @@ class Producto(models.Model):
         blank=True,
         related_name="productos",
         verbose_name="Categoría"
+    )
+
+    estante = models.ForeignKey(
+        'almacenamiento.Estante',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="productos",
+        verbose_name="Estante"
     )
 
     numero_serie = models.CharField(max_length=100, blank=True, null=True, verbose_name="Número de serie")
@@ -48,7 +56,6 @@ class Producto(models.Model):
 
     def __str__(self):
         return f"[{self.codigo_sku}] {self.nombre}"
-
 
 class Proveedor(models.Model):
     nit_proveedor = models.CharField(max_length=50, unique=True, verbose_name="NIT")
