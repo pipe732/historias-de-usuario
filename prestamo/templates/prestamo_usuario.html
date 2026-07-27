@@ -465,12 +465,11 @@
             </button>
 
             <div id="sol-items-err" class="d-none alert alert-danger d-flex align-items-center gap-2 mt-3 small py-2">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-                class="flex-shrink-0">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="flex-shrink-0">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
-              Selecciona al menos una herramienta con stock disponible.
+              <span id="sol-items-err-msg">Selecciona al menos una herramienta con stock disponible.</span>
             </div>
           </div>
           <div class="modal-footer">
@@ -622,11 +621,46 @@
 
   function solGo(paso) {
     if (paso === 2) {
-      var sels = document.querySelectorAll('.sol-prod-sel');
-      var ok = Array.from(sels).some(function (s) { return s.value !== ''; });
-      var err = document.getElementById('sol-items-err');
-      err.classList.toggle('d-none', ok);
-      if (!ok) return;
+      var rows = document.querySelectorAll('#sol-items-container .sol-item-row');
+      var algunSeleccionado = false;
+      var errores = [];
+
+      rows.forEach(function (row) {
+        var sel = row.querySelector('.sol-prod-sel');
+        var qtyInput = row.querySelector('input[name="cantidad[]"]');
+        if (!sel || !sel.value) return;
+
+        algunSeleccionado = true;
+        var opt = sel.options[sel.selectedIndex];
+        var nombre = opt.text.replace(/⚠.*$/, '').trim();
+        var stock = parseInt(opt.dataset.stock, 10);
+        var qty = parseInt(qtyInput ? qtyInput.value : '1', 10);
+
+        if (isNaN(stock) || stock <= 0) {
+          errores.push('"' + nombre + '" no tiene stock disponible.');
+        } else if (qty > stock) {
+          errores.push('Stock insuficiente para "' + nombre + '": solicitaste ' + qty + ' pero solo hay ' + stock + ' disponible' + (stock > 1 ? 's' : '') + '.');
+        } else if (isNaN(qty) || qty < 1) {
+          errores.push('Ingresa una cantidad válida para "' + nombre + '".');
+        }
+      });
+
+      var errBox = document.getElementById('sol-items-err');
+      var errMsg = document.getElementById('sol-items-err-msg');
+
+      if (!algunSeleccionado) {
+        if (errMsg) errMsg.textContent = 'Debes seleccionar al menos una herramienta.';
+        if (errBox) errBox.classList.remove('d-none');
+        return;
+      }
+
+      if (errores.length > 0) {
+        if (errMsg) errMsg.textContent = 'No se pudo solicitar el préstamo: ' + errores.join(' ');
+        if (errBox) errBox.classList.remove('d-none');
+        return;
+      }
+
+      if (errBox) errBox.classList.add('d-none');
       solBuildResumen();
     }
     solPaso = paso;
@@ -713,26 +747,65 @@
   });
 
   function solBindStockInfo() {
-    document.querySelectorAll('.sol-prod-sel').forEach(function (sel) {
-      sel.removeEventListener('change', solUpdateInfo);
-      sel.addEventListener('change', function () { solUpdateInfo(this); });
+    document.querySelectorAll('#sol-items-container .sol-item-row').forEach(function (row) {
+      var sel = row.querySelector('.sol-prod-sel');
+      var qty = row.querySelector('input[name="cantidad[]"]');
+      if (sel && !sel.dataset.bound) {
+        sel.dataset.bound = 'true';
+        sel.addEventListener('change', function () { solUpdateInfo(row); });
+      }
+      if (qty && !qty.dataset.bound) {
+        qty.dataset.bound = 'true';
+        qty.addEventListener('input', function () { solUpdateInfo(row); });
+        qty.addEventListener('change', function () { solUpdateInfo(row); });
+      }
     });
   }
 
-  function solUpdateInfo(sel) {
-    var row = sel.closest('.sol-item-row');
+  function solUpdateInfo(row) {
+    if (!row) return;
+    var sel = row.querySelector('.sol-prod-sel');
+    var qtyInput = row.querySelector('input[name="cantidad[]"]');
     var info = row.querySelector('.sol-stock-info');
+    if (!sel || !info) return;
+
     var opt = sel.options[sel.selectedIndex];
-    var stock = parseInt(opt && opt.dataset.stock, 10);
-    info.className = 'sol-stock-info d-none mt-1 px-2 py-1 rounded small d-flex align-items-center gap-2';
-    if (!opt || !opt.value) return;
+    if (!opt || !opt.value) {
+      info.className = 'sol-stock-info d-none mt-1 px-2 py-1 rounded small d-flex align-items-center gap-2';
+      if (qtyInput) qtyInput.classList.remove('is-invalid');
+      if (sel) sel.classList.remove('is-invalid');
+      return;
+    }
+
+    var stock = parseInt(opt.dataset.stock, 10);
+    var qty = parseInt(qtyInput ? qtyInput.value : '1', 10);
+    if (isNaN(qty)) qty = 1;
+
     info.classList.remove('d-none');
+    info.className = 'sol-stock-info mt-1 px-2 py-1 rounded small d-flex align-items-center gap-2';
+
+    var iconX = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    var iconCheck = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+
     if (isNaN(stock) || stock <= 0) {
       info.classList.add('bg-danger-subtle', 'text-danger', 'border', 'border-danger-subtle');
-      info.textContent = '⚠ Sin stock — no se puede solicitar';
+      info.innerHTML = iconX + ' ✖ Sin stock disponible — no se puede solicitar';
+      if (sel) sel.classList.add('is-invalid');
+      if (qtyInput) qtyInput.classList.add('is-invalid');
+    } else if (qty > stock) {
+      info.classList.add('bg-danger-subtle', 'text-danger', 'border', 'border-danger-subtle');
+      info.innerHTML = iconX + ' ✖ Stock insuficiente — solicitas ' + qty + ' pero solo hay ' + stock + ' disponible' + (stock > 1 ? 's' : '');
+      if (qtyInput) qtyInput.classList.add('is-invalid');
+      if (sel) sel.classList.remove('is-invalid');
+    } else if (qty < 1) {
+      info.classList.add('bg-danger-subtle', 'text-danger', 'border', 'border-danger-subtle');
+      info.innerHTML = iconX + ' ✖ Cantidad inválida (debe ser mayor a 0)';
+      if (qtyInput) qtyInput.classList.add('is-invalid');
     } else {
       info.classList.add('bg-success-subtle', 'text-success-emphasis', 'border', 'border-success-subtle');
-      info.textContent = '✓ Disponible — Stock: ' + stock;
+      info.innerHTML = iconCheck + ' ✓ Disponible — Stock: ' + stock;
+      if (qtyInput) qtyInput.classList.remove('is-invalid');
+      if (sel) sel.classList.remove('is-invalid');
     }
   }
 
@@ -742,12 +815,16 @@
     solGo(1);
     document.getElementById('sol-motivo').value = '';
     document.getElementById('sol-fecha').value = '';
+    var errBox = document.getElementById('sol-items-err');
+    if (errBox) errBox.classList.add('d-none');
     var rows = document.querySelectorAll('#sol-items-container .sol-item-row');
     rows.forEach(function (r, i) { if (i > 0) r.remove(); });
     var firstSel = document.querySelector('#sol-items-container .sol-prod-sel');
     var firstQty = document.querySelector('#sol-items-container input[name="cantidad[]"]');
-    if (firstSel) firstSel.selectedIndex = 0;
-    if (firstQty) firstQty.value = 1;
+    if (firstSel) { firstSel.selectedIndex = 0; firstSel.classList.remove('is-invalid'); }
+    if (firstQty) { firstQty.value = 1; firstQty.classList.remove('is-invalid'); }
+    var firstInfo = document.querySelector('#sol-items-container .sol-stock-info');
+    if (firstInfo) firstInfo.className = 'sol-stock-info d-none mt-1 px-2 py-1 rounded small d-flex align-items-center gap-2';
     solRefreshDel();
   });
 
