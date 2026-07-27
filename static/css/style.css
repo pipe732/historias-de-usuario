@@ -405,7 +405,7 @@ main .container {
 ════════════════════════════════════ */
 aside {
   width: var(--aside-w);
-  background: var(--cream);
+  background: var(--dark);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   border-right: 1px solid rgba(27, 32, 33, 0.10);
@@ -6849,7 +6849,7 @@ body.dark-mode .card:hover {
 aside,
 body.light-mode aside,
 body:not(.dark-mode) aside {
-  background: #04294f !important;
+  background: var(--dark) !important;
   border-right: 1px solid rgba(239, 236, 202, 0.15) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -9874,7 +9874,7 @@ body.auth-page .tab-btn:not(.on):hover,
 aside,
 body.light-mode aside,
 body:not(.dark-mode) aside {
-  background: #04294f !important;
+  background: var(--dark) !important;
   border-right: 1px solid rgba(239, 236, 202, 0.15) !important;
 }
 
@@ -10039,7 +10039,7 @@ body:not(.dark-mode) aside .aside-user-dropup-btn span {
 aside .aside-user-dropdown-menu,
 body.light-mode aside .aside-user-dropdown-menu,
 body:not(.dark-mode) aside .aside-user-dropdown-menu {
-  background: #04294f !important;
+  background: var(--dark) !important;
   border: 1px solid rgba(239, 236, 202, 0.2) !important;
 }
 
@@ -10195,7 +10195,7 @@ body.dark-mode aside .aside-user-dropdown-menu .dropdown-item.text-danger {
 
 /* Mobile Sidebar Toggle Button Styling */
 .btn-sidebar-toggle {
-  background: #04294f !important;
+  background: var(--dark) !important;
   color: #EFECCA !important;
   border: 1px solid rgba(239, 236, 202, 0.25) !important;
 }
@@ -10246,8 +10246,9 @@ aside .aside-brand-sub {
 /* Polished nav link active state */
 aside .nav-link {
   border-radius: 8px !important;
-  margin: 2px 8px !important;
-  padding: 0.55rem 0.85rem !important;
+  margin: 3px 8px !important;
+  padding: 0.75rem 0.9rem !important;
+  font-size: 0.94rem !important;
   transition: all 0.18s ease-in-out !important;
 }
 
@@ -10255,22 +10256,35 @@ aside .nav-link {
 aside .nav-link.active,
 body.light-mode aside .nav-link.active,
 body:not(.dark-mode) aside .nav-link.active {
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.06) 100%) !important;
   color: #FFFFFF !important;
-  border-left: 4px solid #98473E !important;
+  border-left: 5px solid #98473E !important;
   border-top-left-radius: 4px !important;
   border-bottom-left-radius: 4px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
+  padding: 0.9rem 1rem !important;
+  font-size: 0.98rem !important;
+  font-weight: 700 !important;
+  transform: scale(1.02) !important;
+}
+
+aside .nav-link.active .nav-icon {
+  width: 18px !important;
+  height: 18px !important;
 }
 
 /* Dark mode (Beige background, Dark text) active state */
 body.dark-mode aside .nav-link.active {
-  background: linear-gradient(90deg, rgba(27, 32, 33, 0.14) 0%, rgba(27, 32, 33, 0.04) 100%) !important;
+  background: linear-gradient(90deg, rgba(27, 32, 33, 0.16) 0%, rgba(27, 32, 33, 0.05) 100%) !important;
   color: #000000 !important;
-  border-left: 4px solid #98473E !important;
+  border-left: 5px solid #98473E !important;
   border-top-left-radius: 4px !important;
   border-bottom-left-radius: 4px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+  padding: 0.9rem 1rem !important;
+  font-size: 0.98rem !important;
+  font-weight: 700 !important;
+  transform: scale(1.02) !important;
 }
 
 /* Mobile responsive layout fixes */
@@ -10493,4 +10507,4 @@ input, select, textarea, .form-control, .form-select {
     border-radius: var(--radius-sm) !important;
     margin-bottom: 0.3rem !important;
   }
-}
+}
