@@ -105,10 +105,10 @@ def aprobar_prestamo_view(request, pk):
                     messages.error(request, e)
             else:
                 for item in prestamo.items.select_related('producto'):
-                    serial_key = f'serial_{item.pk}'
-                    serial_val = request.POST.get(serial_key, '').strip()
-                    item.serial_entregado = serial_val
-                    item.save(update_fields=['serial_entregado'])
+                    serial_val = request.POST.get(f'serial_{item.pk}', '').strip()
+                    if serial_val:
+                        item.serial_entregado = serial_val
+                        item.save(update_fields=['serial_entregado'])
 
                     item.producto.stock -= item.cantidad
                     item.producto.save(update_fields=['stock', 'actualizado_en'])
@@ -180,10 +180,10 @@ def prestamos_view(request):
 
             if accion_aprobacion == 'aprobar':
                 for item in prestamo.items.select_related('producto'):
-                    serial_key = f'serial_{item.pk}'
-                    serial_val = request.POST.get(serial_key, '').strip()
-                    item.serial_entregado = serial_val
-                    item.save(update_fields=['serial_entregado'])
+                    serial_val = request.POST.get(f'serial_{item.pk}', '').strip()
+                    if serial_val:
+                        item.serial_entregado = serial_val
+                        item.save(update_fields=['serial_entregado'])
 
                     item.producto.stock -= item.cantidad
                     item.producto.save(update_fields=['stock', 'actualizado_en'])

@@ -70,6 +70,17 @@
         overlay.style.display = 'flex';
       }
 
+      function hideLoading() {
+        overlay.style.display = 'none';
+      }
+
+      window.showLoading = showLoading;
+      window.hideLoading = hideLoading;
+
+      window.addEventListener('pageshow', function (e) {
+        hideLoading();
+      });
+
       function isSamePageAnchor(anchor) {
         if (!anchor.href) return false;
         try {
@@ -90,8 +101,13 @@
         }
       });
 
-      document.addEventListener('submit', function () {
-        showLoading();
+      document.addEventListener('submit', function (e) {
+        if (e.defaultPrevented) return;
+        setTimeout(function () {
+          if (!e.defaultPrevented) {
+            showLoading();
+          }
+        }, 50);
       });
 
       window.addEventListener('beforeunload', function () {

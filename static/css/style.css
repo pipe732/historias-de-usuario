@@ -10248,8 +10248,12 @@ aside .nav-link {
   border-radius: 8px !important;
   margin: 3px 8px !important;
   padding: 0.75rem 0.9rem !important;
-  font-size: 0.94rem !important;
+  font-size: 0.83rem !important;
   transition: all 0.18s ease-in-out !important;
+}
+
+aside span.text-uppercase {
+  font-size: 0.65rem !important;
 }
 
 /* Light mode (Navy background, Beige text) active state */
@@ -10263,14 +10267,14 @@ body:not(.dark-mode) aside .nav-link.active {
   border-bottom-left-radius: 4px !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
   padding: 0.9rem 1rem !important;
-  font-size: 0.98rem !important;
+  font-size: 0.86rem !important;
   font-weight: 700 !important;
   transform: scale(1.02) !important;
 }
 
 aside .nav-link.active .nav-icon {
-  width: 18px !important;
-  height: 18px !important;
+  width: 16px !important;
+  height: 16px !important;
 }
 
 /* Dark mode (Beige background, Dark text) active state */
@@ -10282,7 +10286,7 @@ body.dark-mode aside .nav-link.active {
   border-bottom-left-radius: 4px !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
   padding: 0.9rem 1rem !important;
-  font-size: 0.98rem !important;
+  font-size: 0.86rem !important;
   font-weight: 700 !important;
   transform: scale(1.02) !important;
 }
