@@ -247,14 +247,15 @@
     });
 
     document.getElementById('acc-btn-reset').addEventListener('click', function () {
-      fontSize = 100; contrast = false; darkMode = false; lightMode = false; antigravity = false;
-      document.body.classList.remove('high-contrast', 'dark-mode', 'light-mode', 'antigravity-active');
+      fontSize = 100; contrast = false; darkMode = false; lightMode = true; antigravity = false;
+      document.body.classList.remove('high-contrast', 'dark-mode', 'antigravity-active');
+      document.body.classList.add('light-mode');
       document.documentElement.style.fontSize = '100%';
       resetAsideDark();
       localStorage.removeItem('acc_fs');
       localStorage.removeItem('acc_contrast');
       localStorage.removeItem('acc_dark');
-      localStorage.removeItem('acc_light');
+      localStorage.setItem('acc_light', 'true');
       localStorage.removeItem('acc_antigravity');
       syncButtons();
     });
