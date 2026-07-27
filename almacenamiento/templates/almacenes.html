@@ -327,19 +327,16 @@
 {% endif %}
 
 <script>
-  /* ── Modal detalles ── */
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.btn-ver-detalle').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var tr = btn.closest('tr');
-        document.getElementById('det_id').textContent        = tr.dataset.almId;
-        document.getElementById('det_nombre').textContent    = tr.dataset.almNombre;
-        document.getElementById('det_detalles').textContent  = tr.dataset.almDetalles || '—';
-        document.getElementById('det_capacidad').textContent = tr.dataset.almCapacidad || '—';
-        document.getElementById('det_fecha').textContent     = tr.dataset.almFecha;
-        new bootstrap.Modal(document.getElementById('modalDetallesAlmacen')).show();
-      });
-    });
+  /* ── Modal detalles (delegación global) ── */
+  $(document).on('click', '.btn-ver-detalle', function () {
+    var tr = this.closest('tr');
+    if (!tr) return;
+    document.getElementById('det_id').textContent        = tr.dataset.almId || '';
+    document.getElementById('det_nombre').textContent    = tr.dataset.almNombre || '';
+    document.getElementById('det_detalles').textContent  = tr.dataset.almDetalles || '—';
+    document.getElementById('det_capacidad').textContent = tr.dataset.almCapacidad || '—';
+    document.getElementById('det_fecha').textContent     = tr.dataset.almFecha || '';
+    new bootstrap.Modal(document.getElementById('modalDetallesAlmacen')).show();
   });
 
   function abrirEditarAlmacen(pk, nombre, detalles, capacidad) {

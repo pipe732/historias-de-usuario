@@ -127,17 +127,21 @@ $(document).ready(function () {
     }
   });
 
-  // ─── Clic delegado: Aceptar devolución
-  $('#devoluciones-table').on('click', '.btn-aceptar-click', function (e) {
+  // ─── Clic delegado global: Aceptar devolución
+  $(document).on('click', '.btn-aceptar-click', function (e) {
     e.preventDefault();
     var btn = $(this);
-    abrirAceptar(btn.attr('data-pk'), btn.attr('data-prestamo-pk'), btn.attr('data-usuario'));
+    if (typeof abrirAceptar === 'function') {
+      abrirAceptar(btn.attr('data-pk'), btn.attr('data-prestamo-pk'), btn.attr('data-usuario'));
+    }
   });
 
-  // ─── Clic delegado: Rechazar devolución
-  $('#devoluciones-table').on('click', '.btn-rechazar-click', function (e) {
+  // ─── Clic delegado global: Rechazar devolución
+  $(document).on('click', '.btn-rechazar-click', function (e) {
     e.preventDefault();
     var btn = $(this);
-    abrirRechazar(btn.attr('data-pk'), btn.attr('data-prestamo-pk'), btn.attr('data-usuario'));
+    if (typeof abrirRechazar === 'function') {
+      abrirRechazar(btn.attr('data-pk'), btn.attr('data-prestamo-pk'), btn.attr('data-usuario'));
+    }
   });
 });

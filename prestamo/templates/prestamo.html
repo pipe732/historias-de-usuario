@@ -771,37 +771,40 @@
 <script src="{% static 'js/prestamos.js' %}"></script>
 <script src="{% static 'js/tables/prestamos_table.js' %}?v=1.3"></script>
 <script>
-  // Registrar el click handler para abrirAprobar y abrirDevolver dinámicamente usando data-* attributes
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.btn-aprobar-solicitud').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var pk = btn.getAttribute('data-pk');
-        var nombre = btn.getAttribute('data-nombre');
-        var doc = btn.getAttribute('data-usuario');
-        var motivo = btn.getAttribute('data-motivo');
-        var fecha = btn.getAttribute('data-fecha');
-        
-        var jsonSpan = btn.querySelector('.items-json');
-        var items = [];
-        if (jsonSpan) {
-          try {
-            items = JSON.parse(jsonSpan.textContent);
-          } catch (e) {
-            console.error("Error al parsear items de la solicitud:", e);
-          }
-        }
-        
-        abrirAprobar(pk, nombre, doc, motivo, fecha, items);
-      });
-    });
+  // Delegación global de eventos para botones de acción en préstamos (Aprobar / Devolver)
+  $(document).on('click', '.btn-aprobar-solicitud', function (e) {
+    e.preventDefault();
+    var btn = $(this);
+    var pk = btn.attr('data-pk');
+    var nombre = btn.attr('data-nombre');
+    var doc = btn.attr('data-usuario');
+    var motivo = btn.attr('data-motivo');
+    var fecha = btn.attr('data-fecha');
+    
+    var jsonSpan = btn.find('.items-json');
+    var items = [];
+    if (jsonSpan.length) {
+      try {
+        items = JSON.parse(jsonSpan.text());
+      } catch (err) {
+        console.error("Error al parsear items de la solicitud:", err);
+      }
+    }
+    
+    if (typeof abrirAprobar === 'function') {
+      abrirAprobar(pk, nombre, doc, motivo, fecha, items);
+    }
+  });
 
-    document.querySelectorAll('.btn-devolver-prestamo').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var pk = btn.getAttribute('data-pk');
-        var usuario = btn.getAttribute('data-usuario');
-        abrirDevolver(pk, usuario);
-      });
-    });
+  $(document).on('click', '.btn-devolver-prestamo', function (e) {
+    e.preventDefault();
+    var btn = $(this);
+    var pk = btn.attr('data-pk');
+    var usuario = btn.attr('data-usuario');
+    if (typeof abrirDevolver === 'function') {
+      abrirDevolver(pk, usuario);
+    }
+  });
 </script>
 <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
