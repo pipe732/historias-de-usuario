@@ -105,10 +105,10 @@ def aprobar_prestamo_view(request, pk):
                     messages.error(request, e)
             else:
                 for item in prestamo.items.select_related('producto'):
-                    serial_key = f'serial_{item.pk}'
-                    serial_val = request.POST.get(serial_key, '').strip()
-                    item.serial_entregado = serial_val
-                    item.save(update_fields=['serial_entregado'])
+                    serial_val = request.POST.get(f'serial_{item.pk}', '').strip()
+                    if serial_val:
+                        item.serial_entregado = serial_val
+                        item.save(update_fields=['serial_entregado'])
 
                     item.producto.stock -= item.cantidad
                     item.producto.save(update_fields=['stock', 'actualizado_en'])
@@ -179,14 +179,29 @@ def prestamos_view(request):
             accion_aprobacion = request.POST.get('accion_aprobacion')
 
             if accion_aprobacion == 'aprobar':
+                from inventario.models import MovimientoKardex
                 for item in prestamo.items.select_related('producto'):
-                    serial_key = f'serial_{item.pk}'
-                    serial_val = request.POST.get(serial_key, '').strip()
-                    item.serial_entregado = serial_val
-                    item.save(update_fields=['serial_entregado'])
+                    serial_val = request.POST.get(f'serial_{item.pk}', '').strip()
+                    if serial_val:
+                        item.serial_entregado = serial_val
+                        item.save(update_fields=['serial_entregado'])
 
+                    stock_ant = item.producto.stock
                     item.producto.stock -= item.cantidad
                     item.producto.save(update_fields=['stock', 'actualizado_en'])
+
+                    try:
+                        MovimientoKardex.objects.create(
+                            producto=item.producto,
+                            tipo_movimiento='prestamo',
+                            cantidad=item.cantidad,
+                            stock_anterior=stock_ant,
+                            stock_nuevo=item.producto.stock,
+                            usuario_nombre=f"{prestamo.nombre_usuario or prestamo.usuario}",
+                            observaciones=f"Préstamo #{prestamo.pk} aprobado"
+                        )
+                    except Exception:
+                        pass
 
                 fv = request.POST.get('fecha_vencimiento', '').strip()
                 try:
@@ -512,11 +527,11 @@ def usuario_solicitar_prestamo(request):
             errores.append(f'Cantidad inválida para "{producto.nombre}".')
             continue
         if producto.stock <= 0:
-            errores.append(f'"{producto.nombre}" no tiene stock disponible.')
+            errores.append(f'No se pudo realizar el préstamo: "{producto.nombre}" no tiene stock disponible.')
         elif cantidad > producto.stock:
             errores.append(
-                f'Stock insuficiente para "{producto.nombre}": '
-                f'solo hay {producto.stock} disponibles.'
+                f'No se pudo realizar el préstamo: stock insuficiente para "{producto.nombre}" '
+                f'(solicitaste {cantidad}, pero solo hay {producto.stock} disponible{"s" if producto.stock > 1 else ""}).'
             )
         else:
             items_validated.append((producto, cantidad))
@@ -526,26 +541,32 @@ def usuario_solicitar_prestamo(request):
             messages.error(request, e)
         return redirect('prestamo_usuario')
 
-    prestamo = Prestamo()
-    prestamo.usuario          = doc
-    prestamo.nombre_usuario   = usuario.nombre_completo
-    prestamo.observaciones    = motivo
-    prestamo.motivo_solicitud = motivo
-    prestamo.estado           = 'pendiente'
+    from django.db import transaction
 
-    try:
-        prestamo.fecha_vencimiento = datetime.date.fromisoformat(fecha_str) if fecha_str else None
-    except ValueError:
-        prestamo.fecha_vencimiento = None
+    with transaction.atomic():
+        prestamo = Prestamo()
+        prestamo.usuario          = doc
+        prestamo.nombre_usuario   = usuario.nombre_completo
+        prestamo.observaciones    = motivo
+        prestamo.motivo_solicitud = motivo
+        prestamo.estado           = 'pendiente'
 
-    prestamo.save()
+        try:
+            prestamo.fecha_vencimiento = datetime.date.fromisoformat(fecha_str) if fecha_str else None
+        except ValueError:
+            prestamo.fecha_vencimiento = None
 
-    for producto, cantidad in items_validated:
-        ItemPrestamo.objects.create(
-            prestamo=prestamo,
-            producto=producto,
-            cantidad=cantidad,
-        )
+        prestamo.save()
+
+        items_a_crear = [
+            ItemPrestamo(
+                prestamo=prestamo,
+                producto=producto,
+                cantidad=cantidad,
+            )
+            for producto, cantidad in items_validated
+        ]
+        ItemPrestamo.objects.bulk_create(items_a_crear)
 
     messages.success(
         request,

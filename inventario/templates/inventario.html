@@ -3,6 +3,7 @@
 {% block css %}
 {% endblock css %}
 {% block content %}
+
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 alert-custom"
@@ -34,6 +35,205 @@
                         class="btn-close"
                         data-bs-dismiss="alert"
                         aria-label="Close"></button>
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-dismissible fade show d-flex align-items-center gap-2 alert-custom" role="alert">
+  {% if message.tags == 'error' %}
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2.2">
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+    <line x1="12" y1="9" x2="12" y2="13" />
+    <line x1="12" y1="17" x2="12.01" y2="17" />
+  </svg>
+  {% else %}
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2.2">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+    <polyline points="22 4 12 14.01 9 11.01" />
+  </svg>
+  {% endif %}
+  <span>{{ message }}</span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="row g-3 mb-4">
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="card p-3 border-0 shadow-sm bg-white h-100">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h6 class="text-muted fw-normal mb-1">Total Herramientas</h6>
+          <h3 class="fw-bold mb-0">{{ kpi_total_productos }}</h3>
+        </div>
+        <div class="icon-shape bg-light-primary text-primary rounded-circle p-3">
+          <i class="bi bi-tools fs-4"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="card p-3 border-0 shadow-sm bg-white h-100">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h6 class="text-muted fw-normal mb-1">Unidades Totales</h6>
+          <h3 class="fw-bold mb-0">{{ kpi_total_stock }}</h3>
+        </div>
+        <div class="icon-shape bg-light-success text-success rounded-circle p-3">
+          <i class="bi bi-box-seam fs-4"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="card p-3 border-0 shadow-sm bg-white h-100">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h6 class="text-muted fw-normal mb-1">Agotadas (Sin Stock)</h6>
+          <h3 class="fw-bold mb-0 {% if kpi_sin_stock > 0 %}text-danger{% endif %}">{{ kpi_sin_stock }}</h3>
+        </div>
+        <div class="icon-shape bg-light-danger text-danger rounded-circle p-3">
+          <i class="bi bi-exclamation-octagon fs-4"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="card p-3 border-0 shadow-sm bg-white h-100">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h6 class="text-muted fw-normal mb-1">Stock Bajo (≤ 5)</h6>
+          <h3 class="fw-bold mb-0 {% if kpi_stock_bajo > 0 %}text-warning{% endif %}">{{ kpi_stock_bajo }}</h3>
+        </div>
+        <div class="icon-shape bg-light-warning text-warning rounded-circle p-3">
+          <i class="bi bi-graph-down-arrow fs-4"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card p-3 border-0 shadow-sm mb-4 bg-white">
+  <div class="row g-2 align-items-center">
+    <div class="col-12 col-md-7">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+        <input type="text" id="inventario-busqueda" data-no-validate class="form-control bg-light border-start-0" placeholder="Buscar por SKU o nombre de herramienta..." value="{{ request.GET.busqueda|default:'' }}">
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="input-group input-group-sm">
+        <select id="inventario-categoria" data-no-validate class="form-select bg-light">
+          <option value="">-- Todas las Categorías --</option>
+          {% for cat in categorias %}
+          <option value="{{ cat.pk }}" {% if request.GET.categoria == cat.pk|slugify %}selected{% endif %}>{{ cat.nombre }}</option>
+          {% endfor %}
+        </select>
+        <button type="button" class="btn btn-success d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#modalNuevaCategoria" title="Crear nueva categoría">
+          <i class="bi bi-plus-lg"></i>
+        </button>
+      </div>
+    </div>
+    <div class="col-12 col-md-1">
+      <button type="button" id="btn-limpiar-filtros" class="btn btn-outline-secondary btn-sm w-100 d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" data-bs-placement="top" title="Limpiar filtros">
+        <i class="bi bi-brush"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="card table-card p-3">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <span class="card-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+        <line x1="12" y1="17" x2="12" y2="21" />
+      </svg>
+      Herramientas registradas
+    </span>
+    
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge-count">
+        {{ total }} registro{{ total|pluralize }}
+      </span>
+      <button type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#modalKardexHistorial" title="Ver Historial Kardex">
+        <i class="bi bi-journal-text"></i> Kardex
+      </button>
+      <button type="button" class="btn btn-success btn-sm d-flex align-items-center gap-1 has-tooltip" data-bs-toggle="modal" data-bs-target="#modalNuevaHerramienta" data-bs-placement="bottom" title="Registrar una nueva herramienta en el inventario">
+          <i class="bi bi-plus-lg"></i> 
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table-app datatable-custom" id="inventario-table">
+      <thead>
+        <tr>
+          <th>SKU</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Categoría</th>
+          <th>Ubicación</th>
+          <th>Stock</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for producto in productos %}
+        <tr>
+          <td><span class="sku-text">{{ producto.codigo_sku }}</span></td>
+          <td class="fw-semibold">{{ producto.nombre }}</td>
+          <td class="description-col">
+            <span class="text-truncate d-block description-text">{{ producto.descripcion|default:"—" }}</span>
+          </td>
+          <td class="col-categoria" data-categoria-id="{{ producto.categoria.pk|default:'' }}">
+            {% if producto.categoria %}
+            <span class="badge-state badge-aprobada">{{ producto.categoria }}</span>
+            {% else %}
+            <span class="text-muted-small">Sin categoría</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if producto.estante %}
+            <button class="btn btn-outline-secondary btn-sm btn-reg-action btn-ver-ubicacion" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver ubicación física de la herramienta" data-almacen-nombre="{{ producto.estante.almacen.nombre|escapejs }}" data-almacen-pk="{{ producto.estante.almacen.pk }}" data-estante-codigo="{{ producto.estante.codigo|escapejs }}" data-estante-pk="{{ producto.estante.pk }}" data-producto-nombre="{{ producto.nombre|escapejs }}">
+              <i class="bi bi-geo-alt"></i> Ver
+            </button>
+            {% else %}
+            <span class="text-muted-small">—</span>
+            {% endif %}
+          </td>
+          <td data-order="{{ producto.stock }}">
+            {% if producto.stock == 0 %}
+            <span class="badge-state badge-rechazada">Sin stock</span>
+            {% elif producto.stock <= 5 %} 
+            <span class="badge-state badge-pendiente">{{ producto.stock }} unidades</span>
+            {% else %}
+            <span class="badge-state badge-aprobada">{{ producto.stock }} unidades</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="d-flex gap-1 justify-content-center align-items-center">
+              {% if producto.stock > 0 %}
+              <button type="button" class="btn btn-sm btn-outline-success px-2 py-1 btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Registrar préstamo rápido" onclick="abrirPrestamo('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}')">
+                <i class="bi bi-arrow-left-right"></i>
+              </button>
+              {% else %}
+              <button type="button" class="btn btn-sm btn-outline-secondary px-2 py-1 btn-action-small" disabled data-bs-toggle="tooltip" data-bs-placement="top" title="Sin existencias para préstamo" onclick="event.stopPropagation();">
+                <i class="bi bi-arrow-left-right"></i>
+              </button>
+              {% endif %}
+
+              <button type="button" class="btn btn-sm btn-light border btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditar('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}', '{% if producto.descripcion %}{{ producto.descripcion|escapejs }}{% endif %}', '{{ producto.stock }}', '{% if producto.categoria %}{{ producto.categoria.pk }}{% endif %}')">
+                <i class="bi bi-pencil"></i>
+              </button>
+              
+              <button type="button" class="btn btn-sm btn-light border text-warning btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Enviar a mantenimiento" onclick="abrirMantenimiento('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}')">
+                <i class="bi bi-wrench"></i>
+              </button>
+>>>>>>> main
             </div>
         {% endfor %}
     {% endif %}
@@ -831,9 +1031,76 @@
       var modalCat = new bootstrap.Modal(document.getElementById('modalNuevaCategoria'));
       modalCat.show();
     {% endif %}
-  
   });
+
     </script>
+
+</script>
+
+{# ══ MODAL KARDEX HISTORIAL ══ #}
+<div class="modal fade" id="modalKardexHistorial" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-journal-text me-2"></i>Kardex - Historial de Movimientos</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-3">
+        <div class="table-responsive">
+          <table class="table table-hover table-striped align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>Fecha</th>
+                <th>Producto</th>
+                <th>Tipo</th>
+                <th class="text-center">Cant.</th>
+                <th class="text-center">Stock (Ant → Nuevo)</th>
+                <th>Responsable</th>
+                <th>Observaciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for k in kardex_list %}
+              <tr>
+                <td class="small text-nowrap">{{ k.creado_en|date:"d/m/Y H:i" }}</td>
+                <td><strong>{{ k.producto.nombre }}</strong> <span class="text-muted small">({{ k.producto.codigo_sku }})</span></td>
+                <td>
+                  {% if k.tipo_movimiento == 'entrada' %}
+                    <span class="badge bg-success">Entrada</span>
+                  {% elif k.tipo_movimiento == 'salida' %}
+                    <span class="badge bg-danger">Salida</span>
+                  {% elif k.tipo_movimiento == 'prestamo' %}
+                    <span class="badge bg-warning text-dark">Préstamo</span>
+                  {% elif k.tipo_movimiento == 'devolucion' %}
+                    <span class="badge bg-info text-dark">Devolución</span>
+                  {% else %}
+                    <span class="badge bg-secondary">Ajuste</span>
+                  {% endif %}
+                </td>
+                <td class="text-center fw-bold">{{ k.cantidad }}</td>
+                <td class="text-center small font-monospace">{{ k.stock_anterior }} → {{ k.stock_nuevo }}</td>
+                <td class="small">{{ k.usuario_nombre }}</td>
+                <td class="small text-muted">{{ k.observaciones|default:"—" }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" class="text-center py-4 text-muted">
+                  <i class="bi bi-journal-x display-6 d-block mb-2"></i> No hay registros de movimientos en Kardex aún.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 {% endblock %}
 {% block js %}
     <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

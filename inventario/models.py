@@ -147,4 +147,31 @@ class Edicion_limitada(models.Model):
 
     def __str__(self):
         return f"{self.producto.codigo_sku}  {self.nombre}  {self.estado}"
+
+
+class MovimientoKardex(models.Model):
+    TIPO_CHOICES = [
+        ('entrada', 'Entrada (Stock)'),
+        ('salida', 'Salida (Baja)'),
+        ('prestamo', 'Préstamo Entregado'),
+        ('devolucion', 'Devolución Recibida'),
+        ('ajuste', 'Ajuste Manual'),
+    ]
+
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="kardex_movimientos", verbose_name="Producto")
+    tipo_movimiento = models.CharField(max_length=20, choices=TIPO_CHOICES, verbose_name="Tipo de movimiento")
+    cantidad = models.PositiveIntegerField(verbose_name="Cantidad")
+    stock_anterior = models.PositiveIntegerField(default=0, verbose_name="Stock anterior")
+    stock_nuevo = models.PositiveIntegerField(default=0, verbose_name="Stock nuevo")
+    usuario_nombre = models.CharField(max_length=150, blank=True, default="Sistema", verbose_name="Usuario / Responsable")
+    observaciones = models.TextField(blank=True, default="", verbose_name="Observaciones")
+    creado_en = models.DateTimeField(auto_now_add=True, verbose_name="Fecha y Hora")
+
+    class Meta:
+        verbose_name = "Movimiento Kardex"
+        verbose_name_plural = "Movimientos Kardex"
+        ordering = ["-creado_en"]
+
+    def __str__(self):
+        return f"[{self.tipo_movimiento.upper()}] {self.producto.nombre} ({self.cantidad}) - {self.creado_en.strftime('%d/%m/%Y %H:%M')}"
     

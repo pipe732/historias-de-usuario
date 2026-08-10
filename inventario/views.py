@@ -5,7 +5,8 @@ from django.db.models import Q, Sum, Count
 from django.db import IntegrityError
 from django.http import HttpResponse, JsonResponse
 from almacenamiento.models import Almacen, Estante
-from .models import Producto, Categoria, Proveedor, Inventario, Movimientos, Edicion_limitada
+from .models import Producto, Categoria, Proveedor, Inventario, Movimientos
+from .models import Producto, Categoria, Proveedor, Inventario, Movimientos, MovimientoKardex
 from .forms import ProductoForm, CategoriaForm, FiltroInventarioForm, ProveedorForm, InventarioForm, MovimientosForm
 from mantenimiento.forms import MantenimientoForm
 from common.mixins import sesion_requerida
@@ -204,6 +205,7 @@ def inventario(request):
         "kpi_total_stock": total_stock,
         "kpi_sin_stock": sin_stock,
         "kpi_stock_bajo": stock_bajo,
+        "kardex_list": MovimientoKardex.objects.select_related("producto").all()[:100],
     }
 
     return render(request, "inventario.html", context)

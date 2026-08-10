@@ -346,20 +346,17 @@
 {% endif %}
 
 <script>
-  /* ── Modal detalles ── */
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.btn-ver-detalle-estante').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var tr = btn.closest('tr');
-        document.getElementById('det_est_id').textContent        = tr.dataset.estId;
-        document.getElementById('det_est_almacen').textContent   = tr.dataset.estAlmacen;
-        document.getElementById('det_est_codigo').textContent    = tr.dataset.estCodigo;
-        document.getElementById('det_est_detalles').textContent  = tr.dataset.estDetalles || '—';
-        document.getElementById('det_est_capacidad').textContent = tr.dataset.estCapacidad || '—';
-        document.getElementById('det_est_fecha').textContent     = tr.dataset.estFecha;
-        new bootstrap.Modal(document.getElementById('modalDetallesEstante')).show();
-      });
-    });
+  /* ── Modal detalles (delegación global) ── */
+  $(document).on('click', '.btn-ver-detalle-estante', function () {
+    var tr = this.closest('tr');
+    if (!tr) return;
+    document.getElementById('det_est_id').textContent        = tr.dataset.estId || '';
+    document.getElementById('det_est_almacen').textContent   = tr.dataset.estAlmacen || '';
+    document.getElementById('det_est_codigo').textContent    = tr.dataset.estCodigo || '';
+    document.getElementById('det_est_detalles').textContent  = tr.dataset.estDetalles || '—';
+    document.getElementById('det_est_capacidad').textContent = tr.dataset.estCapacidad || '—';
+    document.getElementById('det_est_fecha').textContent     = tr.dataset.estFecha || '';
+    new bootstrap.Modal(document.getElementById('modalDetallesEstante')).show();
   });
 
   function abrirEditarEstante(pk, almacenPk, codigo, detalles, capacidad) {
