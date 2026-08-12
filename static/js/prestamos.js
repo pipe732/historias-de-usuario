@@ -11,7 +11,7 @@ var _aprModal = null;
 function abrirAprobar(pk, nombre, doc, motivo, fecha, items) {
   document.getElementById('apr-pk').value          = pk;
   document.getElementById('apr-titulo').textContent = 'Aprobar solicitud #' + pk;
-  document.getElementById('apr-subtitulo').textContent = 'Verifica seriales antes de entregar';
+  document.getElementById('apr-subtitulo').textContent = 'Verifica la información antes de entregar';
   document.getElementById('apr-nombre').textContent = nombre;
   document.getElementById('apr-doc').textContent   = doc;
   document.getElementById('apr-fecha').textContent  = fecha;
@@ -35,19 +35,14 @@ function abrirAprobar(pk, nombre, doc, motivo, fecha, items) {
       'border:1px solid ' + (insuficiente ? 'rgba(152,71,62,.25)' : 'rgba(9,77,146,.12)') + ';' +
       'background:' + (insuficiente ? 'rgba(152,71,62,.04)' : 'rgba(9,77,146,.03)') + ';';
     row.innerHTML =
-      '<div style="display:flex; align-items:flex-start; gap:1rem; flex-wrap:wrap;">' +
-        '<div style="flex:1; min-width:160px;">' +
+      '<div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;">' +
+        '<div>' +
           '<div style="font-weight:700; font-size:.92rem; color:var(--text-main);">' + escapeHtml(item.nombre) + '</div>' +
-          '<div style="font-family:var(--font-mono); font-size:.72rem; color:var(--text-muted); margin-top:.1rem;">' +
-            escapeHtml(item.sku) + ' · Solicitado: ' + item.cantidad +
-            ' · Stock: <strong style="color:' + (insuficiente ? 'var(--rust)' : 'var(--sage)') + ';">' + item.stock + '</strong>' +
+          '<div style="font-family:var(--font-mono); font-size:.78rem; color:var(--text-muted); margin-top:.1rem;">' +
+            escapeHtml(item.sku) + ' · Solicitado: <strong>' + item.cantidad + '</strong>' +
+            ' · Stock disponible: <strong style="color:' + (insuficiente ? 'var(--rust)' : 'var(--sage)') + ';">' + item.stock + '</strong>' +
           '</div>' +
           (insuficiente ? '<div style="font-size:.74rem; color:var(--rust); margin-top:.25rem; font-weight:600;">⚠ Stock insuficiente</div>' : '') +
-        '</div>' +
-        '<div style="flex:1; min-width:180px;">' +
-          '<label style="font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); font-weight:600; display:block; margin-bottom:.25rem;">Serial / N° de serie *</label>' +
-          '<input type="text" name="serial_' + item.id + '" class="form-control apr-serial-input" placeholder="Ej: SN-20240012" maxlength="200" style="font-family:var(--font-mono); font-size:.88rem;"' +
-          (insuficiente ? ' disabled' : ' required') + '>' +
         '</div>' +
       '</div>';
     container.appendChild(row);
@@ -57,16 +52,6 @@ function abrirAprobar(pk, nombre, doc, motivo, fecha, items) {
   if (!_aprModal) _aprModal = new bootstrap.Modal(document.getElementById('modalAprobarPrestamo'));
   _aprModal.show();
 }
-
-document.getElementById('formAprobar').addEventListener('submit', function (e) {
-  var inputs = document.querySelectorAll('.apr-serial-input:not([disabled])');
-  var todoOk = true;
-  inputs.forEach(function (inp) {
-    if (!inp.value.trim()) { inp.classList.add('is-invalid'); todoOk = false; }
-    else inp.classList.remove('is-invalid');
-  });
-  if (!todoOk) { e.preventDefault(); alert('Por favor ingresa el serial de todas las herramientas.'); }
-});
 
 function abrirRechazar() {
   if (_aprModal) _aprModal.hide();

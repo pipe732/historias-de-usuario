@@ -3,21 +3,24 @@
    Lógica de la vista de devoluciones
 ═══════════════════════════════════════════ */
 
-document.addEventListener('DOMContentLoaded', function () {
-
-  // ── MINE-106: poblar modal editar con datos de la fila ──
-  document.querySelectorAll('.btn-editar').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      document.getElementById('edit-devolucion-id').value  = this.dataset.id;
-      document.getElementById('edit-modal-id').textContent = '#' + this.dataset.id;
-      document.getElementById('edit-numero-orden').value   = this.dataset.orden;
-      document.getElementById('edit-producto').value       = this.dataset.producto;
-      document.getElementById('edit-cantidad').value       = this.dataset.cantidad;
-      document.getElementById('edit-motivo').value         = this.dataset.motivo;
-      document.getElementById('edit-estado').value         = this.dataset.estado;
-    });
-  });
-
+// ── MINE-106: poblar modal editar con datos de la fila (delegación global) ──
+$(document).on('click', '.btn-editar', function () {
+  var dataset = this.dataset;
+  if (!dataset) return;
+  var elId = document.getElementById('edit-devolucion-id');
+  if (elId) elId.value = dataset.id || '';
+  var elModalId = document.getElementById('edit-modal-id');
+  if (elModalId) elModalId.textContent = '#' + (dataset.id || '');
+  var elOrden = document.getElementById('edit-numero-orden');
+  if (elOrden) elOrden.value = dataset.orden || '';
+  var elProd = document.getElementById('edit-producto');
+  if (elProd) elProd.value = dataset.producto || '';
+  var elCant = document.getElementById('edit-cantidad');
+  if (elCant) elCant.value = dataset.cantidad || '';
+  var elMot = document.getElementById('edit-motivo');
+  if (elMot) elMot.value = dataset.motivo || '';
+  var elEst = document.getElementById('edit-estado');
+  if (elEst) elEst.value = dataset.estado || '';
 });
 
 // ══════════════════════════════════════════════════════════════

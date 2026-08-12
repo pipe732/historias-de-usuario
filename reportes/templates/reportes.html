@@ -191,14 +191,14 @@
     return m ? m[1] : '';
   }
 
-  /* ── Descarga via fetch ── */
-  document.querySelectorAll('.btn-reporte').forEach(function (btn) {
-    btn.addEventListener('click', async function () {
-      const modulo  = btn.dataset.modulo;
-      const formato = btn.dataset.formato;
-      const label   = formato === 'pdf' ? 'PDF' : 'Excel';
+  /* ── Descarga via fetch (delegación global) ── */
+  $(document).on('click', '.btn-reporte', async function () {
+    const btn     = this;
+    const modulo  = btn.dataset.modulo;
+    const formato = btn.dataset.formato;
+    const label   = formato === 'pdf' ? 'PDF' : 'Excel';
 
-      showSpinner(btn, label);
+    showSpinner(btn, label);
 
       try {
         const fd = new FormData();
