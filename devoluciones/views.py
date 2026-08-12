@@ -143,11 +143,13 @@ def devoluciones_view(request):
                     messages.error(request, e)
             else:
                 prestamo = get_object_or_404(Prestamo, pk=prestamo_id)
+                est_eq = request.POST.get("estado_equipo", "excelente").strip()
                 devolucion = Devolucion.objects.create(
                     prestamo=prestamo,
                     motivo=motivo,
                     devolucion_total=devolucion_total,
                     estado="aprobada",
+                    estado_equipo=est_eq,
                 )
                 items = ItemPrestamo.objects.filter(pk__in=items_ids, prestamo=prestamo)
                 devolucion.items.set(items)
