@@ -233,7 +233,7 @@
               <button type="button" class="btn btn-sm btn-light border text-warning btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Enviar a mantenimiento" onclick="abrirMantenimiento('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}')">
                 <i class="bi bi-wrench"></i>
               </button>
->>>>>>> main
+
             </div>
         {% endfor %}
     {% endif %}
@@ -1105,6 +1105,5 @@
 {% block js %}
     <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
-    <!-- Custom Table JS -->
     <script defer src="{% static 'js/tables/inventario_table.js' %}?v=3"></script>
 {% endblock %}
