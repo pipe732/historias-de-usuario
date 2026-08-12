@@ -9,6 +9,8 @@
   /* ── Campos que no deben validarse visualmente ── */
   var SKIP_SELECTORS = [
     '[data-no-validate]',
+    'input[name="q"]',
+    'input[name="busqueda"]',
     '[type="hidden"]',
     '[type="submit"]',
     '[type="button"]',

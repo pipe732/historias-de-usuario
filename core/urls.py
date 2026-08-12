@@ -18,6 +18,7 @@ urlpatterns = [
     path('mantenimiento/', include('mantenimiento.urls')),
     path('reportes/', include('reportes.urls')),
     path('configuracion/', include('configuracion.urls')),
+    path('notificaciones/', include('pagina_principal.urls')),
 ]
 
 if settings.DEBUG:
