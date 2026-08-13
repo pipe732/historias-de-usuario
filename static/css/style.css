@@ -10715,3 +10715,232 @@ aside .nav-bottom {
   flex-shrink: 0 !important;
   background: inherit !important;
 }
+
+/* ═══════════════════════════════════════════════════════
+   UNIFIED ASIDE BOTTOM NAV & DROPDOWN STYLES
+   ═══════════════════════════════════════════════════════ */
+
+.aside-bottom-bar {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+  gap: .5rem !important;
+  padding: .5rem .75rem !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.aside-bottom-bar .dropup {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+.btn-profile-pill {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  padding: 0.25rem 0.65rem 0.25rem 0.35rem !important;
+  transition: background 0.18s ease, border-color 0.18s ease !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.btn-profile-pill::after {
+  display: none !important;
+}
+
+.btn-profile-pill:hover,
+.btn-profile-pill:focus,
+.btn-profile-pill[aria-expanded="true"] {
+  background: rgba(255, 255, 255, 0.14) !important;
+  border-color: rgba(255, 255, 255, 0.24) !important;
+  color: #ffffff !important;
+}
+
+.profile-avatar-circle {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  border-radius: 50% !important;
+  background: #e63946 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  color: #ffffff !important;
+  flex-shrink: 0 !important;
+}
+
+.profile-pill-name {
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  letter-spacing: 0.01em !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.profile-pill-caret {
+  color: #ffffff !important;
+}
+
+.btn-notif-bell {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 50% !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  transition: background .15s ease, border-color .15s ease, transform .15s ease !important;
+  position: relative !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.btn-notif-bell:hover {
+  background: rgba(255, 255, 255, 0.14) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  transform: scale(1.04) !important;
+}
+
+.btn-notif-bell svg {
+  width: 18px !important;
+  height: 18px !important;
+  stroke: #ffffff !important;
+  fill: none !important;
+}
+
+.aside-notif-badge {
+  position: absolute !important;
+  top: -2px !important;
+  right: -2px !important;
+  background: #ffffff !important;
+  color: #111111 !important;
+  font-size: .65rem !important;
+  font-weight: 800 !important;
+  font-family: var(--font-mono, monospace) !important;
+  border-radius: 50% !important;
+  width: 16px !important;
+  height: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* --- Profile Dropdown Menu Styling (High Contrast & Clear Colors) --- */
+aside .aside-profile-dropdown,
+.aside-profile-dropdown {
+  background: #1e2227 !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, .15) !important;
+  border-radius: .75rem !important;
+  min-width: 190px !important;
+  padding: .4rem !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3) !important;
+}
+
+aside .aside-profile-dropdown .profile-role-header,
+.aside-profile-dropdown .profile-role-header {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: .78rem !important;
+  font-weight: 600 !important;
+  padding: .35rem .6rem !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+aside .aside-profile-dropdown .profile-role-header i,
+.aside-profile-dropdown .profile-role-header i {
+  color: #38bdf8 !important;
+  font-size: .95rem !important;
+  opacity: 1 !important;
+}
+
+aside .aside-profile-dropdown .dropdown-divider,
+.aside-profile-dropdown .dropdown-divider {
+  border-color: rgba(255, 255, 255, .12) !important;
+  margin: .35rem 0 !important;
+  opacity: 1 !important;
+}
+
+aside .aside-profile-dropdown .dropdown-item,
+.aside-profile-dropdown .dropdown-item {
+  color: #ffffff !important;
+  font-size: .85rem !important;
+  font-weight: 500 !important;
+  border-radius: .5rem !important;
+  padding: .45rem .65rem !important;
+  transition: background-color .15s ease, color .15s ease !important;
+}
+
+aside .aside-profile-dropdown .dropdown-item i,
+.aside-profile-dropdown .dropdown-item i {
+  color: #38bdf8 !important;
+  font-size: 1rem !important;
+  opacity: 1 !important;
+  transition: color .15s ease !important;
+}
+
+aside .aside-profile-dropdown .dropdown-item:hover,
+aside .aside-profile-dropdown .dropdown-item:focus,
+.aside-profile-dropdown .dropdown-item:hover,
+.aside-profile-dropdown .dropdown-item:focus {
+  background-color: rgba(255, 255, 255, .14) !important;
+  color: #ffffff !important;
+}
+
+aside .aside-profile-dropdown .dropdown-item:hover i,
+aside .aside-profile-dropdown .dropdown-item:focus i,
+.aside-profile-dropdown .dropdown-item:hover i,
+.aside-profile-dropdown .dropdown-item:focus i {
+  color: #ffffff !important;
+}
+
+/* Danger Item (Cerrar sesión) */
+aside .aside-profile-dropdown .dropdown-item.text-danger,
+.aside-profile-dropdown .dropdown-item.text-danger {
+  color: #f87171 !important;
+}
+
+aside .aside-profile-dropdown .dropdown-item.text-danger i,
+.aside-profile-dropdown .dropdown-item.text-danger i {
+  color: #f87171 !important;
+  opacity: 1 !important;
+}
+
+aside .aside-profile-dropdown .dropdown-item.text-danger:hover,
+aside .aside-profile-dropdown .dropdown-item.text-danger:focus,
+.aside-profile-dropdown .dropdown-item.text-danger:hover,
+.aside-profile-dropdown .dropdown-item.text-danger:focus {
+  background-color: rgba(239, 68, 68, .22) !important;
+  color: #fca5a5 !important;
+}
+
+aside .aside-profile-dropdown .dropdown-item.text-danger:hover i,
+aside .aside-profile-dropdown .dropdown-item.text-danger:focus i,
+.aside-profile-dropdown .dropdown-item.text-danger:hover i,
+.aside-profile-dropdown .dropdown-item.text-danger:focus i {
+  color: #fca5a5 !important;
+}
+
