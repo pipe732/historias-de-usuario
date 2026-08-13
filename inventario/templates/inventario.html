@@ -120,12 +120,12 @@
     <div class="col-12 col-md-7">
       <div class="input-group input-group-sm">
         <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
-        <input type="text" id="inventario-busqueda" data-no-validate class="form-control bg-light border-start-0" placeholder="Buscar por SKU o nombre de herramienta..." value="{{ request.GET.busqueda|default:'' }}">
+        <input type="text" id="inventario-busqueda" class="form-control bg-light border-start-0" placeholder="Buscar por SKU o nombre de herramienta..." value="{{ request.GET.busqueda|default:'' }}">
       </div>
     </div>
     <div class="col-12 col-md-4">
       <div class="input-group input-group-sm">
-        <select id="inventario-categoria" data-no-validate class="form-select bg-light">
+        <select id="inventario-categoria" class="form-select bg-light">
           <option value="">-- Todas las Categorías --</option>
           {% for cat in categorias %}
           <option value="{{ cat.pk }}" {% if request.GET.categoria == cat.pk|slugify %}selected{% endif %}>{{ cat.nombre }}</option>
@@ -154,7 +154,7 @@
       </svg>
       Herramientas registradas
     </span>
-    
+
     <div class="d-flex align-items-center gap-2">
       <span class="badge-count">
         {{ total }} registro{{ total|pluralize }}
@@ -163,7 +163,7 @@
         <i class="bi bi-journal-text"></i> Kardex
       </button>
       <button type="button" class="btn btn-success btn-sm d-flex align-items-center gap-1 has-tooltip" data-bs-toggle="modal" data-bs-target="#modalNuevaHerramienta" data-bs-placement="bottom" title="Registrar una nueva herramienta en el inventario">
-          <i class="bi bi-plus-lg"></i> 
+          <i class="bi bi-plus-lg"></i>
       </button>
     </div>
   </div>
@@ -208,7 +208,7 @@
           <td data-order="{{ producto.stock }}">
             {% if producto.stock == 0 %}
             <span class="badge-state badge-rechazada">Sin stock</span>
-            {% elif producto.stock <= 5 %} 
+            {% elif producto.stock <= 5 %}
             <span class="badge-state badge-pendiente">{{ producto.stock }} unidades</span>
             {% else %}
             <span class="badge-state badge-aprobada">{{ producto.stock }} unidades</span>
@@ -229,7 +229,7 @@
               <button type="button" class="btn btn-sm btn-light border btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Modificar información" onclick="abrirEditar('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}', '{% if producto.descripcion %}{{ producto.descripcion|escapejs }}{% endif %}', '{{ producto.stock }}', '{% if producto.categoria %}{{ producto.categoria.pk }}{% endif %}')">
                 <i class="bi bi-pencil"></i>
               </button>
-              
+
               <button type="button" class="btn btn-sm btn-light border text-warning btn-action-small" data-bs-toggle="tooltip" data-bs-placement="top" title="Enviar a mantenimiento" onclick="abrirMantenimiento('{{ producto.pk }}', '{{ producto.codigo_sku|escapejs }}', '{{ producto.nombre|escapejs }}')">
                 <i class="bi bi-wrench"></i>
               </button>
@@ -249,6 +249,7 @@
                         <i class="bi bi-tools fs-4"></i>
                     </div>
                 </div>
+
             </div>
         </div>
         <div class="col-12 col-sm-6 col-lg-3">
@@ -303,6 +304,32 @@
                            placeholder="Buscar por SKU o nombre de herramienta..."
                            value="{{ request.GET.busqueda|default:'' }}">
                 </div>
+
+<div class="modal fade" id="modalNuevaHerramienta" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2"></i>Registrar Nueva Herramienta</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="{% url 'inventario:inventario' %}" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="crear_producto">
+        <div class="modal-body p-4">
+
+          {% if error_producto %}
+          <div class="alert alert-danger py-2 fs-7 mb-3">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error_producto }}
+          </div>
+          {% endif %}
+
+          <div class="modal-section-title">Datos de la herramienta</div>
+
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Código SKU *</label>
+              <input type="text" name="codigo_sku" class="form-control" placeholder="Ej: SKU-001" value="{{ post_sku }}" required>
+
             </div>
             <div class="col-12 col-md-4">
                 <div class="input-group input-group-sm">
@@ -334,6 +361,16 @@
                     <i class="bi bi-brush"></i>
                 </button>
             </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Stock / Cantidad inicial</label>
+              <input type="number" name="stock" class="form-control" min="0" value="{{ post_stock|default:1 }}" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Descripción</label>
+              <textarea name="descripcion" class="form-control" rows="3" placeholder="Descripción (opcional)">{{ post_descripcion }}</textarea>
+            </div>
+          </div>
+
         </div>
     </div>
     <div class="card table-card p-3">
@@ -588,6 +625,116 @@
                             class="btn btn-secondary btn-sm"
                             data-bs-dismiss="modal">Cerrar</button>
                 </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL MANTENIMIENTO ==================== -->
+<div class="modal fade" id="modalMantenimiento" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+    <div class="modal-content d-flex flex-column" style="max-height: 92vh;">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title fw-bold"><i class="bi bi-wrench me-2"></i>Enviar a Mantenimiento</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="formMantenimiento" method="POST" action="{% url 'mantenimiento:registrar_desde_inventario' %}" class="d-flex flex-column flex-grow-1" style="min-height: 0;">
+        {% csrf_token %}
+        <input type="hidden" name="producto_id" id="mantProductoId">
+
+        <div class="modal-body flex-grow-1 overflow-auto p-4" style="min-height: 0;">
+          <div class="alert alert-info py-2 mb-3 fs-7">
+            <div class="fw-bold">Herramienta seleccionada:</div>
+            <span id="mantTextDisplay"></span>
+          </div>
+
+          <!-- ==================== CAMPOS DEL FORMULARIO DE MANTENIMIENTO ==================== -->
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Tipo de Mantenimiento *</label>
+              {{ mant_form.tipo_mantenimiento }}
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Tipo de Estado Actual *</label>
+              {{ mant_form.tipo_estado }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Fecha de Reporte / Detección *</label>
+              {{ mant_form.fecha_reporte }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Fecha Inicio Mantenimiento *</label>
+              {{ mant_form.fecha_inicio }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Fecha Fin Estimada</label>
+              {{ mant_form.fecha_fin_estimada }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Fecha Fin Real</label>
+              {{ mant_form.fecha_fin_real }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Tiempo Empleado (horas)</label>
+              {{ mant_form.tiempo_empleado_horas }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Prioridad / Urgencia *</label>
+              {{ mant_form.prioridad }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Responsable / Técnico *</label>
+              {{ mant_form.responsable }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Costo Estimado</label>
+              {{ mant_form.costo_estimado }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Costo Real</label>
+              {{ mant_form.costo_real }}
+            </div>
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Estado del Registro *</label>
+              {{ mant_form.estado_registro }}
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light border-0 px-4 py-3 flex-shrink-0">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-warning text-dark px-4 fw-bold">Confirmar Envío</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalNuevaCategoria" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-tag-fill me-2"></i>Crear Nueva Categoría</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{% url 'inventario:inventario' %}">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="crear_categoria">
+
+        <input type="hidden" name="codigo_sku" value="{{ post_sku }}">
+        <input type="hidden" name="nombre" value="{{ post_nombre }}">
+        <input type="hidden" name="descripcion" value="{{ post_descripcion }}">
+        <input type="hidden" name="stock" value="{{ post_stock }}">
+
+        <div class="modal-body p-4">
+          {% if error_categoria %}
+          <div class="alert alert-danger py-2 fs-7 mb-3">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error_categoria }}
+          </div>
+          {% endif %}
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label text-muted fw-bold small uppercase mb-1">Nombre de la Categoría *</label>
+              <input type="text" name="cat_nombre" class="form-control" placeholder="Ej: Herramientas Eléctricas" value="{{ post_cat_nombre }}" required>
+
             </div>
         </div>
     </div>
@@ -961,6 +1108,7 @@
       actualizarBadgeUbicacion(document.getElementById('edit_almacen'), this, document.getElementById('edit_ubicacion_badge'));
   });
 
+<script>
   // Abrir Préstamo Rápido
   function abrirPrestamo(id, sku, nombre) {
     document.getElementById('prestamo_producto_id').value = id;
@@ -996,11 +1144,16 @@
   }
 
   // Abrir Mantenimiento
+
   function abrirMantenimiento(id, sku, nombre) {
+    const modalEl = document.getElementById('modalMantenimiento');
+    const dialog = modalEl.querySelector('.modal-dialog');
+    if (dialog) dialog.classList.add('modal-dialog-scrollable', 'modal-xl');
+
     document.getElementById('mantProductoId').value = id;
     document.getElementById('mantTextDisplay').innerText = '[' + sku + '] ' + nombre;
-    var modal = new bootstrap.Modal(document.getElementById('modalMantenimiento'));
-    modal.show();
+
+    new bootstrap.Modal(modalEl, { backdrop: 'static' }).show();
   }
 
   // Flujo puente: Abrir categoría desde el modal de producto conservando datos
@@ -1107,3 +1260,4 @@
     <script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
     <script defer src="{% static 'js/tables/inventario_table.js' %}?v=3"></script>
 {% endblock %}
+

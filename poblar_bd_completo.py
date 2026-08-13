@@ -19,6 +19,7 @@ django.setup()
 from django.utils import timezone
 from django.contrib.sessions.models import Session
 from django.db import transaction
+from django.core.management import call_command
 
 # Importar todos los modelos del proyecto
 from usuario.models import Usuario
@@ -530,4 +531,8 @@ def main():
 
 
 if __name__ == '__main__':
+    try:
+        call_command('migrate', verbosity=0)
+    except Exception as e:
+        print(f"Error aplicando migraciones iniciales: {e}")
     main()

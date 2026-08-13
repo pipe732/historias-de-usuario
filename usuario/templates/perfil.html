@@ -413,11 +413,9 @@
 .toggle-switch input:checked + .toggle-slider::before { transform:translateX(18px); }
 </style>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+(function () {
 
-  const modalEl = document.getElementById('modalPerfil');
-  if (!modalEl) return;
-  const modal = new bootstrap.Modal(modalEl);
+  const modal = new bootstrap.Modal(document.getElementById('modalPerfil'));
 
   document.getElementById('btn-abrir-perfil').addEventListener('click', function () {
     activarTab('tab-datos');
@@ -516,6 +514,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-});
+})();
 </script>
 {% endblock js %}
