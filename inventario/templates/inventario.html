@@ -27,92 +27,236 @@
 {% endfor %}
 {% endif %}
 
+<style>
+  /* ── KPI Cards Inventario ── */
+  .inv-kpi-card {
+    border-radius: 14px;
+    border: 1px solid rgba(0,0,0,.06);
+    background: var(--bg-surface, #fff);
+    padding: 1.1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    transition: transform .18s ease, box-shadow .18s ease;
+    height: 100%;
+  }
+  .inv-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,.1);
+  }
+  .inv-kpi-icon {
+    width: 50px; height: 50px;
+    min-width: 50px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+  }
+  .inv-kpi-icon.blue   { background: linear-gradient(135deg,#2563eb22,#3b82f622); color: #2563eb; }
+  .inv-kpi-icon.green  { background: linear-gradient(135deg,#16a34a22,#22c55e22); color: #16a34a; }
+  .inv-kpi-icon.red    { background: linear-gradient(135deg,#dc262622,#ef444422); color: #dc2626; }
+  .inv-kpi-icon.amber  { background: linear-gradient(135deg,#d9770622,#f59e0b22); color: #d97706; }
+  .inv-kpi-label {
+    font-size: .72rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .06em;
+    color: var(--text-muted, #71816D); margin-bottom: .2rem;
+  }
+  .inv-kpi-value {
+    font-size: 1.75rem; font-weight: 800;
+    line-height: 1; color: var(--text-main, #1B2021);
+    font-family: var(--font-title, 'Space Grotesk', sans-serif);
+  }
+  .inv-kpi-value.danger  { color: #dc2626; }
+  .inv-kpi-value.warning { color: #d97706; }
+  /* border-left accent */
+  .inv-kpi-card.accent-blue   { border-left: 3px solid #3b82f6; }
+  .inv-kpi-card.accent-green  { border-left: 3px solid #22c55e; }
+  .inv-kpi-card.accent-red    { border-left: 3px solid #ef4444; }
+  .inv-kpi-card.accent-amber  { border-left: 3px solid #f59e0b; }
+
+  /* ── Search / Filter bar ── */
+  .inv-filter-bar {
+    background: var(--bg-surface, #fff);
+    border: 1px solid rgba(0,0,0,.07);
+    border-radius: 14px;
+    padding: .75rem 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+  }
+  /* Search block — grows to fill all remaining space */
+  .inv-filter-search {
+    flex: 1 1 0%;
+    min-width: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .inv-search-icon {
+    position: absolute;
+    left: .8rem;
+    color: var(--text-muted, #71816d);
+    font-size: .9rem;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .inv-search-input {
+    width: 100% !important;
+    height: 38px;
+    padding: 0 .9rem 0 2.2rem;
+    border-radius: 9px;
+    border: 1px solid rgba(0,0,0,.1);
+    background: var(--bg-body, #f5f4f0);
+    font-size: .85rem;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s, background .15s;
+  }
+  .inv-search-input:focus {
+    background: #fff;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.15);
+  }
+  /* Category block — fixed width, no shrink */
+  .inv-cat-wrap {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+  }
+  .inv-cat-select {
+    width: 200px;
+    height: 38px;
+    border-radius: 9px;
+    border: 1px solid rgba(0,0,0,.1);
+    background: var(--bg-body, #f5f4f0);
+    font-size: .85rem;
+    padding: 0 .75rem;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    appearance: auto;
+  }
+  .inv-cat-select:focus {
+    background: #fff;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.15);
+  }
+  .inv-filter-bar .btn-add-cat {
+    height: 38px; width: 38px; border-radius: 9px;
+    background: #16a34a; color: #fff; border: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+    cursor: pointer;
+    transition: background .15s, transform .12s;
+  }
+  .inv-filter-bar .btn-add-cat:hover { background: #15803d; transform: scale(1.07); }
+  .inv-filter-bar .btn-clear {
+    flex-shrink: 0;
+    height: 38px; padding: 0 .85rem; border-radius: 9px; font-size: .82rem;
+    border: 1px solid rgba(0,0,0,.12); background: transparent;
+    color: var(--text-muted, #71816d); white-space: nowrap;
+    display: flex; align-items: center; gap: .3rem;
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .inv-filter-bar .btn-clear:hover {
+    background: #fee2e2; color: #dc2626; border-color: #fca5a5;
+  }
+
+  /* Dark mode */
+  body.dark-mode .inv-kpi-card {
+    background: #23272b; border-color: rgba(255,255,255,.08);
+  }
+  body.dark-mode .inv-kpi-value { color: #EFECCA; }
+  body.dark-mode .inv-filter-bar {
+    background: #23272b; border-color: rgba(255,255,255,.08);
+  }
+  body.dark-mode .inv-search-input,
+  body.dark-mode .inv-cat-select {
+    background: #1a1e22; border-color: rgba(255,255,255,.12); color: #EFECCA;
+  }
+  body.dark-mode .inv-search-input:focus,
+  body.dark-mode .inv-cat-select:focus {
+    background: #1e2428;
+  }
+</style>
+
+<!-- KPI Cards -->
 <div class="row g-3 mb-4">
   <div class="col-12 col-sm-6 col-lg-3">
-    <div class="card p-3 border-0 shadow-sm bg-white h-100">
-      <div class="d-flex align-items-center justify-content-between">
-        <div>
-          <h6 class="text-muted fw-normal mb-1">Total Herramientas</h6>
-          <h3 class="fw-bold mb-0">{{ kpi_total_productos }}</h3>
-        </div>
-        <div class="icon-shape bg-light-primary text-primary rounded-circle p-3">
-          <i class="bi bi-tools fs-4"></i>
-        </div>
+    <div class="inv-kpi-card accent-blue">
+      <div class="inv-kpi-icon blue">
+        <i class="bi bi-tools"></i>
+      </div>
+      <div>
+        <div class="inv-kpi-label">Total Herramientas</div>
+        <div class="inv-kpi-value">{{ kpi_total_productos }}</div>
       </div>
     </div>
   </div>
 
   <div class="col-12 col-sm-6 col-lg-3">
-    <div class="card p-3 border-0 shadow-sm bg-white h-100">
-      <div class="d-flex align-items-center justify-content-between">
-        <div>
-          <h6 class="text-muted fw-normal mb-1">Unidades Totales</h6>
-          <h3 class="fw-bold mb-0">{{ kpi_total_stock }}</h3>
-        </div>
-        <div class="icon-shape bg-light-success text-success rounded-circle p-3">
-          <i class="bi bi-box-seam fs-4"></i>
-        </div>
+    <div class="inv-kpi-card accent-green">
+      <div class="inv-kpi-icon green">
+        <i class="bi bi-box-seam"></i>
+      </div>
+      <div>
+        <div class="inv-kpi-label">Unidades Totales</div>
+        <div class="inv-kpi-value">{{ kpi_total_stock }}</div>
       </div>
     </div>
   </div>
 
   <div class="col-12 col-sm-6 col-lg-3">
-    <div class="card p-3 border-0 shadow-sm bg-white h-100">
-      <div class="d-flex align-items-center justify-content-between">
-        <div>
-          <h6 class="text-muted fw-normal mb-1">Agotadas (Sin Stock)</h6>
-          <h3 class="fw-bold mb-0 {% if kpi_sin_stock > 0 %}text-danger{% endif %}">{{ kpi_sin_stock }}</h3>
-        </div>
-        <div class="icon-shape bg-light-danger text-danger rounded-circle p-3">
-          <i class="bi bi-exclamation-octagon fs-4"></i>
-        </div>
+    <div class="inv-kpi-card accent-red">
+      <div class="inv-kpi-icon red">
+        <i class="bi bi-exclamation-octagon"></i>
+      </div>
+      <div>
+        <div class="inv-kpi-label">Agotadas (Sin Stock)</div>
+        <div class="inv-kpi-value {% if kpi_sin_stock > 0 %}danger{% endif %}">{{ kpi_sin_stock }}</div>
       </div>
     </div>
   </div>
 
   <div class="col-12 col-sm-6 col-lg-3">
-    <div class="card p-3 border-0 shadow-sm bg-white h-100">
-      <div class="d-flex align-items-center justify-content-between">
-        <div>
-          <h6 class="text-muted fw-normal mb-1">Stock Bajo (≤ 5)</h6>
-          <h3 class="fw-bold mb-0 {% if kpi_stock_bajo > 0 %}text-warning{% endif %}">{{ kpi_stock_bajo }}</h3>
-        </div>
-        <div class="icon-shape bg-light-warning text-warning rounded-circle p-3">
-          <i class="bi bi-graph-down-arrow fs-4"></i>
-        </div>
+    <div class="inv-kpi-card accent-amber">
+      <div class="inv-kpi-icon amber">
+        <i class="bi bi-graph-down-arrow"></i>
+      </div>
+      <div>
+        <div class="inv-kpi-label">Stock Bajo (≤ 5)</div>
+        <div class="inv-kpi-value {% if kpi_stock_bajo > 0 %}warning{% endif %}">{{ kpi_stock_bajo }}</div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="card p-3 border-0 shadow-sm mb-4 bg-white">
-  <div class="row g-2 align-items-center">
-    <div class="col-12 col-md-7">
-      <div class="input-group input-group-sm">
-        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
-        <input type="text" id="inventario-busqueda" data-no-validate class="form-control bg-light border-start-0" placeholder="Buscar por SKU o nombre de herramienta..." value="{{ request.GET.busqueda|default:'' }}">
-      </div>
-    </div>
-    <div class="col-12 col-md-4">
-      <div class="input-group input-group-sm">
-        <select id="inventario-categoria" data-no-validate class="form-select bg-light">
-          <option value="">-- Todas las Categorías --</option>
-          {% for cat in categorias %}
-          <option value="{{ cat.pk }}" {% if request.GET.categoria == cat.pk|slugify %}selected{% endif %}>{{ cat.nombre }}</option>
-          {% endfor %}
-        </select>
-        <button type="button" class="btn btn-success d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#modalNuevaCategoria" title="Crear nueva categoría">
-          <i class="bi bi-plus-lg"></i>
-        </button>
-      </div>
-    </div>
-    <div class="col-12 col-md-1">
-      <button type="button" id="btn-limpiar-filtros" class="btn btn-outline-secondary btn-sm w-100 d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" data-bs-placement="top" title="Limpiar filtros">
-        <i class="bi bi-brush"></i>
-      </button>
-    </div>
+<!-- Filter Bar -->
+<div class="inv-filter-bar mb-4">
+  <div class="inv-filter-search">
+    <i class="bi bi-search inv-search-icon"></i>
+    <input type="text" id="inventario-busqueda" class="inv-search-input" placeholder="Buscar por SKU o nombre de herramienta…" value="{{ request.GET.busqueda|default:'' }}">
   </div>
+
+  <div class="inv-cat-wrap">
+    <select id="inventario-categoria" class="inv-cat-select">
+      <option value="">— Todas las Categorías —</option>
+      {% for cat in categorias %}
+      <option value="{{ cat.pk }}" {% if request.GET.categoria == cat.pk|slugify %}selected{% endif %}>{{ cat.nombre }}</option>
+      {% endfor %}
+    </select>
+    <button type="button" class="btn-add-cat" data-bs-toggle="modal" data-bs-target="#modalNuevaCategoria" title="Nueva categoría">
+      <i class="bi bi-plus-lg"></i>
+    </button>
+  </div>
+
+  <button type="button" id="btn-limpiar-filtros" class="btn-clear" title="Limpiar filtros">
+    <i class="bi bi-x-circle"></i> Limpiar
+  </button>
 </div>
+
+
 
 <div class="card table-card p-3">
   <div class="card-header d-flex align-items-center justify-content-between">

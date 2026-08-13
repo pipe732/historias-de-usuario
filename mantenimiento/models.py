@@ -1,9 +1,7 @@
-# mantenimiento/models.py
 from django.db import models
+from django.utils import timezone
 from inventario.models import Producto
 from usuario.models import Usuario
-
-# CONSTANTES Y CHOICES CENTRALIZADOS
 
 CATEGORIA_TIPOESTADO_CHOICES = [
     ("danado", "Dañado"),
@@ -20,9 +18,12 @@ IMPACTO_DISPONIBILIDAD_CHOICES = [
     ("disponible_restringido", "Disponible con restricción"),
 ]
 
+<<<<<<< HEAD
 # Nivel de severidad del estado. Pedido por el MER (campo niPreferences: Open User Settings (JSON)vel_estado).
 # Sirve para ordenar/priorizar estados por gravedad real, sin depender
 # del texto libre de "categoria".
+=======
+>>>>>>> main
 NIVEL_ESTADO_CHOICES = [
     (1, "Leve"),
     (2, "Moderado"),
@@ -60,8 +61,6 @@ MOTIVO_CAMBIO_CHOICES = [
     ("otro", "Otro"),
 ]
 
-# Tipo de entrada dentro de la bitácora de detalle (detalle_mantenimiento.tipo
-# en el MER). Cada fila de detalle representa UN evento en el tiempo.
 TIPO_DETALLE_CHOICES = [
     ("diagnostico", "Diagnóstico"),
     ("accion", "Acción realizada"),
@@ -70,25 +69,14 @@ TIPO_DETALLE_CHOICES = [
     ("cierre", "Cierre / entrega"),
 ]
 
-# Constantes para disponibilidad
 ESTADOS_MANTENIMIENTO_ACTIVOS = {"abierto", "en_proceso"}
 IMPACTO_NO_DISPONIBLE = "no_disponible"
 
-# TIPOS DE MANTENIMIENTO
 
 class TipoMantenimiento(models.Model):
-    """
-    Catálogo dinámico de tipos de mantenimiento.
-    Reemplaza los choices hardcodeados para mayor flexibilidad.
-    """
-
-    nombre = models.CharField(
-        max_length=50, unique=True, verbose_name="Nombre del tipo"
-    )
+    nombre = models.CharField(max_length=50, unique=True, verbose_name="Nombre del tipo")
     descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
-    color = models.CharField(
-        max_length=7, blank=True, null=True, verbose_name="Color (hex)"
-    )
+    color = models.CharField(max_length=7, blank=True, null=True, verbose_name="Color (hex)")
     activo = models.BooleanField(default=True, verbose_name="Activo")
     creado_en = models.DateTimeField(auto_now_add=True)
     creado_por = models.ForeignKey(
@@ -109,42 +97,13 @@ class TipoMantenimiento(models.Model):
     def __str__(self):
         return self.nombre
 
-    def puede_eliminarse(self):
-        """Verifica si el tipo puede ser eliminado (nunca fue usado)."""
-        return not self.mantenimientos.exists()
 
-    def puede_inactivarse(self):
-        """Verifica si puede inactivarse (sin órdenes abiertas)."""
-        from django.db.models import Q
-
-        return not self.mantenimientos.filter(
-            Q(estado_registro="abierto") | Q(estado_registro="en_proceso")
-        ).exists()
-
-
-# TIPOS DE ESTADO
 class TipoEstado(models.Model):
-    # Se usan las constantes a nivel de módulo: CATEGORIA_TIPOESTADO_CHOICES,
-    # IMPACTO_DISPONIBILIDAD_CHOICES y NIVEL_ESTADO_CHOICES para evitar duplicación.
-    nombre = models.CharField(
-        max_length=120, unique=True, verbose_name="Nombre del estado"
-    )
-    codigo = models.CharField(
-        max_length=20, unique=True, verbose_name="Código abreviado"
-    )
-    descripcion = models.TextField(
-        blank=True, null=True, verbose_name="Descripción breve"
-    )
-    categoria = models.CharField(
-        max_length=50, choices=CATEGORIA_TIPOESTADO_CHOICES, verbose_name="Categoría"
-    )
-    # Campo pedido por el MER (bitácora_estado.nivel_estado). Permite
-    # ordenar/filtrar estados por severidad sin parsear texto de "categoria".
-    nivel_estado = models.PositiveSmallIntegerField(
-        choices=NIVEL_ESTADO_CHOICES,
-        default=1,
-        verbose_name="Nivel de severidad",
-    )
+    nombre = models.CharField(max_length=120, unique=True, verbose_name="Nombre del estado")
+    codigo = models.CharField(max_length=20, unique=True, verbose_name="Código abreviado")
+    descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción breve")
+    categoria = models.CharField(max_length=50, choices=CATEGORIA_TIPOESTADO_CHOICES, verbose_name="Categoría")
+    nivel_estado = models.PositiveSmallIntegerField(choices=NIVEL_ESTADO_CHOICES, default=1, verbose_name="Nivel de severidad")
     impacto_disponibilidad = models.CharField(
         max_length=40,
         choices=IMPACTO_DISPONIBILIDAD_CHOICES,
@@ -153,13 +112,7 @@ class TipoEstado(models.Model):
     )
     color = models.CharField(max_length=7, blank=True, verbose_name="Color asociado")
     activo = models.BooleanField(default=True, verbose_name="Activo")
-    creado_por = models.ForeignKey(
-        Usuario,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name="Creado por",
-    )
+    creado_por = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Creado por")
     creado_en = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -172,30 +125,35 @@ class TipoEstado(models.Model):
         db_table = "mantenimiento_tipoestado"
 
 
-# registro de mantenimiento (cabecera — equivale a bitácora_mantenimiento del MER)
+# Mantenimiento (Tabla del diagrama ER Workbench)
 class Mantenimiento(models.Model):
-    """
-    Cabecera del mantenimiento. Guarda QUÉ se está atendiendo, de qué tipo,
-    con qué estado y prioridad. El detalle día a día (diagnóstico, acciones,
-    repuestos, notas) vive en DetalleMantenimiento, no aquí.
-    """
-
-    # Relaciones
-    producto = models.ForeignKey(
-        Producto,
-        on_delete=models.PROTECT,
-        related_name="mantenimientos",
-        verbose_name="Ítem / Herramienta",
-    )
+    num_mantenimiento = models.AutoField(primary_key=True, db_column='num_mantenimiento')
     tipo_mantenimiento = models.ForeignKey(
         TipoMantenimiento,
         on_delete=models.PROTECT,
         related_name="mantenimientos",
         verbose_name="Tipo de mantenimiento",
     )
+    descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
+    fecha_ingreso = models.DateField(default=timezone.now, verbose_name="Fecha de ingreso / reporte")
+    fecha_salida = models.DateField(blank=True, null=True, verbose_name="Fecha de salida / entrega real")
+    observaciones = models.TextField(blank=True, null=True, verbose_name="Observaciones")
+    codigo_herramienta = models.ForeignKey(
+        Producto,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="mantenimientos",
+        db_column="codigo_herramienta",
+        verbose_name="Ítem / Herramienta",
+    )
+
+    # Campos adicionales de gestión operativa
     tipo_estado = models.ForeignKey(
         TipoEstado,
         on_delete=models.PROTECT,
+        null=True,
+        blank=True,
         related_name="mantenimientos",
         verbose_name="Tipo de estado actual",
     )
@@ -203,6 +161,7 @@ class Mantenimiento(models.Model):
         "usuario.Usuario",
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         related_name="mantenimientos_responsable",
         verbose_name="Responsable / Técnico",
     )
@@ -210,11 +169,10 @@ class Mantenimiento(models.Model):
         "usuario.Usuario",
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         related_name="mantenimientos_creados",
         verbose_name="Registrado por",
     )
-
-    # Campos de cabecera
     estado_registro = models.CharField(
         max_length=20,
         choices=ESTADO_REGISTRO_CHOICES,
@@ -227,41 +185,11 @@ class Mantenimiento(models.Model):
         default="media",
         verbose_name="Prioridad / urgencia",
     )
-    fecha_reporte = models.DateField(verbose_name="Fecha de reporte / detección")
-    fecha_inicio = models.DateField(verbose_name="Fecha inicio mantenimiento")
-    fecha_fin_estimada = models.DateField(
-        blank=True, null=True, verbose_name="Fecha estimada de entrega"
-    )
-    fecha_fin_real = models.DateField(
-        blank=True, null=True, verbose_name="Fecha entrega real"
-    )
-    tiempo_empleado_horas = models.DecimalField(
-        max_digits=7,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        verbose_name="Tiempo empleado (horas)",
-    )
-    ubicacion_snapshot = models.CharField(
-        max_length=150,
-        blank=True,
-        null=True,
-        verbose_name="Ubicación al momento del registro",
-    )
-    costo_estimado = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        verbose_name="Costo estimado",
-    )
-    costo_real = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        verbose_name="Costo real",
-    )
+    fecha_fin_estimada = models.DateField(blank=True, null=True, verbose_name="Fecha estimada de entrega")
+    tiempo_empleado_horas = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True, verbose_name="Tiempo empleado (horas)")
+    ubicacion_snapshot = models.CharField(max_length=150, blank=True, null=True, verbose_name="Ubicación al momento del registro")
+    costo_estimado = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name="Costo estimado")
+    costo_real = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name="Costo real")
     actualizado_por = models.ForeignKey(
         "usuario.Usuario",
         on_delete=models.SET_NULL,
@@ -270,90 +198,58 @@ class Mantenimiento(models.Model):
         related_name="mantenimientos_actualizados",
         verbose_name="Última edición por",
     )
-
-    # Auditoría
     creado_en = models.DateTimeField(auto_now_add=True)
     actualizado_en = models.DateTimeField(auto_now=True)
 
-    def clean(self):
-        """Validaciones de integridad del modelo."""
-        from django.core.exceptions import ValidationError as DjangoValidationError
-        from django.utils.translation import gettext_lazy as _
+    def __init__(self, *args, **kwargs):
+        if 'producto' in kwargs:
+            kwargs['codigo_herramienta'] = kwargs.pop('producto')
+        if 'fecha_reporte' in kwargs:
+            kwargs['fecha_ingreso'] = kwargs.pop('fecha_reporte')
+        if 'fecha_inicio' in kwargs and 'fecha_ingreso' not in kwargs:
+            kwargs['fecha_ingreso'] = kwargs.pop('fecha_inicio')
+        if 'fecha_fin_real' in kwargs:
+            kwargs['fecha_salida'] = kwargs.pop('fecha_fin_real')
+        super().__init__(*args, **kwargs)
 
-        errors = {}
+    # Propiedades de compatibilidad
+    @property
+    def producto(self):
+        return self.codigo_herramienta
 
-        if (
-            self.fecha_fin_estimada
-            and self.fecha_inicio
-            and self.fecha_fin_estimada < self.fecha_inicio
-        ):
-            errors["fecha_fin_estimada"] = _(
-                "La fecha estimada debe ser posterior a la de inicio."
-            )
+    @producto.setter
+    def producto(self, val):
+        self.codigo_herramienta = val
 
-        if (
-            self.fecha_fin_real
-            and self.fecha_fin_estimada
-            and self.fecha_fin_real > self.fecha_fin_estimada
-        ):
-            # Nota: Permitimos retrasos, solo advertencia en logs
-            pass
+    @property
+    def producto_id(self):
+        return self.codigo_herramienta_id
 
-        if self.tiempo_empleado_horas and self.tiempo_empleado_horas < 0:
-            errors["tiempo_empleado_horas"] = _("El tiempo no puede ser negativo.")
+    @property
+    def fecha_reporte(self):
+        return self.fecha_ingreso
 
-        if self.costo_estimado and self.costo_estimado < 0:
-            errors["costo_estimado"] = _("El costo estimado no puede ser negativo.")
+    @fecha_reporte.setter
+    def fecha_reporte(self, val):
+        self.fecha_ingreso = val
 
-        if self.costo_real and self.costo_real < 0:
-            errors["costo_real"] = _("El costo real no puede ser negativo.")
+    @property
+    def fecha_inicio(self):
+        return self.fecha_ingreso
 
-        if errors:
-            raise DjangoValidationError(errors)
+    @fecha_inicio.setter
+    def fecha_inicio(self, val):
+        self.fecha_ingreso = val
 
-    @staticmethod
-    def _calcular_disponibilidad_producto(producto):
-        """
-        Un producto queda no disponible si existe al menos un mantenimiento
-        activo (abierto/en_proceso) con impacto no_disponible.
-        """
-        bloqueo = Mantenimiento.objects.filter(
-            producto=producto,
-            estado_registro__in=ESTADOS_MANTENIMIENTO_ACTIVOS,
-            tipo_estado__impacto_disponibilidad=IMPACTO_NO_DISPONIBLE,
-        ).exists()
-        return not bloqueo
+    @property
+    def fecha_fin_real(self):
+        return self.fecha_salida
 
-    def _actualizar_disponibilidad(self):
-        if not self.producto_id:
-            return
+    @fecha_fin_real.setter
+    def fecha_fin_real(self, val):
+        self.fecha_salida = val
 
-        disponible = self._calcular_disponibilidad_producto(self.producto)
-        if self.producto.disponible != disponible:
-            self.producto.disponible = disponible
-            self.producto.save(update_fields=["disponible"])
-
-    def save(self, *args, **kwargs):
-        # Snapshot de ubicación
-        if not self.pk and self.producto_id and self.producto.ubicacion:
-            self.ubicacion_snapshot = self.producto.ubicacion
-
-        super().save(*args, **kwargs)
-        self._actualizar_disponibilidad()
-
-    def delete(self, *args, **kwargs):
-        producto = self.producto if self.producto_id else None
-        super().delete(*args, **kwargs)
-        if producto:
-            producto.disponible = self._calcular_disponibilidad_producto(producto)
-            producto.save(update_fields=["disponible"])
-
-    def __str__(self):
-        return f"[{self.tipo_mantenimiento}] {self.producto} — {self.fecha_reporte}"
-
-    def registrar_cambio(
-        self, *, editado_por, motivo_edicion, cambios, detalle_motivo=""
-    ):
+    def registrar_cambio(self, *, editado_por, motivo_edicion, cambios, detalle_motivo=""):
         if not cambios:
             return None
         return MantenimientoCambio.objects.create(
@@ -364,47 +260,94 @@ class Mantenimiento(models.Model):
             cambios=cambios,
         )
 
+    def clean(self):
+        from django.core.exceptions import ValidationError as DjangoValidationError
+        from django.utils.translation import gettext_lazy as _
+
+        errors = {}
+        if self.fecha_fin_estimada and self.fecha_ingreso and self.fecha_fin_estimada < self.fecha_ingreso:
+            errors["fecha_fin_estimada"] = _("La fecha estimada debe ser posterior a la de inicio.")
+        if self.tiempo_empleado_horas and self.tiempo_empleado_horas < 0:
+            errors["tiempo_empleado_horas"] = _("El tiempo no puede ser negativo.")
+        if self.costo_estimado and self.costo_estimado < 0:
+            errors["costo_estimado"] = _("El costo estimado no puede ser negativo.")
+        if self.costo_real and self.costo_real < 0:
+            errors["costo_real"] = _("El costo real no puede ser negativo.")
+        if errors:
+            raise DjangoValidationError(errors)
+
+    def _actualizar_disponibilidad(self):
+        if not self.codigo_herramienta_id:
+            return
+        bloqueo = Mantenimiento.objects.filter(
+            codigo_herramienta=self.codigo_herramienta,
+            estado_registro__in=ESTADOS_MANTENIMIENTO_ACTIVOS,
+            tipo_estado__impacto_disponibilidad=IMPACTO_NO_DISPONIBLE,
+        ).exists()
+        disponible = not bloqueo
+        if self.codigo_herramienta.disponible != disponible:
+            self.codigo_herramienta.disponible = disponible
+            self.codigo_herramienta.save(update_fields=["disponible"])
+
+    def save(self, *args, **kwargs):
+        if not self.pk and self.codigo_herramienta_id and self.codigo_herramienta.ubicacion:
+            self.ubicacion_snapshot = self.codigo_herramienta.ubicacion
+        super().save(*args, **kwargs)
+        self._actualizar_disponibilidad()
+
+    def delete(self, *args, **kwargs):
+        prod = self.codigo_herramienta
+        super().delete(*args, **kwargs)
+        if prod:
+            bloqueo = Mantenimiento.objects.filter(
+                codigo_herramienta=prod,
+                estado_registro__in=ESTADOS_MANTENIMIENTO_ACTIVOS,
+                tipo_estado__impacto_disponibilidad=IMPACTO_NO_DISPONIBLE,
+            ).exists()
+            disponible = not bloqueo
+            if prod.disponible != disponible:
+                prod.disponible = disponible
+                prod.save(update_fields=["disponible"])
+
+    def __str__(self):
+        return f"[{self.tipo_mantenimiento}] {self.codigo_herramienta} — {self.fecha_ingreso}"
+
     class Meta:
         verbose_name = "Mantenimiento"
         verbose_name_plural = "Mantenimientos"
-        ordering = ["-fecha_reporte"]
-        db_table = "mantenimiento_bitacoramantenimiento"
+        ordering = ["-fecha_ingreso"]
+        db_table = "mantenimiento"
 
 
-# detalle_mantenimiento del MER. Historial de eventos de UN mantenimiento.
-# Antes estos campos (descripcion_problema, acciones_realizadas,
-# materiales_usados, notas_adicionales, evidencia_adicional) vivían sueltos
-# dentro de Mantenimiento. Separarlos permite VARIOS registros en el tiempo
-# por mantenimiento, en vez de un solo bloque de texto fijo.
+# DetalleMantenimiento (Tabla del diagrama ER Workbench)
 class DetalleMantenimiento(models.Model):
-    mantenimiento = models.ForeignKey(
+    detalle_mantenimiento = models.AutoField(primary_key=True, db_column='detalle_mantenimiento')
+    accion_realizada = models.TextField(blank=True, null=True, verbose_name="Acción realizada")
+    materiales_usados = models.TextField(blank=True, null=True, verbose_name="Materiales usados")
+    fecha_mantenimiento = models.DateField(default=timezone.now, verbose_name="Fecha de mantenimiento")
+    observacion = models.TextField(blank=True, null=True, verbose_name="Observación")
+    num_mantenimiento = models.ForeignKey(
         Mantenimiento,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
         related_name="detalles",
+        db_column="num_mantenimiento",
         verbose_name="Mantenimiento",
     )
-    # El MER repite tipo_mantenimiento(fk) también en el detalle. Se conserva
-    # para no romper el diagrama, pero normalmente coincidirá con el de la
-    # cabecera; útil solo si un detalle puntual cambia de tipo (ej. pasa de
-    # correctivo a calibración a mitad de proceso).
+
+    # Campos adicionales de soporte
     tipo_mantenimiento = models.ForeignKey(
         TipoMantenimiento,
         on_delete=models.PROTECT,
+        null=True,
+        blank=True,
         related_name="detalles_mantenimiento",
         verbose_name="Tipo de mantenimiento (detalle)",
     )
-    tipo = models.CharField(
-        max_length=20,
-        choices=TIPO_DETALLE_CHOICES,
-        verbose_name="Tipo de entrada",
-    )
-    descripcion = models.TextField(verbose_name="Descripción")
-    evidencia_adicional = models.FileField(
-        upload_to="mantenimiento/evidencias/",
-        blank=True,
-        null=True,
-        verbose_name="Evidencia adjunta",
-    )
+    tipo = models.CharField(max_length=20, choices=TIPO_DETALLE_CHOICES, default="diagnostico", verbose_name="Tipo de entrada")
+    descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
+    evidencia_adicional = models.FileField(upload_to="mantenimiento/evidencias/", blank=True, null=True, verbose_name="Evidencia adjunta")
     registrado_por = models.ForeignKey(
         "usuario.Usuario",
         on_delete=models.SET_NULL,
@@ -413,18 +356,50 @@ class DetalleMantenimiento(models.Model):
         related_name="detalles_mantenimiento_creados",
         verbose_name="Registrado por",
     )
-    creado_en = models.DateTimeField(
-        auto_now_add=True, verbose_name="Fecha del evento"
-    )
+    creado_en = models.DateTimeField(auto_now_add=True, verbose_name="Fecha del evento")
+
+    @property
+    def mantenimiento(self):
+        return self.num_mantenimiento
+
+    @mantenimiento.setter
+    def mantenimiento(self, val):
+        self.num_mantenimiento = val
 
     class Meta:
         verbose_name = "Detalle de Mantenimiento"
         verbose_name_plural = "Detalles de Mantenimiento"
         ordering = ["creado_en"]
-        db_table = "mantenimiento_detallemantenimiento"
+        db_table = "detalle_mantenimiento"
 
     def __str__(self):
-        return f"Detalle #{self.pk} ({self.get_tipo_display()}) - OT #{self.mantenimiento_id}"
+        return f"Detalle #{self.pk} - Mantenimiento #{self.num_mantenimiento_id}"
+
+
+# BitacoraEstado (Tabla del diagrama ER Workbench)
+class BitacoraEstado(models.Model):
+    codigo_bitacora = models.AutoField(primary_key=True, db_column='codigo_bitacora')
+    descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
+    estado = models.CharField(max_length=50, verbose_name="Estado")
+    nivel_estado = models.CharField(max_length=50, verbose_name="Nivel de estado")
+    num_mantenimiento = models.ForeignKey(
+        Mantenimiento,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="bitacoras_estado",
+        db_column="num_mantenimiento",
+        verbose_name="Mantenimiento",
+    )
+
+    class Meta:
+        verbose_name = "Bitácora de Estado"
+        verbose_name_plural = "Bitácoras de Estado"
+        db_table = "bitacora_estado"
+
+    def __str__(self):
+        return f"Bitácora #{self.codigo_bitacora} — Mantenimiento #{self.num_mantenimiento_id}"
+
 
 class MantenimientoCambio(models.Model):
     mantenimiento = models.ForeignKey(
@@ -434,22 +409,16 @@ class MantenimientoCambio(models.Model):
         verbose_name="Mantenimiento",
     )
     editado_por = models.ForeignKey(
-        "usuario.Usuario",  
+        "usuario.Usuario",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="cambios_mantenimiento",
         verbose_name="Editado por",
     )
-    fecha_edicion = models.DateTimeField(
-        auto_now_add=True, verbose_name="Fecha de edición"
-    )
-    motivo_edicion = models.CharField(
-        max_length=40, choices=MOTIVO_CAMBIO_CHOICES, verbose_name="Motivo de edición"
-    )
-    detalle_motivo = models.CharField(
-        max_length=255, blank=True, verbose_name="Detalle del motivo"
-    )
+    fecha_edicion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de edición")
+    motivo_edicion = models.CharField(max_length=40, choices=MOTIVO_CAMBIO_CHOICES, verbose_name="Motivo de edición")
+    detalle_motivo = models.CharField(max_length=255, blank=True, verbose_name="Detalle del motivo")
     cambios = models.JSONField(default=dict, verbose_name="Campos modificados")
 
     class Meta:
@@ -459,14 +428,3 @@ class MantenimientoCambio(models.Model):
 
     def __str__(self):
         return f"Cambio OT #{self.mantenimiento_id} - {self.fecha_edicion:%Y-%m-%d %H:%M}"
-
-    def get_editado_por_nombre(self):
-        if not self.editado_por:
-            return "Sistema"
-        return self.editado_por.nombre_completo if hasattr(self.editado_por, 'nombre_completo') else \
-            self.editado_por.get_full_name() or self.editado_por.username
-"""            
-class Empresa(models.Model):
-    proveedor = models.OneToOneField = ()
-"""
-

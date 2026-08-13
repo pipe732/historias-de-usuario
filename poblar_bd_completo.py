@@ -19,6 +19,7 @@ django.setup()
 from django.utils import timezone
 from django.contrib.sessions.models import Session
 from django.db import transaction
+from django.core.management import call_command
 
 # Importar todos los modelos del proyecto
 from usuario.models import Usuario
@@ -54,16 +55,17 @@ def crear_usuarios():
     # Mantener el usuario admin principal
     admin_doc = '0000000000'
     admin, _ = Usuario.objects.get_or_create(
-        numero_documento=admin_doc,
+        documento=admin_doc,
         defaults={
             'tipo_documento': 'CC',
-            'nombre_completo': 'Administrador Principal',
-            'correo': 'admin@mineinventory.com',
+            'primer_nombre': 'Administrador',
+            'primer_apellido': 'Principal',
+            'correo_personal': 'admin@mineinventory.com',
             'rol': 'Administrador',
             'password': make_password('@dmin123'),
             'telefono': '3000000000',
-            'numero_ficha': 'ADMIN-001',
-            'nombre_programa': 'Administración'
+            'ficha': 'ADMIN-001',
+            'programa': 'Administración'
         }
     )
     print(f"[OK] Admin creado: {admin_doc}")
@@ -71,7 +73,7 @@ def crear_usuarios():
     # Limpiar otros usuarios que no tengan sesión activa para evitar inconsistencias
     docs_activos = obtener_documentos_activos()
     excluidos = ['0000000000'] + list(docs_activos)
-    Usuario.objects.exclude(numero_documento__in=excluidos).delete()
+    Usuario.objects.exclude(documento__in=excluidos).delete()
 
     nombres_usuarios = [
         ('Juan', 'Pérez'), ('María', 'García'), ('Carlos', 'López'), ('Ana', 'Martínez'),
@@ -101,15 +103,16 @@ def crear_usuarios():
         correo = f"{nombre.lower()}.{apellido.lower()}@sena.edu.co"
         
         usuario = Usuario.objects.create(
-            numero_documento=doc,
+            documento=doc,
             tipo_documento='CC',
-            nombre_completo=f'{nombre} {apellido}',
-            correo=correo,
+            primer_nombre=nombre,
+            primer_apellido=apellido,
+            correo_personal=correo,
             rol='Usuario',
             password=make_password('Contra123*'),
             telefono=f'310000{idx:04d}',
-            numero_ficha=random.choice(fichas_opciones),
-            nombre_programa=random.choice(programas_opciones)
+            ficha=random.choice(fichas_opciones),
+            programa=random.choice(programas_opciones)
         )
         usuarios.append(usuario)
         print(f"[OK] Usuario creado: {doc} - {nombre} {apellido}")
@@ -358,21 +361,20 @@ def crear_mantenimientos(productos, tipos_estado, tipos_mantenimiento, usuarios)
         fecha_inicio = fecha_reporte + timedelta(days=random.randint(1, 5))
         
         mant = Mantenimiento.objects.create(
-            pk=i,
-            producto=producto,
+            num_mantenimiento=i,
+            codigo_herramienta=producto,
             tipo_mantenimiento=tipo_mant,
             tipo_estado=tipo_estado,
             estado_registro=random.choice(estados),
             prioridad=random.choice(prioridades),
-            fecha_reporte=fecha_reporte,
-            fecha_inicio=fecha_inicio,
+            fecha_ingreso=fecha_reporte,
             responsable=responsable,
             creado_por=creado_por,
             costo_estimado=Decimal(random.randint(50000, 800000)),
         )
         
         DetalleMantenimiento.objects.create(
-            mantenimiento=mant,
+            num_mantenimiento=mant,
             tipo_mantenimiento=tipo_mant,
             tipo='diagnostico',
             descripcion=f"Diagnóstico inicial: {random.choice(['Desgaste severo', 'Falla eléctrica', 'Problema mecánico', 'Falta de calibración'])} en {producto.nombre}.",
@@ -401,7 +403,7 @@ def crear_prestamos(usuarios, productos):
             fecha_venc = timezone.localdate() + timedelta(days=random.randint(2, 10))
             
         pres = Prestamo.objects.create(
-            usuario=user.numero_documento,
+            documento=user,
             nombre_usuario=user.nombre_completo,
             observaciones=f"Préstamo de prueba número {i}",
             motivo_solicitud="Trabajo de campo en el centro de formación",
@@ -414,8 +416,8 @@ def crear_prestamos(usuarios, productos):
         selected_prods = random.sample(productos, num_items)
         for prod in selected_prods:
             ItemPrestamo.objects.create(
-                prestamo=pres,
-                producto=prod,
+                codigo_prestamo=pres,
+                codigo_herramienta=prod,
                 cantidad=random.randint(1, 2),
                 serial_entregado=f"SR-{prod.codigo_sku}-{random.randint(1000, 9999)}",
                 devuelto=(est == 'devuelto')
@@ -438,7 +440,7 @@ def crear_devoluciones(prestamos):
     for idx, pres in enumerate(prestamos_validos[:4], 1):
         est = random.choice(estados)
         dev = Devolucion.objects.create(
-            prestamo=pres,
+            codigo_prestamo=pres,
             devolucion_total=random.choice([True, False]),
             motivo="Devolución rutinaria de fin de formación",
             estado=est
@@ -530,4 +532,8 @@ def main():
 
 
 if __name__ == '__main__':
+    try:
+        call_command('migrate', verbosity=0)
+    except Exception as e:
+        print(f"Error aplicando migraciones iniciales: {e}")
     main()

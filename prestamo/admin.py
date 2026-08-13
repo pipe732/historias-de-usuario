@@ -1,36 +1,35 @@
-# prestamo/admin.py
 from django.contrib import admin
 from django.utils import timezone
 from django.utils.html import format_html
-from .models import Prestamo, ItemPrestamo
+from .models import Prestamo, DetallePrestamo
 
 
-class ItemPrestamoInline(admin.TabularInline):
-    model       = ItemPrestamo
-    extra       = 0          # sin filas vacías por defecto
+class DetallePrestamoInline(admin.TabularInline):
+    model       = DetallePrestamo
+    extra       = 0
     min_num     = 1
-    fields      = ('producto', 'cantidad', 'devuelto')
-    raw_id_fields = ('producto',)
+    fields      = ('codigo_herramienta', 'cantidad', 'devuelto')
+    raw_id_fields = ('codigo_herramienta',)
     show_change_link = True
 
 
 @admin.register(Prestamo)
 class PrestamoAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'usuario', 'nombre_usuario',
+        'codigo_prestamo', 'documento', 'nombre_usuario',
         'estado_badge', 'urgencia_badge',
         'fecha_prestamo', 'fecha_vencimiento',
     )
     list_filter  = ('estado', 'fecha_prestamo', 'fecha_vencimiento')
-    search_fields = ('usuario', 'nombre_usuario', 'observaciones')
+    search_fields = ('documento__documento', 'nombre_usuario', 'observaciones')
     ordering      = ('-fecha_prestamo',)
     readonly_fields = ('fecha_prestamo', 'fecha_actualizacion')
-    inlines       = [ItemPrestamoInline]
+    inlines       = [DetallePrestamoInline]
     actions       = ['marcar_vencidos', 'cancelar_prestamos']
 
     fieldsets = (
         ('Responsable', {
-            'fields': ('usuario', 'nombre_usuario'),
+            'fields': ('documento', 'nombre_usuario'),
         }),
         ('Estado y fechas', {
             'fields': ('estado', 'fecha_vencimiento', 'fecha_prestamo', 'fecha_actualizacion'),
@@ -41,7 +40,6 @@ class PrestamoAdmin(admin.ModelAdmin):
         }),
     )
 
-    # ── Columnas con color ───────────────────────────────────────────
     @admin.display(description='Estado', ordering='estado')
     def estado_badge(self, obj):
         colores = {
@@ -81,7 +79,6 @@ class PrestamoAdmin(admin.ModelAdmin):
             bg, fg, label, sufijo
         )
 
-    # ── Acciones masivas ─────────────────────────────────────────────
     @admin.action(description='Marcar como vencidos los préstamos con fecha pasada')
     def marcar_vencidos(self, request, queryset):
         hoy     = timezone.localdate()
@@ -100,12 +97,12 @@ class PrestamoAdmin(admin.ModelAdmin):
         self.message_user(request, f'{count} préstamo(s) cancelados y stock restaurado.')
 
 
-@admin.register(ItemPrestamo)
-class ItemPrestamoAdmin(admin.ModelAdmin):
-    list_display  = ('id', 'prestamo', 'producto', 'cantidad', 'devuelto_badge')
+@admin.register(DetallePrestamo)
+class DetallePrestamoAdmin(admin.ModelAdmin):
+    list_display  = ('numero_detalle', 'codigo_prestamo', 'codigo_herramienta', 'cantidad', 'devuelto_badge')
     list_filter   = ('devuelto',)
-    search_fields = ('prestamo__usuario', 'producto__nombre')
-    raw_id_fields = ('prestamo', 'producto')
+    search_fields = ('codigo_prestamo__documento__documento', 'codigo_herramienta__nombre')
+    raw_id_fields = ('codigo_prestamo', 'codigo_herramienta')
 
     @admin.display(description='Devuelto', boolean=True)
     def devuelto_badge(self, obj):

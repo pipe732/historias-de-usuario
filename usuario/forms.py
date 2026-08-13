@@ -6,24 +6,41 @@ class UsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = [
-            'numero_documento',
-            'nombre_completo',
-            'correo',
+            'documento',
+            'primer_nombre',
+            'segundo_nombre',
+            'primer_apellido',
+            'segundo_apellido',
+            'correo_personal',
             'telefono',
             'tipo_documento',
+            'programa',
+            'ficha',
             'destinado',
             'solicitado',
         ]
         widgets = {
-            'numero_documento': forms.TextInput(attrs={
+            'documento': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Ej: 1234567890'
             }),
-            'nombre_completo': forms.TextInput(attrs={
+            'primer_nombre': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Nombre completo'
+                'placeholder': 'Primer nombre'
             }),
-            'correo': forms.EmailInput(attrs={
+            'segundo_nombre': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Segundo nombre (opcional)'
+            }),
+            'primer_apellido': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Primer apellido'
+            }),
+            'segundo_apellido': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Segundo apellido (opcional)'
+            }),
+            'correo_personal': forms.EmailInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'ejemplo@correo.com'
             }),
@@ -34,6 +51,14 @@ class UsuarioForm(forms.ModelForm):
             'tipo_documento': forms.Select(attrs={
                 'class': 'form-control'
             }),
+            'programa': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Programa de formación'
+            }),
+            'ficha': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Número de ficha'
+            }),
             'destinado': forms.Select(attrs={
                 'class': 'form-control'
             }),
@@ -42,29 +67,34 @@ class UsuarioForm(forms.ModelForm):
             }),
         }
         labels = {
-            'numero_documento': 'Número de Documento',
-            'nombre_completo': 'Nombre Completo',
-            'correo': 'Correo Electrónico',
+            'documento': 'Número de Documento',
+            'primer_nombre': 'Primer Nombre',
+            'segundo_nombre': 'Segundo Nombre',
+            'primer_apellido': 'Primer Apellido',
+            'segundo_apellido': 'Segundo Apellido',
+            'correo_personal': 'Correo Electrónico',
             'telefono': 'Teléfono',
             'tipo_documento': 'Tipo de Documento',
+            'programa': 'Programa',
+            'ficha': 'Ficha',
             'destinado': 'Destinado a',
             'solicitado': 'Solicitado por',
         }
 
-    def clean_numero_documento(self):
-        numero = self.cleaned_data.get('numero_documento')
+    def clean_documento(self):
+        numero = str(self.cleaned_data.get('documento') or '').strip()
         if not numero.isdigit():
             raise forms.ValidationError('El número de documento solo debe contener dígitos.')
         return numero
 
     def clean_telefono(self):
-        telefono = self.cleaned_data.get('telefono')
-        if not telefono.isdigit():
+        telefono = str(self.cleaned_data.get('telefono') or '').strip()
+        if telefono and not telefono.isdigit():
             raise forms.ValidationError('El teléfono solo debe contener dígitos.')
         return telefono
 
-    def clean_correo(self):
-        correo = self.cleaned_data.get('correo')
-        if Usuario.objects.filter(correo=correo).exclude(numero_documento=self.instance.numero_documento).exists():
+    def clean_correo_personal(self):
+        correo = self.cleaned_data.get('correo_personal')
+        if correo and Usuario.objects.filter(correo_personal=correo).exclude(documento=self.instance.documento).exists():
             raise forms.ValidationError('Este correo ya está registrado.')
         return correo

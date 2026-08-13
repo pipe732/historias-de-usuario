@@ -206,47 +206,55 @@
 
   </nav>
 
-<!-- ── Usuario + logout al fondo ── -->
+  <!-- ── Bottom bar: bell button (left) + pill user dropup (right) ── -->
   <div class="nav-bottom">
     <hr class="opacity-10 mx-3 my-0">
-    <div class="aside-user-bottom-row">
-      <!-- Bell notification button -->
-      <div id="aside-notif-widget" class="aside_admin__style-2">
-        <button id="aside-notif-btn" type="button" aria-label="Notificaciones" aria-expanded="false" class="aside-user-notif-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <div class="aside-bottom-bar">
+
+      <!-- Bell notification button (Left) -->
+      <div id="aside-notif-widget" class="position-relative flex-shrink-0">
+        <button id="aside-notif-btn" type="button" aria-label="Notificaciones" aria-expanded="false" class="btn-notif-bell">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
             <path d="M13.73 21a2 2 0 0 1-3.46 0" />
           </svg>
-          <span id="aside-notif-badge" class="aside-user-notif-badge">0</span>
+          <span id="aside-notif-badge" class="aside-notif-badge" style="display:none;">0</span>
         </button>
         <!-- Notif panel + JS -->
         {% include "partials/_notif_row.html" %}
       </div>
 
-      <!-- Circular user avatar dropup -->
-      <div class="dropup aside-user-dropup-container">
-        <button type="button" class="btn w-100 d-flex align-items-center gap-2 px-2 py-1.5 dropdown-toggle aside-user-dropup-btn"
+      <!-- Pill User Avatar + Name Dropup (Right) -->
+      <div class="dropup flex-grow-1" style="min-width: 0;">
+        <button type="button" class="btn btn-profile-pill w-100 d-flex align-items-center justify-content-between px-2 py-1"
           data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-          {% with nombre=request.session.usuario_nombre|default:"Invitado" %}
-          <div class="d-flex align-items-center justify-content-center rounded-circle bg-danger flex-shrink-0 fw-bold text-white aside-user-avatar">
-            {{ nombre|slice:":2"|upper }}
+          <div class="d-flex align-items-center gap-2 text-truncate me-1">
+            {% with nombre=request.session.usuario_nombre|default:"Administrador" %}
+            <div class="profile-avatar-circle flex-shrink-0 fw-bold text-white">
+              {{ nombre|slice:":2"|upper }}
+            </div>
+            {% with partes=nombre.split %}
+            <span class="profile-pill-name text-truncate text-start ms-1" style="color: inherit;">
+              {{ partes.0 }} {% if partes|length > 1 %}{{ partes.1 }}{% endif %}
+            </span>
+            {% endwith %}
+            {% endwith %}
           </div>
-          {% with partes=nombre.split %}
-          <span class="flex-grow-1 text-start text-truncate">{{ partes.0 }}</span>
-          {% endwith %}
-          {% endwith %}
+          <svg class="profile-pill-caret opacity-75 flex-shrink-0" width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
+            <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
+          </svg>
         </button>
 
-        <ul class="dropdown-menu dropdown-menu-end shadow aside-user-dropdown-menu">
+        <ul class="dropdown-menu dropdown-menu-end shadow aside-profile-dropdown">
           <li>
-            <span class="dropdown-item-text small text-white-50">
+            <span class="dropdown-item-text profile-role-header">
               <i class="bi bi-shield-check me-1"></i>
               {{ request.session.usuario_rol|default:"Sin rol" }}
             </span>
           </li>
-          <li><hr class="dropdown-divider border-white-subtle"></li>
+          <li><hr class="dropdown-divider"></li>
           <li>
-            <a class="dropdown-item d-flex align-items-center gap-2 text-white-75" href="{% url 'perfil' %}">
+            <a class="dropdown-item d-flex align-items-center gap-2" href="{% url 'perfil' %}">
               <i class="bi bi-person"></i> Mi perfil
             </a>
           </li>
@@ -260,4 +268,5 @@
 
     </div>
   </div><!-- /nav-bottom -->
+
 </aside>

@@ -146,7 +146,7 @@ def inventario(request):
     categorias = Categoria.objects.all()
 
     from usuario.models import Usuario
-    usuarios_sistema = Usuario.objects.all().order_by('nombre_completo')
+    usuarios_sistema = Usuario.objects.all().order_by('primer_nombre', 'primer_apellido')
 
     # Manejo de errores de formularios externos (Mantenimiento)
     mant_form_data = request.session.pop('mant_form_data', None)

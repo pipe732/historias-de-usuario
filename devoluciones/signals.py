@@ -27,7 +27,7 @@ def revertir_al_eliminar(sender, instance, **kwargs):
     revertir el stock para mantener consistencia.
     """
     if getattr(instance, '_aplicada', False):
-        for item in instance.items.select_related('producto'):
+        for item in instance.items.select_related('codigo_herramienta'):
             item.producto.stock = max(0, item.producto.stock - item.cantidad)
             item.producto.save(update_fields=['stock', 'actualizado_en'])
             item.devuelto = False

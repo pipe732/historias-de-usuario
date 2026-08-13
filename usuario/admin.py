@@ -1,28 +1,21 @@
 from django.contrib import admin
 from django.contrib.auth.hashers import make_password
-
-from django.dispatch import receiver
-from .models import  Usuario
+from .models import Usuario
 
 
-
-
-# ─────────────────────────────────────────────────────────────
-#  USUARIO
-# ─────────────────────────────────────────────────────────────
 @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):
-    list_display    = ('numero_documento', 'nombre_completo', 'correo',
+    list_display    = ('documento', 'primer_nombre', 'primer_apellido', 'correo_personal',
                        'tipo_documento', 'rol', 'telefono')
     list_filter     = ('rol', 'tipo_documento')
-    search_fields   = ('numero_documento', 'nombre_completo', 'correo')
-    ordering        = ('nombre_completo',)
-    readonly_fields = ('numero_documento',)
+    search_fields   = ('documento', 'primer_nombre', 'primer_apellido', 'correo_personal')
+    ordering        = ('primer_nombre', 'primer_apellido')
+    readonly_fields = ('documento',)
 
     fieldsets = (
         ('Información personal', {
-            'fields': ('numero_documento', 'nombre_completo', 'tipo_documento',
-                       'correo', 'telefono'),
+            'fields': ('documento', 'primer_nombre', 'segundo_nombre', 'primer_apellido', 'segundo_apellido', 'tipo_documento',
+                       'correo_personal', 'telefono', 'programa', 'ficha'),
         }),
         ('Acceso', {
             'fields': ('rol', 'password'),

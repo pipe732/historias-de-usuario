@@ -34,11 +34,11 @@ def prestamo_usuario_view(request):
     _marcar_vencidos()
 
     from usuario.models import Usuario
-    usuario = get_object_or_404(Usuario, numero_documento=doc)
+    usuario = get_object_or_404(Usuario, documento=doc)
 
     all_prestamos = (
         Prestamo.objects
-        .prefetch_related('items__producto')
+        .prefetch_related('items__codigo_herramienta')
         .filter(usuario=doc)
         .order_by('-fecha_prestamo')
     )
@@ -57,8 +57,6 @@ def prestamo_usuario_view(request):
 
     productos_disponibles = Producto.objects.filter(stock__gt=0).order_by('nombre')
 
-    pendientes_aprobacion = all_prestamos.filter(estado='pendiente').count()
-
     context = {
         'usuario':               usuario,
         'all_prestamos':         all_prestamos,
@@ -67,7 +65,6 @@ def prestamo_usuario_view(request):
         'vencidos_count':        vencidos_count,
         'proximos_vencer':       proximos_vencer,
         'productos_disponibles': productos_disponibles,
-        'pendientes_aprobacion': pendientes_aprobacion,
     }
 
 
@@ -94,7 +91,7 @@ def aprobar_prestamo_view(request, pk):
 
         if accion == 'aprobar':
             errores_stock = []
-            for item in prestamo.items.select_related('producto'):
+            for item in prestamo.items.select_related('codigo_herramienta'):
                 if item.producto.stock < item.cantidad:
                     errores_stock.append(
                         f'"{item.producto.nombre}": stock insuficiente '
@@ -104,7 +101,7 @@ def aprobar_prestamo_view(request, pk):
                 for e in errores_stock:
                     messages.error(request, e)
             else:
-                for item in prestamo.items.select_related('producto'):
+                for item in prestamo.items.select_related('codigo_herramienta'):
                     serial_val = request.POST.get(f'serial_{item.pk}', '').strip()
                     if serial_val:
                         item.serial_entregado = serial_val
@@ -139,7 +136,7 @@ def aprobar_prestamo_view(request, pk):
                 messages.warning(request, f'Solicitud #{prestamo.pk} rechazada.')
                 return redirect('prestamo')
 
-    items = prestamo.items.select_related('producto').all()
+    items = prestamo.items.select_related('codigo_herramienta').all()
     context = {
         'prestamo': prestamo,
         'items':    items,
@@ -165,7 +162,7 @@ def prestamos_view(request):
             )
 
             errores_stock = []
-            for item in prestamo.items.select_related('producto'):
+            for item in prestamo.items.select_related('codigo_herramienta'):
                 if item.producto.stock < item.cantidad:
                     errores_stock.append(
                         f'"{item.producto.nombre}": stock insuficiente '
@@ -180,7 +177,7 @@ def prestamos_view(request):
 
             if accion_aprobacion == 'aprobar':
                 from inventario.models import MovimientoKardex
-                for item in prestamo.items.select_related('producto'):
+                for item in prestamo.items.select_related('codigo_herramienta'):
                     serial_val = request.POST.get(f'serial_{item.pk}', '').strip()
                     if serial_val:
                         item.serial_entregado = serial_val
@@ -406,13 +403,13 @@ def prestamos_view(request):
     estado_f   = request.GET.get('estado', '').strip()
     vencidos_f = request.GET.get('vencidos', '').strip()
 
-    prestamos = Prestamo.objects.prefetch_related('items__producto').all()
+    prestamos = Prestamo.objects.prefetch_related('items__codigo_herramienta').all()
 
     if q:
         prestamos = prestamos.filter(
             Q(usuario__icontains=q) |
             Q(nombre_usuario__icontains=q) |
-            Q(items__producto__nombre__icontains=q)
+            Q(items__codigo_herramienta__nombre__icontains=q)
         ).distinct()
 
     if estado_f:
@@ -428,7 +425,7 @@ def prestamos_view(request):
     productos = Producto.objects.filter(stock__gt=0).order_by('nombre')
 
     from usuario.models import Usuario
-    usuarios_sistema = Usuario.objects.all().order_by('nombre_completo')
+    usuarios_sistema = Usuario.objects.all().order_by('primer_nombre', 'primer_apellido')
 
     import json
     usuarios_json = json.dumps([
@@ -452,8 +449,6 @@ def prestamos_view(request):
         fecha_vencimiento__gte=hoy,
     ).count()
 
-    prestamos_pendientes = Prestamo.objects.filter(estado='pendiente').count()
-
     context = {
         'form':                 form,
         'prestamos':            prestamos,
@@ -463,7 +458,6 @@ def prestamos_view(request):
         'productos_json':       productos_json,
         'total_prestamos':      total_prestamos,
         'prestamos_activos':    prestamos_activos,
-        'prestamos_pendientes': prestamos_pendientes,
         'prestamos_devueltos':  prestamos_devueltos,
         'prestamos_vencidos':   prestamos_vencidos,
         'proximos_vencer':      proximos_vencer,
@@ -491,7 +485,7 @@ def usuario_solicitar_prestamo(request):
         return redirect('login')
 
     try:
-        usuario = Usuario.objects.get(numero_documento=doc)
+        usuario = Usuario.objects.get(documento=doc)
     except Usuario.DoesNotExist:
         messages.error(request, 'Usuario no encontrado.')
         return redirect('login')
@@ -579,7 +573,7 @@ def usuario_solicitar_prestamo(request):
 # ── API JSON de un préstamo ────────────────────────────────────────────────
 def prestamo_api(request, pk):
     try:
-        p = Prestamo.objects.prefetch_related('items__producto').get(pk=pk)
+        p = Prestamo.objects.prefetch_related('items__codigo_herramienta').get(pk=pk)
     except Prestamo.DoesNotExist:
         return JsonResponse({'error': 'Préstamo no encontrado'}, status=404)
 
@@ -640,7 +634,7 @@ def usuario_api(request):
 
     from usuario.models import Usuario
     try:
-        usuario = Usuario.objects.get(numero_documento=doc)
+        usuario = Usuario.objects.get(documento=doc)
         data = {
             'doc': doc,
             'nombre': usuario.nombre_completo,

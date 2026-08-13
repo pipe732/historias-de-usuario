@@ -228,7 +228,7 @@ def _data_inventario():
 
 def _data_prestamos():
     from prestamo.models import Prestamo
-    qs = Prestamo.objects.prefetch_related('items__producto').all()
+    qs = Prestamo.objects.prefetch_related('items__codigo_herramienta').all()
     headers = ['#', 'Usuario', 'Productos', 'Cantidades', 'Estado', 'Fecha préstamo', 'Observaciones']
     rows = []
     for p in qs:
@@ -249,31 +249,27 @@ def _data_prestamos():
 
 def _data_devoluciones():
     from devoluciones.models import Devolucion
-    qs = Devolucion.objects.select_related('prestamo').prefetch_related('items__producto').all()
+    qs = Devolucion.objects.select_related('codigo_prestamo').prefetch_related('items__codigo_herramienta').all()
     headers = ['#', 'Préstamo', 'Usuario', 'Tipo', 'Ítems devueltos', 'Motivo', 'Estado', 'Fecha']
     rows = []
     for d in qs:
-        items_str = ', '.join(
-            f'{i.producto.nombre} x{i.cantidad}' for i in d.items.all()
-        ) or '—'
-        motivo = (d.motivo or '')
-        motivo = motivo[:60] + ('…' if len(motivo) > 60 else '')
-        rows.append((
-            d.pk,
-            f'#{d.prestamo_id}',
-            d.prestamo.usuario,
-            'Total' if d.devolucion_total else 'Parcial',
+        items_str = ", ".join(f"{it.codigo_herramienta.nombre if it.codigo_herramienta else ''} (x{it.cantidad})" for it in d.items.all())
+        rows.append([
+            f"DEV-{d.pk:04d}",
+            f"PRES-{d.codigo_prestamo.pk:04d}" if d.codigo_prestamo else 'N/A',
+            d.codigo_prestamo.nombre_usuario if d.codigo_prestamo else 'N/A',
+            "Total" if d.devolucion_total else "Parcial",
             items_str,
-            motivo or '—',
+            d.motivo or '',
             d.get_estado_display(),
-            d.fecha_creacion.strftime('%d/%m/%Y'),
-        ))
-    return headers, rows, 'Devoluciones'
+            d.fecha_creacion.strftime('%d/%m/%Y %H:%M') if d.fecha_creacion else '',
+        ])
+    return headers, rows
 
 
 def _data_mantenimiento():
     from mantenimiento.models import Mantenimiento
-    qs = Mantenimiento.objects.select_related('producto', 'tipo_mantenimiento', 'tipo_estado').all()
+    qs = Mantenimiento.objects.select_related('codigo_herramienta', 'tipo_mantenimiento', 'tipo_estado').all()
     headers = ['ID', 'Producto/Herramienta', 'Tipo Mantenimiento', 'Tipo Estado', 'Prioridad', 'Estado Registro', 'Fecha Reporte']
     rows = [
         (
