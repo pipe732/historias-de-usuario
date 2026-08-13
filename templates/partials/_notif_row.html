@@ -47,6 +47,200 @@
 </div>
 
 <style>
+  /* ── Bottom Bar Layout & Buttons ── */
+  .aside-bottom-bar {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem 0.75rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .aside-bottom-bar .dropup {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+  .btn-notif-bell {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 50% !important;
+    color: var(--cream, #EFECCA) !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease !important;
+    position: relative !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+  }
+  .btn-notif-bell:hover {
+    background: rgba(255, 255, 255, 0.14) !important;
+    border-color: rgba(255, 255, 255, 0.22) !important;
+    transform: scale(1.04) !important;
+  }
+  .btn-notif-bell svg {
+    width: 18px !important;
+    height: 18px !important;
+    stroke: var(--cream, #EFECCA) !important;
+    fill: none !important;
+    display: block !important;
+  }
+  .aside-notif-badge {
+    position: absolute !important;
+    top: -2px !important;
+    right: -2px !important;
+    background: #ffffff !important;
+    color: #111111 !important;
+    font-size: 0.65rem !important;
+    font-weight: 800 !important;
+    font-family: var(--font-mono, monospace) !important;
+    border-radius: 50% !important;
+    width: 16px !important;
+    height: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+  }
+  .btn-profile-pill {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 12px !important;
+    color: #ffffff !important;
+    padding: 0.25rem 0.65rem 0.25rem 0.35rem !important;
+    transition: background 0.18s ease, border-color 0.18s ease !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    outline: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+  }
+  .btn-profile-pill::after {
+    display: none !important;
+  }
+  .btn-profile-pill:hover,
+  .btn-profile-pill:focus,
+  .btn-profile-pill[aria-expanded="true"] {
+    background: rgba(255, 255, 255, 0.14) !important;
+    border-color: rgba(255, 255, 255, 0.24) !important;
+    color: #ffffff !important;
+  }
+  .profile-avatar-circle {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    border-radius: 50% !important;
+    background: #e63946 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.02em !important;
+    color: #ffffff !important;
+    flex-shrink: 0 !important;
+  }
+  .profile-pill-name {
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    letter-spacing: 0.01em !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  .profile-pill-caret {
+    color: #ffffff !important;
+  }
+
+  /* ── Profile Dropdown Menu (High Contrast & Clear Icons) ── */
+  .aside-profile-dropdown {
+    background: #1e2227 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important;
+    min-width: 190px !important;
+    padding: 0.4rem !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+    z-index: 10000 !important;
+  }
+  .aside-profile-dropdown .profile-role-header {
+    color: rgba(255, 255, 255, 0.75) !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    padding: 0.4rem 0.65rem !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  .aside-profile-dropdown .profile-role-header i {
+    color: #38bdf8 !important;
+    font-size: 1rem !important;
+    opacity: 1 !important;
+  }
+  .aside-profile-dropdown .dropdown-divider {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    margin: 0.35rem 0 !important;
+    opacity: 1 !important;
+  }
+  .aside-profile-dropdown .dropdown-item {
+    color: #ffffff !important;
+    font-size: 0.86rem !important;
+    font-weight: 500 !important;
+    border-radius: 8px !important;
+    padding: 0.45rem 0.65rem !important;
+    transition: background-color 0.15s ease, color 0.15s ease !important;
+  }
+  .aside-profile-dropdown .dropdown-item i {
+    color: #38bdf8 !important;
+    font-size: 1rem !important;
+    opacity: 1 !important;
+    transition: color 0.15s ease !important;
+  }
+  .aside-profile-dropdown .dropdown-item.text-danger i {
+    color: #f87171 !important;
+    opacity: 1 !important;
+  }
+  .aside-profile-dropdown .dropdown-item:hover,
+  .aside-profile-dropdown .dropdown-item:focus {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+  }
+  .aside-profile-dropdown .dropdown-item:hover i,
+  .aside-profile-dropdown .dropdown-item:focus i {
+    color: #ffffff !important;
+  }
+  .aside-profile-dropdown .dropdown-item.text-danger {
+    color: #f87171 !important;
+  }
+  .aside-profile-dropdown .dropdown-item.text-danger:hover,
+  .aside-profile-dropdown .dropdown-item.text-danger:focus {
+    background-color: rgba(239, 68, 68, 0.2) !important;
+    color: #fca5a5 !important;
+  }
+  .aside-profile-dropdown .dropdown-item.text-danger:hover i,
+  .aside-profile-dropdown .dropdown-item.text-danger:focus i {
+    color: #fca5a5 !important;
+  }
+
   .aside-notif-panel {
     position: fixed;
     bottom: 5.5rem;
@@ -146,6 +340,12 @@
     transition: color .15s !important;
   }
   .aside-notif-refresh:hover { color: #98473E !important; }
+  .aside-notif-refresh svg,
+  #aside-refresh-icon {
+    stroke: #094D92 !important;
+    color: #094D92 !important;
+    opacity: 1 !important;
+  }
   
   .aside-notif-row {
     display: flex !important;
@@ -167,6 +367,10 @@
     font-size: 1.15rem !important;
     margin-top: 2px !important;
     line-height: 1 !important;
+  }
+  .aside-notif-row-icon i {
+    opacity: 1 !important;
+    display: inline-block !important;
   }
   .aside-notif-row-body {
     flex: 1 !important;
@@ -358,8 +562,14 @@
             var ico = item.icono || 'info-circle';
             var color = item.color || '#094D92';
 
+            if (item.tipo === 'activo') color = '#0284c7';
+            else if (item.tipo === 'vencido' || item.tipo === 'vencido_no_marcado') color = '#dc2626';
+            else if (item.tipo === 'proximo' || item.tipo === 'stock_bajo') color = '#d97706';
+            else if (item.tipo === 'devolucion') color = '#094D92';
+            else if (!color || color === 'var(--navy)' || color === 'var(--cream)') color = '#094D92';
+
             if (typeof ico === 'string' && ico.startsWith('<svg')) {
-              return '<div class="flex-shrink-0 aside-notif-row-icon" style="color: ' + color + ' !important;">' + ico + '</div>';
+              return '<div class="flex-shrink-0 aside-notif-row-icon" style="color: ' + color + ' !important;"><span style="color: ' + color + ' !important;">' + ico + '</span></div>';
             }
 
             var iconClass = 'bi-info-circle';
@@ -374,7 +584,7 @@
               iconClass = ico.startsWith('bi-') ? ico : ('bi-' + ico);
             }
 
-            return '<div class="flex-shrink-0 aside-notif-row-icon" style="color: ' + color + ' !important; font-size: 1.15rem; display: flex; align-items: center;"><i class="bi ' + iconClass + '"></i></div>';
+            return '<div class="flex-shrink-0 aside-notif-row-icon" style="color: ' + color + ' !important; font-size: 1.15rem; display: flex; align-items: center;"><i class="bi ' + iconClass + '" style="color: ' + color + ' !important; opacity: 1 !important;"></i></div>';
           }
 
           if (total > 0) {
