@@ -18,12 +18,6 @@ IMPACTO_DISPONIBILIDAD_CHOICES = [
     ("disponible_restringido", "Disponible con restricción"),
 ]
 
-<<<<<<< HEAD
-# Nivel de severidad del estado. Pedido por el MER (campo niPreferences: Open User Settings (JSON)vel_estado).
-# Sirve para ordenar/priorizar estados por gravedad real, sin depender
-# del texto libre de "categoria".
-=======
->>>>>>> main
 NIVEL_ESTADO_CHOICES = [
     (1, "Leve"),
     (2, "Moderado"),
