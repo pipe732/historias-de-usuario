@@ -405,7 +405,7 @@ main .container {
 ════════════════════════════════════ */
 aside {
   width: var(--aside-w);
-  background: var(--dark);
+  background: #000000;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   border-right: 1px solid rgba(27, 32, 33, 0.10);
@@ -9949,11 +9949,11 @@ body.auth-page .tab-btn:not(.on):hover,
    Modo Oscuro: Fondo Beige (#EFECCA) + Letras Negras (#1B2021)
    ════════════════════════════════════════════════════════════ */
 
-/* --- MODO CLARO (Azul Oscuro + Letras Beige) --- */
+/* --- MODO CLARO (Fondo Negro + Letras Beige) --- */
 aside,
 body.light-mode aside,
 body:not(.dark-mode) aside {
-  background: var(--dark) !important;
+  background: #000000 !important;
   border-right: 1px solid rgba(239, 236, 202, 0.15) !important;
 }
 
