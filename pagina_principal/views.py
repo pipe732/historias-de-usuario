@@ -22,10 +22,10 @@ def dashboard_view(request):
     # ── Préstamos ──
     prestamos_activos_count   = Prestamo.objects.filter(estado='activo').count()
     prestamos_vencidos_count  = Prestamo.objects.filter(estado='vencido').count()
-    prestamos_recientes       = Prestamo.objects.prefetch_related('items__producto').order_by('-fecha_prestamo')[:5]
+    prestamos_recientes       = Prestamo.objects.prefetch_related('items__codigo_herramienta').order_by('-fecha_prestamo')[:5]
     # ── Devoluciones ──
     devoluciones_pendientes_count = Devolucion.objects.count()
-    devoluciones_recientes        = Devolucion.objects.select_related('prestamo').order_by('-fecha_creacion')[:5]
+    devoluciones_recientes        = Devolucion.objects.select_related('codigo_prestamo').order_by('-fecha_creacion')[:5]
     # ── Stock por categoría ──
     stock_por_categoria = (
         Categoria.objects
@@ -65,14 +65,14 @@ def home_usuario_view(request):
         return redirect('login')
 
     try:
-        usuario = Usuario.objects.get(numero_documento=doc)
+        usuario = Usuario.objects.get(documento=doc)
     except Usuario.DoesNotExist:
         return redirect('login')
 
     # Todos los préstamos del usuario identificado por su documento
     all_prestamos = (
         Prestamo.objects
-        .prefetch_related('items__producto')
+        .prefetch_related('items__codigo_herramienta')
         .filter(usuario=doc)
         .order_by('-fecha_prestamo')
     )

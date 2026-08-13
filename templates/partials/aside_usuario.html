@@ -82,41 +82,41 @@
 
       <!-- Pill User Avatar + Name Dropup (Right) -->
       <div class="dropup flex-grow-1" style="min-width: 0;">
-        <button type="button" class="btn btn-profile-pill w-100 d-flex align-items-center justify-content-between px-2 py-1" style="color: #ffffff !important; background: rgba(255,255,255,0.06) !important; border: 1px solid rgba(255,255,255,0.12) !important;"
+        <button type="button" class="btn btn-profile-pill w-100 d-flex align-items-center justify-content-between px-2 py-1"
           data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
           <div class="d-flex align-items-center gap-2 text-truncate me-1">
             {% with nombre=request.session.usuario_nombre|default:"Usuario" %}
-            <div class="profile-avatar-circle flex-shrink-0 fw-bold text-white" style="background-color: #e63946 !important; color: #ffffff !important;">
+            <div class="profile-avatar-circle flex-shrink-0 fw-bold text-white">
               {{ nombre|slice:":2"|upper }}
             </div>
             {% with partes=nombre.split %}
-            <span class="profile-pill-name text-truncate text-start ms-1" style="color: #ffffff !important; font-weight: 600 !important;">
+            <span class="profile-pill-name text-truncate text-start ms-1" style="color: inherit;">
               {{ partes.0 }} {% if partes|length > 1 %}{{ partes.1 }}{% endif %}
             </span>
             {% endwith %}
             {% endwith %}
           </div>
-          <svg class="profile-pill-caret opacity-75 flex-shrink-0" width="10" height="10" viewBox="0 0 16 16" fill="currentColor" style="color: #ffffff !important; fill: #ffffff !important;">
+          <svg class="profile-pill-caret opacity-75 flex-shrink-0" width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
             <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
           </svg>
         </button>
 
-        <ul class="dropdown-menu dropdown-menu-end shadow aside-profile-dropdown" style="background: #1e2227 !important; border: 1px solid rgba(255,255,255,0.15) !important;">
+        <ul class="dropdown-menu dropdown-menu-end shadow aside-profile-dropdown">
           <li>
-            <span class="dropdown-item-text profile-role-header" style="color: rgba(255,255,255,0.85) !important;">
-              <i class="bi bi-shield-check me-1" style="color: #38bdf8 !important;"></i>
+            <span class="dropdown-item-text profile-role-header">
+              <i class="bi bi-shield-check me-1"></i>
               {{ request.session.usuario_rol|default:"Sin rol" }}
             </span>
           </li>
-          <li><hr class="dropdown-divider" style="border-color: rgba(255,255,255,0.12) !important;"></li>
+          <li><hr class="dropdown-divider"></li>
           <li>
-            <a class="dropdown-item d-flex align-items-center gap-2" href="{% url 'perfil' %}" style="color: #ffffff !important;">
-              <i class="bi bi-person" style="color: #38bdf8 !important;"></i> Mi perfil
+            <a class="dropdown-item d-flex align-items-center gap-2" href="{% url 'perfil' %}">
+              <i class="bi bi-person"></i> Mi perfil
             </a>
           </li>
           <li>
-            <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="{% url 'logout' %}" style="color: #f87171 !important;">
-              <i class="bi bi-box-arrow-right" style="color: #f87171 !important;"></i> Cerrar sesión
+            <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="{% url 'logout' %}">
+              <i class="bi bi-box-arrow-right"></i> Cerrar sesión
             </a>
           </li>
         </ul>

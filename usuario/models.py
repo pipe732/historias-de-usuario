@@ -28,22 +28,28 @@ class Usuario(models.Model):
         ('Administrador', 'Administrador'),
     ]
 
-    numero_documento = models.CharField(max_length=20, primary_key=True)
-    rol              = models.CharField(max_length=20, choices=ROL_CHOICES, default='Usuario')
-    nombre_completo  = models.CharField(max_length=200)
-    correo           = models.EmailField(max_length=255, unique=True)
-    telefono         = models.CharField(max_length=20, blank=True, default='')
-    numero_ficha     = models.CharField(max_length=20, blank=True, default='', verbose_name='Número de ficha')
-    nombre_programa  = models.CharField(max_length=200, blank=True, default='', verbose_name='Nombre del programa')
+    # Campos exactos del diagrama ER MySQL Workbench
+    documento        = models.CharField(max_length=20, primary_key=True, db_column='documento', default='')
+    primer_nombre    = models.CharField(max_length=50, default='', verbose_name="Primer Nombre")
+    segundo_nombre   = models.CharField(max_length=50, blank=True, null=True, verbose_name="Segundo Nombre")
+    primer_apellido  = models.CharField(max_length=50, default='', verbose_name="Primer Apellido")
+    segundo_apellido = models.CharField(max_length=50, blank=True, null=True, verbose_name="Segundo Apellido")
+    correo_personal  = models.EmailField(max_length=100, default='', verbose_name="Correo Personal", db_column='correo_personal')
+    telefono         = models.CharField(max_length=20, blank=True, null=True, verbose_name="Teléfono")
     tipo_documento   = models.CharField(
-        max_length=2,
+        max_length=30,
         choices=TIPO_DOCUMENTO_CHOICES,
         default='CC',
         verbose_name='Tipo de documento',
     )
-    password = models.CharField(max_length=255, default='')
+    programa         = models.CharField(max_length=100, blank=True, null=True, verbose_name='Programa')
+    ficha            = models.CharField(max_length=50, blank=True, null=True, verbose_name='Ficha')
 
-    # Campo para recuperación de contraseña (persistente, no depende de sesión)
+    # Campos requeridos por el sistema para autenticación y rol
+    rol              = models.CharField(max_length=20, choices=ROL_CHOICES, default='Usuario')
+    password         = models.CharField(max_length=255, default='')
+
+    # Recuperación de contraseña
     reset_token        = models.CharField(max_length=40, blank=True, default='')
     reset_token_expira = models.FloatField(default=0)
 
@@ -65,9 +71,60 @@ class Usuario(models.Model):
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
 
+    # Propiedades de compatibilidad con vistas existentes
+    @property
+    def numero_documento(self):
+        return self.documento
+
+    @numero_documento.setter
+    def numero_documento(self, val):
+        self.documento = val
+
+    @property
+    def nombre_completo(self):
+        partes = [self.primer_nombre, self.segundo_nombre, self.primer_apellido, self.segundo_apellido]
+        return " ".join([p for p in partes if p])
+
+    @nombre_completo.setter
+    def nombre_completo(self, val):
+        if val:
+            partes = val.strip().split()
+            if len(partes) >= 4:
+                self.primer_nombre, self.segundo_nombre, self.primer_apellido, self.segundo_apellido = partes[0], partes[1], partes[2], " ".join(partes[3:])
+            elif len(partes) == 3:
+                self.primer_nombre, self.segundo_nombre, self.primer_apellido = partes[0], partes[1], partes[2]
+            elif len(partes) == 2:
+                self.primer_nombre, self.primer_apellido = partes[0], partes[1]
+            elif len(partes) == 1:
+                self.primer_nombre = partes[0]
+
+    @property
+    def correo(self):
+        return self.correo_personal
+
+    @correo.setter
+    def correo(self, val):
+        self.correo_personal = val
+
+    @property
+    def numero_ficha(self):
+        return self.ficha or ''
+
+    @numero_ficha.setter
+    def numero_ficha(self, val):
+        self.ficha = val
+
+    @property
+    def nombre_programa(self):
+        return self.programa or ''
+
+    @nombre_programa.setter
+    def nombre_programa(self, val):
+        self.programa = val
+
     def clean(self):
         super().clean()
-        validar_numero_documento(self.numero_documento, self.tipo_documento)
+        validar_numero_documento(self.documento, self.tipo_documento)
 
     def __str__(self):
-        return f"{self.nombre_completo} ({self.get_tipo_documento_display()} {self.numero_documento})"
+        return f"{self.nombre_completo} ({self.get_tipo_documento_display()} {self.documento})"

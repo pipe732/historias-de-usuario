@@ -177,15 +177,15 @@ def devoluciones_view(request):
             return redirect("devoluciones")
 
     devoluciones = (
-        Devolucion.objects.select_related("prestamo")
-        .prefetch_related("items__producto")
+        Devolucion.objects.select_related("codigo_prestamo")
+        .prefetch_related("items__codigo_herramienta")
         .all()
     )
 
     # Préstamos que aún tienen ítems pendientes de devolución
     prestamos_activos = (
         Prestamo.objects.filter(estado__in=["activo", "parcial", "vencido"])
-        .prefetch_related("items__producto")
+        .prefetch_related("items__codigo_herramienta")
         .order_by("-fecha_prestamo")
     )
 

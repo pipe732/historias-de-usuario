@@ -137,36 +137,31 @@ class MantenimientoForm(forms.ModelForm):
     class Meta:
         model = Mantenimiento
         fields = [
-            "producto",
+            "codigo_herramienta",
             "tipo_mantenimiento",
             "tipo_estado",
-            "fecha_reporte",
-            "fecha_inicio",
+            "fecha_ingreso",
+            "fecha_salida",
             "fecha_fin_estimada",
-            "fecha_fin_real",
             "tiempo_empleado_horas",
             "prioridad",
             "responsable",
             "costo_estimado",
             "costo_real",
-            "estado_registro",
         ]
         widgets = {
-            "producto": forms.HiddenInput(),
+            "codigo_herramienta": forms.HiddenInput(),
             "tipo_mantenimiento": forms.Select(attrs={"class": "form-select"}),
             "tipo_estado": forms.Select(attrs={"class": "form-select"}),
             "prioridad": forms.Select(attrs={"class": "form-select"}),
             "responsable": forms.Select(attrs={"class": "form-select"}),
-            "fecha_reporte": forms.DateInput(
+            "fecha_ingreso": forms.DateInput(
                 format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}
             ),
-            "fecha_inicio": forms.DateInput(
+            "fecha_salida": forms.DateInput(
                 format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}
             ),
             "fecha_fin_estimada": forms.DateInput(
-                format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}
-            ),
-            "fecha_fin_real": forms.DateInput(
                 format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}
             ),
             "tiempo_empleado_horas": forms.NumberInput(
@@ -196,6 +191,17 @@ class MantenimientoForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        if 'data' in kwargs and kwargs['data']:
+            d = kwargs['data'].copy()
+            if 'producto' in d and 'codigo_herramienta' not in d:
+                d['codigo_herramienta'] = d['producto']
+            if 'fecha_reporte' in d and 'fecha_ingreso' not in d:
+                d['fecha_ingreso'] = d['fecha_reporte']
+            elif 'fecha_inicio' in d and 'fecha_ingreso' not in d:
+                d['fecha_ingreso'] = d['fecha_inicio']
+            if 'fecha_fin_real' in d and 'fecha_salida' not in d:
+                d['fecha_salida'] = d['fecha_fin_real']
+            kwargs['data'] = d
         super().__init__(*args, **kwargs)
 
         self.fields["tipo_mantenimiento"].queryset = TipoMantenimiento.objects.filter(
@@ -206,10 +212,11 @@ class MantenimientoForm(forms.ModelForm):
         self.fields["tipo_estado"].queryset = TipoEstado.objects.filter(activo=True)
         self.fields["tipo_estado"].empty_label = "-- Selecciona un estado --"
 
-        self.fields["estado_registro"].empty_label = "-- Selecciona el estado --"
+        if "estado_registro" in self.fields:
+            self.fields["estado_registro"].empty_label = "-- Selecciona el estado --"
         self.fields["prioridad"].empty_label = "-- Selecciona la prioridad --"
         self.fields["responsable"].queryset = Usuario.objects.all().order_by(
-            "nombre_completo", "numero_documento"
+            "primer_nombre", "primer_apellido"
         )
         self.fields["responsable"].empty_label = "-- Selecciona un técnico --"
         self.fields["responsable"].label_from_instance = (
@@ -219,6 +226,13 @@ class MantenimientoForm(forms.ModelForm):
         if self.instance.pk and self.instance.producto_id:
             p = self.instance.producto
             self.fields["producto_busqueda"].initial = f"[{p.codigo_sku}] {p.nombre}"
+
+    def __getitem__(self, name):
+        if name in ("fecha_reporte", "fecha_inicio") and name not in self.fields and "fecha_ingreso" in self.fields:
+            return super().__getitem__("fecha_ingreso")
+        if name == "producto" and name not in self.fields and "codigo_herramienta" in self.fields:
+            return super().__getitem__("codigo_herramienta")
+        return super().__getitem__(name)
 
     # Métodos clean (mantengo la lógica que tenías)
     def clean_producto(self):
