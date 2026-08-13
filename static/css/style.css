@@ -35,6 +35,26 @@
   --shadow-md: 0 8px 24px rgba(27, 32, 33, .08);
 }
 
+/* ── Utility Classes ── */
+.bg-navy {
+  background-color: var(--navy, #04294f) !important;
+}
+.badge-dot-amber {
+  width: 6px; height: 6px; border-radius: 50%; background: #c4900a; display: inline-block;
+}
+.badge-dot-navy {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--navy, #04294f); display: inline-block;
+}
+.modal-max-vh {
+  max-height: 92vh !important;
+}
+.min-h-0 {
+  min-height: 0 !important;
+}
+.min-w-0 {
+  min-width: 0 !important;
+}
+
 html {
   font-size: calc(100% * var(--acc-font-scale, 1)) !important;
 }
