@@ -74,14 +74,14 @@
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
             <path d="M13.73 21a2 2 0 0 1-3.46 0" />
           </svg>
-          <span id="aside-notif-badge" class="aside-notif-badge" style="display:none;">0</span>
+          <span id="aside-notif-badge" class="aside-notif-badge d-none">0</span>
         </button>
         <!-- Notif panel + JS -->
         {% include "partials/_notif_row.html" %}
       </div>
 
       <!-- Pill User Avatar + Name Dropup (Right) -->
-      <div class="dropup flex-grow-1" style="min-width: 0;">
+      <div class="dropup flex-grow-1 min-w-0">
         <button type="button" class="btn btn-profile-pill w-100 d-flex align-items-center justify-content-between px-2 py-1"
           data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
           <div class="d-flex align-items-center gap-2 text-truncate me-1">
@@ -90,7 +90,7 @@
               {{ nombre|slice:":2"|upper }}
             </div>
             {% with partes=nombre.split %}
-            <span class="profile-pill-name text-truncate text-start ms-1" style="color: inherit;">
+            <span class="profile-pill-name text-truncate text-start ms-1">
               {{ partes.0 }} {% if partes|length > 1 %}{{ partes.1 }}{% endif %}
             </span>
             {% endwith %}
