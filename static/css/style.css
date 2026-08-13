@@ -1367,8 +1367,171 @@ body.dark-mode #acc-panel {
 /* ════════════════════════════════════
    MODOS ACCESIBILIDAD
 ════════════════════════════════════ */
-body.high-contrast {
-  filter: contrast(1.6) !important;
+/* ════════════════════════════════════
+   MODOS ACCESIBILIDAD — ALTO CONTRASTE
+════════════════════════════════════ */
+
+/* ── Alto Contraste en Modo Claro (Default) ── */
+body.high-contrast:not(.dark-mode),
+body.light-mode.high-contrast {
+  --bg-body: #ffffff;
+  --bg-surface: #ffffff;
+  --text-main: #000000;
+  --text-muted: #111111;
+  --border-color: #000000;
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+body.high-contrast:not(.dark-mode) main,
+body.light-mode.high-contrast main {
+  background: #ffffff !important;
+}
+
+body.high-contrast:not(.dark-mode) .card,
+body.light-mode.high-contrast .card,
+body.high-contrast:not(.dark-mode) .inv-kpi-card,
+body.high-contrast:not(.dark-mode) .inv-filter-bar,
+body.high-contrast:not(.dark-mode) .table-card {
+  background: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow: none !important;
+}
+
+body.high-contrast:not(.dark-mode) .card-header,
+body.high-contrast:not(.dark-mode) thead tr {
+  background: #f0f0f0 !important;
+  border-bottom: 2px solid #000000 !important;
+}
+
+body.high-contrast:not(.dark-mode) th,
+body.high-contrast:not(.dark-mode) td,
+body.high-contrast:not(.dark-mode) h1,
+body.high-contrast:not(.dark-mode) h2,
+body.high-contrast:not(.dark-mode) h3,
+body.high-contrast:not(.dark-mode) h4,
+body.high-contrast:not(.dark-mode) h5,
+body.high-contrast:not(.dark-mode) h6,
+body.high-contrast:not(.dark-mode) p,
+body.high-contrast:not(.dark-mode) span,
+body.high-contrast:not(.dark-mode) label {
+  color: #000000 !important;
+}
+
+body.high-contrast:not(.dark-mode) .text-muted,
+body.high-contrast:not(.dark-mode) .text-secondary {
+  color: #222222 !important;
+}
+
+body.high-contrast:not(.dark-mode) .form-control,
+body.high-contrast:not(.dark-mode) .form-select,
+body.high-contrast:not(.dark-mode) input,
+body.high-contrast:not(.dark-mode) select {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  font-weight: 600 !important;
+}
+
+body.high-contrast:not(.dark-mode) .btn-outline-mine,
+body.high-contrast:not(.dark-mode) .btn-outline-secondary,
+body.high-contrast:not(.dark-mode) .btn-clear {
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+
+/* ── Alto Contraste en Modo Oscuro ── */
+body.dark-mode.high-contrast {
+  --bg-body: #000000;
+  --bg-surface: #000000;
+  --text-main: #FFFFFF;
+  --text-muted: #EFECCA;
+  --border-color: #FFFFFF;
+  background: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+body.dark-mode.high-contrast main {
+  background: #000000 !important;
+}
+
+body.dark-mode.high-contrast .card,
+body.dark-mode.high-contrast .inv-kpi-card,
+body.dark-mode.high-contrast .inv-filter-bar,
+body.dark-mode.high-contrast .table-card {
+  background: #0a0a0a !important;
+  border: 2px solid #FFFFFF !important;
+  box-shadow: none !important;
+}
+
+body.dark-mode.high-contrast .card-header,
+body.dark-mode.high-contrast thead tr {
+  background: #181818 !important;
+  border-bottom: 2px solid #FFFFFF !important;
+}
+
+body.dark-mode.high-contrast th,
+body.dark-mode.high-contrast td,
+body.dark-mode.high-contrast h1,
+body.dark-mode.high-contrast h2,
+body.dark-mode.high-contrast h3,
+body.dark-mode.high-contrast h4,
+body.dark-mode.high-contrast h5,
+body.dark-mode.high-contrast h6,
+body.dark-mode.high-contrast p,
+body.dark-mode.high-contrast span,
+body.dark-mode.high-contrast label {
+  color: #FFFFFF !important;
+}
+
+body.dark-mode.high-contrast .inv-kpi-value {
+  color: #FFFF00 !important;
+}
+
+body.dark-mode.high-contrast .text-muted,
+body.dark-mode.high-contrast .text-secondary {
+  color: #EFECCA !important;
+}
+
+body.dark-mode.high-contrast .form-control,
+body.dark-mode.high-contrast .form-select,
+body.dark-mode.high-contrast input,
+body.dark-mode.high-contrast select,
+body.dark-mode.high-contrast .inv-search-input,
+body.dark-mode.high-contrast .inv-cat-select {
+  background: #121212 !important;
+  color: #FFFFFF !important;
+  border: 2px solid #FFFFFF !important;
+  font-weight: 600 !important;
+}
+
+body.dark-mode.high-contrast .btn-outline-mine,
+body.dark-mode.high-contrast .btn-outline-secondary,
+body.dark-mode.high-contrast .btn-clear {
+  border: 2px solid #FFFFFF !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+}
+
+body.dark-mode.high-contrast aside {
+  background: #000000 !important;
+  border-right: 2px solid #FFFFFF !important;
+}
+
+/* ── DENSIDAD DE TABLAS COMPACTA ── */
+body.table-compact table td,
+body.table-compact table th,
+body.table-compact .table td,
+body.table-compact .table th,
+body.table-compact .table-app td,
+body.table-compact .table-app th,
+body.table-compact .datatable-custom td,
+body.table-compact .datatable-custom th {
+  padding-top: 0.35rem !important;
+  padding-bottom: 0.35rem !important;
+  font-size: 0.81rem !important;
 }
 
 /* ── MODO CLARO ── */
