@@ -27,9 +27,21 @@ from almacenamiento.models import Almacen, Estante
 from inventario.models import Categoria, Producto, Proveedor, Inventario, Movimientos, Detalle_Movimientos, Edicion_limitada
 from mantenimiento.models import TipoEstado, TipoMantenimiento, Mantenimiento, DetalleMantenimiento
 from prestamo.models import Prestamo, ItemPrestamo
-from devoluciones.models import Devolucion
+from devoluciones.models import DevolucionHerramienta as Devolucion
 from reportes.models import ReporteHistorial
 from django.contrib.auth.hashers import make_password
+from django.db import connection
+
+
+def asegurar_tablas_sqlite():
+    with connection.cursor() as cursor:
+        for tbl in ['tipo_estado', 'mantenimiento_tipoestado', 'tipo_mantenimiento', 'mantenimiento_tipomantenimiento']:
+            cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS {tbl} (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nombre VARCHAR(50) NOT NULL
+                );
+            """)
 
 
 def obtener_documentos_activos():
@@ -278,8 +290,17 @@ def crear_mantenimientos(productos):
     print("\n" + "="*70)
     print(">>> CREANDO MANTENIMIENTOS Y DETALLES")
     print("="*70)
+
+    # Poblar catálogos de TipoEstado y TipoMantenimiento
+    estados = ["Abierto", "En proceso", "Cerrado", "Cancelado"]
+    for est in estados:
+        TipoEstado.objects.get_or_create(nombre=est)
+
+    tipos_cat = ["Mantenimiento Preventivo", "Mantenimiento Correctivo", "Calibración", "Reparación Externa"]
+    for t in tipos_cat:
+        TipoMantenimiento.objects.get_or_create(nombre=t)
     
-    tipos = ["Mantenimiento Preventivo", "Mantenimiento Correctivo", "Calibración", "Reparación Externa"]
+    tipos = tipos_cat
     
     for i in range(1, 16):
         producto = random.choice(productos)
@@ -394,9 +415,10 @@ def main():
     print("|      POBLAR BASE DE DATOS LOCAL - COBERTURA 100%     |")
     print("+======================================================+")
     
+    asegurar_tablas_sqlite()
+
     try:
         # 1. Realizar limpieza masiva de todas las tablas en orden de dependencias
-        print("\n>>> LIMPIANDO BASE DE DATOS...")
         ReporteHistorial.objects.all().delete()
         Devolucion.objects.all().delete()
         ItemPrestamo.objects.all().delete()

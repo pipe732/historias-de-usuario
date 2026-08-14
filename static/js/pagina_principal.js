@@ -1,21 +1,19 @@
 /* ─────────────────────────────────────────────────────────────
-   PÁGINA PRINCIPAL - DASHBOARD DE GRÁFICAS (CHART.JS)
+   PÁGINA PRINCIPAL - DASHBOARD DE GRÁFICAS (TEMA CLARO NATIVO)
    ───────────────────────────────────────────────────────────── */
 
 (function () {
   'use strict';
 
-  // Configuración de colores globales acordes al diseño de la app
-  const colors = {
-    activo: '#1D9E75',      // Verde Esmeralda / Sage
-    vencido: '#98473E',     // Rojo / Rust
-    devuelto: '#5b8dee',    // Azul primario
-    parcial: '#c4900a',     // Amarillo / Warning
-    optimo: '#1D9E75',
-    stockBajo: '#c4900a',
-    sinStock: '#98473E',
-    gridColor: 'rgba(255, 255, 255, 0.08)',
-    textColor: '#a3aed0'
+  // Configuración de paleta de colores nativos nítidos y legibles
+  const theme = {
+    activo: '#10b981',        // Verde esmeralda
+    vencido: '#ef4444',       // Rojo
+    devuelto: '#3b82f6',      // Azul
+    parcial: '#f59e0b',       // Amarillo/Ámbar
+    gridColor: 'rgba(0, 0, 0, 0.06)',
+    textColor: '#334155',     // Texto oscuro para alta legibilidad
+    fontFamily: "'Inter', system-ui, sans-serif"
   };
 
   // ── 1. Gráfica de Estado de Préstamos (Doughnut) ──
@@ -34,31 +32,33 @@
           labels: rawData.labels || ['Activos', 'Vencidos', 'Devueltos', 'Parciales'],
           datasets: [{
             data: rawData.data || [0, 0, 0, 0],
-            backgroundColor: [colors.activo, colors.vencido, colors.devuelto, colors.parcial],
+            backgroundColor: [theme.activo, theme.vencido, theme.devuelto, theme.parcial],
             borderWidth: 2,
-            borderColor: '#1e2430'
+            borderColor: '#ffffff'
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: { duration: 900 },
           plugins: {
             legend: {
               position: 'bottom',
               labels: {
-                color: colors.textColor,
-                font: { family: 'Inter', size: 12 },
+                color: theme.textColor,
+                font: { family: theme.fontFamily, size: 12, weight: '600' },
                 padding: 16,
-                usePointStyle: true
+                usePointStyle: true,
+                pointStyleWidth: 10
               }
             },
             tooltip: {
-              backgroundColor: '#1b202e',
-              titleColor: '#fff',
-              bodyColor: '#a3aed0',
-              borderColor: 'rgba(255, 255, 255, 0.1)',
+              backgroundColor: '#1e293b',
+              titleColor: '#ffffff',
+              bodyColor: '#e2e8f0',
+              borderColor: '#334155',
               borderWidth: 1,
-              padding: 12
+              padding: 10
             }
           },
           cutout: '70%'
@@ -84,10 +84,10 @@
         data: {
           labels: rawData.labels || [],
           datasets: [{
-            label: 'Stock total',
+            label: 'Herramientas',
             data: rawData.data || [],
-            backgroundColor: 'rgba(91, 141, 238, 0.85)',
-            borderColor: '#5b8dee',
+            backgroundColor: 'rgba(59, 130, 246, 0.85)',
+            borderColor: '#2563eb',
             borderWidth: 1,
             borderRadius: 6
           }]
@@ -95,26 +95,27 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          indexAxis: 'y', // Barras horizontales
+          indexAxis: 'y',
+          animation: { duration: 900 },
           plugins: {
             legend: { display: false },
             tooltip: {
-              backgroundColor: '#1b202e',
-              titleColor: '#fff',
-              bodyColor: '#a3aed0',
-              borderColor: 'rgba(255, 255, 255, 0.1)',
+              backgroundColor: '#1e293b',
+              titleColor: '#ffffff',
+              bodyColor: '#e2e8f0',
+              borderColor: '#334155',
               borderWidth: 1,
-              padding: 12
+              padding: 10
             }
           },
           scales: {
             x: {
-              grid: { color: colors.gridColor },
-              ticks: { color: colors.textColor }
+              grid: { color: theme.gridColor },
+              ticks: { color: theme.textColor, font: { family: theme.fontFamily, weight: '500' } }
             },
             y: {
               grid: { display: false },
-              ticks: { color: colors.textColor }
+              ticks: { color: '#0f172a', font: { family: theme.fontFamily, weight: '600' } }
             }
           }
         }
@@ -137,34 +138,36 @@
       new Chart(ctx, {
         type: 'pie',
         data: {
-          labels: rawData.labels || ['Óptimo', 'Stock Bajo', 'Sin Stock'],
+          labels: rawData.labels || ['Disponible', 'En Préstamo', 'No disponible'],
           datasets: [{
             data: rawData.data || [0, 0, 0],
-            backgroundColor: [colors.optimo, colors.stockBajo, colors.sinStock],
+            backgroundColor: [theme.activo, theme.parcial, theme.vencido],
             borderWidth: 2,
-            borderColor: '#1e2430'
+            borderColor: '#ffffff'
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: { duration: 900 },
           plugins: {
             legend: {
               position: 'bottom',
               labels: {
-                color: colors.textColor,
-                font: { family: 'Inter', size: 12 },
+                color: theme.textColor,
+                font: { family: theme.fontFamily, size: 12, weight: '600' },
                 padding: 16,
-                usePointStyle: true
+                usePointStyle: true,
+                pointStyleWidth: 10
               }
             },
             tooltip: {
-              backgroundColor: '#1b202e',
-              titleColor: '#fff',
-              bodyColor: '#a3aed0',
-              borderColor: 'rgba(255, 255, 255, 0.1)',
+              backgroundColor: '#1e293b',
+              titleColor: '#ffffff',
+              bodyColor: '#e2e8f0',
+              borderColor: '#334155',
               borderWidth: 1,
-              padding: 12
+              padding: 10
             }
           }
         }
@@ -196,7 +199,7 @@ function verProducto(sku, nombre, desc, stock, cat) {
   if (vpCat)    vpCat.textContent    = cat || '—';
   if (vpStock) {
     vpStock.textContent = stock;
-    vpStock.style.color = stock === 0 ? 'var(--rust)' : stock < 3 ? '#c4900a' : 'var(--sage)';
+    vpStock.style.color = stock === 0 ? '#ef4444' : stock < 3 ? '#f59e0b' : '#10b981';
   }
   if (vpDesc)  vpDesc.textContent  = desc || '—';
   if (vpLink)  vpLink.href         = '/inventario/' + encodeURIComponent(sku) + '/editar/';

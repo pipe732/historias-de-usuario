@@ -63,18 +63,18 @@ def _puede_editar_mantenimiento(request, mantenimiento):
     rol = _get_rol_sesion(request)
     documento = request.session.get("usuario_documento")
 
-    if mantenimiento.estado_registro not in ESTADOS_EDITABLES and not _es_rol_admin(
-        rol
-    ):
+    estado_reg = getattr(mantenimiento, 'estado_registro', 'en_proceso')
+    if estado_reg not in ESTADOS_EDITABLES and not _es_rol_admin(rol):
         return False
 
     if _es_rol_admin(rol):
         return True
 
     if _es_rol_tecnico(rol):
-        if not mantenimiento.responsable_id:
+        resp_id = getattr(mantenimiento, 'responsable_id', None)
+        if not resp_id:
             return False
-        return mantenimiento.responsable_id == documento
+        return resp_id == documento
 
     return False
 
@@ -329,7 +329,7 @@ class MantenimientoListView(SesionRequeridaMixin, ListView):
 
     def get_queryset(self):
         qs = Mantenimiento.objects.select_related(
-            "codigo_herramienta", "tipo_estado", "tipo_mantenimiento", "responsable"
+            "codigo_herramienta"
         ).order_by("-fecha_ingreso")
 
         q = self.request.GET.get("q", "")
@@ -338,20 +338,23 @@ class MantenimientoListView(SesionRequeridaMixin, ListView):
 
         if q:
             qs = qs.filter(
-                Q(codigo_herramienta__nombre__icontains=q)
-                | Q(codigo_herramienta__codigo_sku__icontains=q)
-                | Q(detalles__descripcion__icontains=q)
+                Q(codigo_herramienta__nombre_herramienta__icontains=q)
+                | Q(codigo_herramienta__codigo_SKU__icontains=q)
+                | Q(detalles__accion_realizada__icontains=q)
             )
         if tipo:
             qs = _filtrar_por_tipo_mantenimiento(qs, tipo)
         if estado:
-            qs = qs.filter(estado_registro=estado)
+            if estado == 'cerrado':
+                qs = qs.filter(fecha_salida__isnull=False)
+            else:
+                qs = qs.filter(fecha_salida__isnull=True)
         return qs
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["editable_ids"] = _editable_ids(self.request, ctx["registros"])
-        ctx["tipos"] = TipoMantenimiento.objects.filter(activo=True).order_by("nombre")
+        ctx["tipos"] = TipoMantenimiento.objects.all().order_by("nombre")
         ctx["estado_choices"] = ESTADO_REGISTRO_CHOICES
         ctx["q"] = self.request.GET.get("q", "")
         ctx["tipo_filtro"] = self.request.GET.get("tipo", "")
@@ -505,31 +508,28 @@ class EstadoActualListView(SesionRequeridaMixin, ListView):
     context_object_name = "productos"
 
     def get_queryset(self):
-        qs = Producto.objects.prefetch_related("mantenimientos").order_by("nombre")
+        qs = Producto.objects.prefetch_related("mantenimientos").order_by("nombre_herramienta")
         q = self.request.GET.get("q", "").strip()
         disponible = self.request.GET.get("disponible", "")
 
         if q:
             qs = qs.filter(
-                Q(nombre__icontains=q)
-                | Q(codigo_sku__icontains=q)
-                | Q(numero_serie__icontains=q)
-                | Q(ubicacion__icontains=q)
+                Q(nombre_herramienta__icontains=q)
+                | Q(codigo_SKU__icontains=q)
+                | Q(descripcion__icontains=q)
             )
         if disponible == "si":
-            qs = qs.filter(disponible=True)
+            qs = qs.filter(disponibilidad="Disponible")
         elif disponible == "no":
-            qs = qs.filter(disponible=False)
+            qs = qs.filter(disponibilidad="No disponible")
         return qs
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["q"] = self.request.GET.get("q", "")
         ctx["disponible_filtro"] = self.request.GET.get("disponible", "")
-        # Estos counts usan el queryset completo sin filtros,
-        # correcto para los totales globales
-        ctx["total_disponibles"] = Producto.objects.filter(disponible=True).count()
-        ctx["total_no_disponibles"] = Producto.objects.filter(disponible=False).count()
+        ctx["total_disponibles"] = Producto.objects.filter(disponibilidad="Disponible").count()
+        ctx["total_no_disponibles"] = Producto.objects.filter(disponibilidad="No disponible").count()
         return ctx
 
 
