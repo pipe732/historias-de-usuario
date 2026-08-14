@@ -1,42 +1,186 @@
-/* ── Búsqueda en tabla de préstamos ── */
+/* ─────────────────────────────────────────────────────────────
+   PÁGINA PRINCIPAL - DASHBOARD DE GRÁFICAS (CHART.JS)
+   ───────────────────────────────────────────────────────────── */
+
 (function () {
-  var searchInput = document.getElementById('tbl-search');
-  if (searchInput) {
-    searchInput.addEventListener('input', function () {
-      var q = this.value.toLowerCase();
-      document.querySelectorAll('#tbl-prestamos tbody tr').forEach(function (tr) {
-        tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
-      });
-    });
-  }
-})();
+  'use strict';
 
-/* ── Modal ver préstamo ── */
-function verPrestamo(id, producto, usuario, cantidad, estado, fecha, obs) {
-  var estadoBadge = {
-    activo:   '<span class="badge-state badge-aprobada">Activo</span>',
-    devuelto: '<span class="badge-state badge-pendiente">Devuelto</span>',
-    vencido:  '<span class="badge-state badge-rechazada">Vencido</span>'
+  // Configuración de colores globales acordes al diseño de la app
+  const colors = {
+    activo: '#1D9E75',      // Verde Esmeralda / Sage
+    vencido: '#98473E',     // Rojo / Rust
+    devuelto: '#5b8dee',    // Azul primario
+    parcial: '#c4900a',     // Amarillo / Warning
+    optimo: '#1D9E75',
+    stockBajo: '#c4900a',
+    sinStock: '#98473E',
+    gridColor: 'rgba(255, 255, 255, 0.08)',
+    textColor: '#a3aed0'
   };
-  var vpProducto = document.getElementById('vp-producto');
-  var vpUsuario  = document.getElementById('vp-usuario');
-  var vpCantidad = document.getElementById('vp-cantidad');
-  var vpEstado   = document.getElementById('vp-estado');
-  var vpFecha    = document.getElementById('vp-fecha');
-  var vpObs      = document.getElementById('vp-obs');
-  var vpLink     = document.getElementById('vp-link');
 
-  if (vpProducto) vpProducto.textContent = producto;
-  if (vpUsuario)  vpUsuario.textContent  = usuario;
-  if (vpCantidad) vpCantidad.textContent = cantidad;
-  if (vpEstado)   vpEstado.innerHTML     = estadoBadge[estado] || estado;
-  if (vpFecha)    vpFecha.textContent    = fecha;
-  if (vpObs)      vpObs.textContent      = obs || '—';
-  if (vpLink)     vpLink.href            = '/prestamos/' + id + '/editar/';
+  // ── 1. Gráfica de Estado de Préstamos (Doughnut) ──
+  function initChartPrestamos() {
+    const el = document.getElementById('chart-prestamos-data');
+    const canvas = document.getElementById('chartPrestamos');
+    if (!el || !canvas) return;
 
-  var modal = document.getElementById('modalVerPrestamo');
-  if (modal) new bootstrap.Modal(modal).show();
-}
+    try {
+      const rawData = JSON.parse(el.textContent);
+      const ctx = canvas.getContext('2d');
+
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: rawData.labels || ['Activos', 'Vencidos', 'Devueltos', 'Parciales'],
+          datasets: [{
+            data: rawData.data || [0, 0, 0, 0],
+            backgroundColor: [colors.activo, colors.vencido, colors.devuelto, colors.parcial],
+            borderWidth: 2,
+            borderColor: '#1e2430'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: colors.textColor,
+                font: { family: 'Inter', size: 12 },
+                padding: 16,
+                usePointStyle: true
+              }
+            },
+            tooltip: {
+              backgroundColor: '#1b202e',
+              titleColor: '#fff',
+              bodyColor: '#a3aed0',
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 1,
+              padding: 12
+            }
+          },
+          cutout: '70%'
+        }
+      });
+    } catch (e) {
+      console.error('Error iniciando chartPrestamos:', e);
+    }
+  }
+
+  // ── 2. Gráfica de Stock por Categoría (Bar) ──
+  function initChartCategorias() {
+    const el = document.getElementById('chart-categorias-data');
+    const canvas = document.getElementById('chartCategorias');
+    if (!el || !canvas) return;
+
+    try {
+      const rawData = JSON.parse(el.textContent);
+      const ctx = canvas.getContext('2d');
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: rawData.labels || [],
+          datasets: [{
+            label: 'Stock total',
+            data: rawData.data || [],
+            backgroundColor: 'rgba(91, 141, 238, 0.85)',
+            borderColor: '#5b8dee',
+            borderWidth: 1,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y', // Barras horizontales
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#1b202e',
+              titleColor: '#fff',
+              bodyColor: '#a3aed0',
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 1,
+              padding: 12
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: colors.gridColor },
+              ticks: { color: colors.textColor }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: colors.textColor }
+            }
+          }
+        }
+      });
+    } catch (e) {
+      console.error('Error iniciando chartCategorias:', e);
+    }
+  }
+
+  // ── 3. Gráfica de Salud de Inventario (Pie) ──
+  function initChartSalud() {
+    const el = document.getElementById('chart-salud-data');
+    const canvas = document.getElementById('chartSalud');
+    if (!el || !canvas) return;
+
+    try {
+      const rawData = JSON.parse(el.textContent);
+      const ctx = canvas.getContext('2d');
+
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: rawData.labels || ['Óptimo', 'Stock Bajo', 'Sin Stock'],
+          datasets: [{
+            data: rawData.data || [0, 0, 0],
+            backgroundColor: [colors.optimo, colors.stockBajo, colors.sinStock],
+            borderWidth: 2,
+            borderColor: '#1e2430'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: colors.textColor,
+                font: { family: 'Inter', size: 12 },
+                padding: 16,
+                usePointStyle: true
+              }
+            },
+            tooltip: {
+              backgroundColor: '#1b202e',
+              titleColor: '#fff',
+              bodyColor: '#a3aed0',
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 1,
+              padding: 12
+            }
+          }
+        }
+      });
+    } catch (e) {
+      console.error('Error iniciando chartSalud:', e);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initChartPrestamos();
+    initChartCategorias();
+    initChartSalud();
+  });
+
+})();
 
 /* ── Modal ver producto ── */
 function verProducto(sku, nombre, desc, stock, cat) {

@@ -11,6 +11,7 @@ from django.utils import timezone
 #@sesion_requerida     
 def dashboard_view(request):
     """Home del administrador — solo accesible por admins."""
+    import json
     # Validar que el usuario sea administrador
     rol = (request.session.get('usuario_rol') or '').strip().lower()
     if rol not in ('administrador', 'admin'):
@@ -19,22 +20,36 @@ def dashboard_view(request):
     # ── Inventario ──
     total_productos  = Producto.objects.count()
     total_categorias = Categoria.objects.count()
-    # ── Préstamos ──
+
+    # ── Préstamos estadísticas ──
     prestamos_activos_count   = Prestamo.objects.filter(estado='activo').count()
     prestamos_vencidos_count  = Prestamo.objects.filter(estado='vencido').count()
+    prestamos_devueltos_count = Prestamo.objects.filter(estado='devuelto').count()
+    prestamos_parciales_count = Prestamo.objects.filter(estado='parcial').count()
     prestamos_recientes       = Prestamo.objects.prefetch_related('items__codigo_herramienta').order_by('-fecha_prestamo')[:5]
+
     # ── Devoluciones ──
     devoluciones_pendientes_count = Devolucion.objects.count()
     devoluciones_recientes        = Devolucion.objects.select_related('codigo_prestamo').order_by('-fecha_creacion')[:5]
+
     # ── Stock por categoría ──
-    stock_por_categoria = (
+    stock_por_categoria = list(
         Categoria.objects
         .annotate(total_stock=Sum('productos__stock'))
         .filter(total_stock__isnull=False)
         .order_by('-total_stock')
     )
-    max_stock = stock_por_categoria.aggregate(m=Max('total_stock'))['m'] or 1
-    # ── Productos recientes ──
+    max_stock = max([c.total_stock for c in stock_por_categoria], default=1)
+
+    # Datos estructurados para gráficas
+    cat_labels = [c.nombre for c in stock_por_categoria[:7]]
+    cat_values = [c.total_stock for c in stock_por_categoria[:7]]
+
+    # Salud de Inventario (Óptimo >= 5, Bajo 1-4, Agotado = 0)
+    stock_optimo  = Producto.objects.filter(stock__gte=5).count()
+    stock_bajo    = Producto.objects.filter(stock__gt=0, stock__lt=5).count()
+    stock_agotado = Producto.objects.filter(stock=0).count()
+
     productos_recientes = Producto.objects.select_related('categoria').order_by('-actualizado_en')[:8]
 
     context = {
@@ -42,14 +57,28 @@ def dashboard_view(request):
         'total_categorias':               total_categorias,
         'prestamos_activos_count':        prestamos_activos_count,
         'prestamos_vencidos_count':       prestamos_vencidos_count,
+        'prestamos_devueltos_count':      prestamos_devueltos_count,
+        'prestamos_parciales_count':      prestamos_parciales_count,
         'devoluciones_pendientes_count':  devoluciones_pendientes_count,
         'prestamos_recientes':            prestamos_recientes,
         'devoluciones_recientes':         devoluciones_recientes,
         'productos_recientes':            productos_recientes,
         'stock_por_categoria':            stock_por_categoria,
         'max_stock':                      max_stock,
+        # JSON para Chart.js
+        'chart_prestamos_json': json.dumps({
+            'labels': ['Activos', 'Vencidos', 'Devueltos', 'Parciales'],
+            'data': [prestamos_activos_count, prestamos_vencidos_count, prestamos_devueltos_count, prestamos_parciales_count]
+        }),
+        'chart_categorias_json': json.dumps({
+            'labels': cat_labels,
+            'data': cat_values
+        }),
+        'chart_salud_json': json.dumps({
+            'labels': ['Óptimo (≥5)', 'Stock Bajo (1-4)', 'Sin Stock (0)'],
+            'data': [stock_optimo, stock_bajo, stock_agotado]
+        })
     }
-
 
     return render(request, 'pagina_principal.html', context)
 
