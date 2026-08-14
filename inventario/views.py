@@ -161,11 +161,11 @@ def inventario(request):
         mant_form = MantenimientoForm()
         mant_modal_errors = False
 
-  # KPIs adaptados a la lógica unitaria
+    # KPIs adaptados a la lógica unitaria
     total_productos = productos.count()
-    total_stock = productos.aggregate(s=Sum("stock"))["s"] or 0
-    sin_stock = productos.filter(stock=0).count()
-    stock_bajo = productos.filter(stock__lte=5, stock__gt=0).count()
+    total_stock = total_productos
+    sin_stock = productos.filter(disponibilidad='No disponible').count()
+    stock_bajo = 0
     
     # ── CONTROL DE REAPERTURA: Validación de categoría rápida ──
     # Si la sesión tiene la bandera, forzamos a True para que el script del HTML abra el modal de herramientas
@@ -198,7 +198,7 @@ def inventario(request):
         "kpi_total_stock": total_stock,
         "kpi_sin_stock": sin_stock,
         "kpi_stock_bajo": stock_bajo,
-        "kardex_list": MovimientoKardex.objects.select_related("producto").all()[:100],
+        "kardex_list": MovimientoKardex.objects.select_related("codigo_herramienta").all()[:100],
     }
 
     return render(request, "inventario.html", context)
@@ -215,7 +215,7 @@ def lista_inventario_detalle(request):
 
     """Vista de los registros de Inventario (estantes/cantidades), separada de Producto."""
 
-    registros = Inventario.objects.select_related("producto").all()
+    registros = Inventario.objects.select_related("num_estante").all()
 
     if request.method == "POST":
         form = InventarioForm(request.POST)
@@ -241,7 +241,7 @@ def lista_inventario_detalle(request):
 
 @sesion_requerida
 def lista_movimientos(request):
-    movimientos = Movimientos.objects.select_related("inventario", "proveedor").all().order_by("-fecha_movimiento")
+    movimientos = Movimientos.objects.select_related("codigo_inventario").all().order_by("-fecha_movimiento")
 
     if request.method == "POST":
         form = MovimientosForm(request.POST)

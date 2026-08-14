@@ -17,7 +17,7 @@ def _marcar_vencidos():
     # Solo ejecutamos el update si existen registros desactualizados
     vencidos = Prestamo.objects.filter(
         estado__in=['activo', 'parcial'],
-        fecha_vencimiento__lt=hoy,
+        fecha__lt=hoy,
     )
     if vencidos.exists():
         vencidos.update(estado='vencido')
@@ -39,8 +39,8 @@ def prestamo_usuario_view(request):
     all_prestamos = (
         Prestamo.objects
         .prefetch_related('items__codigo_herramienta')
-        .filter(usuario=doc)
-        .order_by('-fecha_prestamo')
+        .filter(documento=doc)
+        .order_by('-fecha')
     )
 
     hoy = timezone.localdate()
@@ -51,11 +51,11 @@ def prestamo_usuario_view(request):
 
     proximos_vencer = all_prestamos.filter(
         estado__in=['activo', 'parcial'],
-        fecha_vencimiento__lte=hoy + timezone.timedelta(days=3),
-        fecha_vencimiento__gte=hoy,
+        fecha__lte=hoy + timezone.timedelta(days=3),
+        fecha__gte=hoy,
     ).count()
 
-    productos_disponibles = Producto.objects.filter(stock__gt=0).order_by('nombre')
+    productos_disponibles = Producto.objects.filter(disponibilidad='Disponible').order_by('nombre_herramienta')
 
     context = {
         'usuario':               usuario,
@@ -407,9 +407,8 @@ def prestamos_view(request):
 
     if q:
         prestamos = prestamos.filter(
-            Q(usuario__icontains=q) |
-            Q(nombre_usuario__icontains=q) |
-            Q(items__codigo_herramienta__nombre__icontains=q)
+            Q(documento__icontains=q) |
+            Q(items__codigo_herramienta__nombre_herramienta__icontains=q)
         ).distinct()
 
     if estado_f:
@@ -418,11 +417,11 @@ def prestamos_view(request):
     if vencidos_f == '1':
         hoy = timezone.localdate()
         prestamos = prestamos.filter(
-            fecha_vencimiento__lt=hoy,
+            fecha__lt=hoy,
             estado__in=['activo', 'parcial', 'vencido'],
         )
 
-    productos = Producto.objects.filter(stock__gt=0).order_by('nombre')
+    productos = Producto.objects.filter(disponibilidad='Disponible').order_by('nombre_herramienta')
 
     from usuario.models import Usuario
     usuarios_sistema = Usuario.objects.all().order_by('primer_nombre', 'primer_apellido')
@@ -445,8 +444,8 @@ def prestamos_view(request):
     hoy = timezone.localdate()
     proximos_vencer = Prestamo.objects.filter(
         estado__in=['activo', 'parcial'],
-        fecha_vencimiento__lte=hoy + timezone.timedelta(days=3),
-        fecha_vencimiento__gte=hoy,
+        fecha__lte=hoy + timezone.timedelta(days=3),
+        fecha__gte=hoy,
     ).count()
 
     context = {

@@ -292,7 +292,7 @@
           <td class="text-center">
             <div class="prestamo__style-51">
               {% if p.estado == 'pendiente' %}
-              <button type="button" class="btn-ghost btn-aprobar-solicitud prestamo__style-52" data-pk="{{ p.pk }}" data-nombre="{{ p.nombre_usuario|default:p.usuario|escapejs }}" data-usuario="{{ p.usuario|escapejs }}" data-motivo="{% if p.motivo_solicitud %}{{ p.motivo_solicitud|escapejs }}{% endif %}" data-fecha="{{ p.fecha_prestamo|date:'d/m/Y H:i' }}">
+              <button type="button" class="btn-ghost btn-aprobar-solicitud prestamo__style-52" data-pk="{{ p.pk }}" data-nombre="{{ p.nombre_usuario|default:p.usuario|escapejs }}" data-usuario="{{ p.usuario|escapejs }}" data-motivo="{% if p.motivo_solicitud %}{{ p.motivo_solicitud|escapejs }}{% endif %}" data-fecha="{{ p.fecha_prestamo|date:'d/m/Y' }}">
                 <span class="items-json d-none">
                   [
                     {% for item in p.items.all %}

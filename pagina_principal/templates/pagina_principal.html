@@ -7,17 +7,17 @@
 ═══════════════════════════════════ -->
 <div class="d-flex align-items-center justify-content-between mb-4">
   <div>
-    <h4 class="fw-bold mb-1" style="color: #fff;">
-      <i class="bi bi-speedometer2 me-2 text-primary"></i>Panel de Control General
-    </h4>
-    <p class="text-muted small mb-0">Resumen visual e indicadores en tiempo real del sistema de inventario</p>
+    <h5 class="fw-bold mb-1" style="color: var(--text-main, #1B2021);">
+      Resumen general del sistema
+    </h5>
+    <p class="text-muted small mb-0">Indicadores clave y distribución gráfica en tiempo real</p>
   </div>
   <div class="d-flex gap-2">
-    <a href="{% url 'inventario:inventario' %}" class="btn btn-outline-secondary btn-sm">
-      <i class="bi bi-boxes me-1"></i> Inventario
+    <a href="{% url 'inventario:inventario' %}" class="btn-outline-mine text-decoration-none">
+      <i class="bi bi-boxes me-1"></i> Ver inventario
     </a>
-    <a href="{% url 'prestamo' %}" class="btn btn-primary btn-sm">
-      <i class="bi bi-clipboard-check me-1"></i> Préstamos
+    <a href="{% url 'prestamo' %}" class="btn-primary-mine text-decoration-none">
+      <i class="bi bi-clipboard-check me-1"></i> Ver préstamos
     </a>
   </div>
 </div>
@@ -30,6 +30,11 @@
     transition: opacity 0.5s ease, transform 0.5s ease;
     position: relative !important;
     overflow: hidden !important;
+    background: #ffffff;
+    border: 1px solid rgba(27, 32, 33, 0.09);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(27, 32, 33, 0.04);
   }
   .kpi-card.kpi-visible {
     opacity: 1;
@@ -37,13 +42,13 @@
   }
   .kpi-card:hover {
     transform: translateY(-3px) !important;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 24px rgba(27, 32, 33, 0.1);
     transition: opacity 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
   }
   .kpi-accent-bar {
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 3px;
+    height: 4px;
     border-radius: 4px 4px 0 0;
     transform: scaleX(0);
     transform-origin: left;
@@ -52,36 +57,50 @@
   .kpi-card.kpi-visible .kpi-accent-bar {
     transform: scaleX(1);
   }
+  .kpi-title-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .kpi-num-display {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1.1;
+    margin: 8px 0;
+  }
   .chart-container {
     position: relative;
     width: 100%;
     height: 250px;
   }
-  .quick-action-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 8px;
-    padding: 12px 16px;
-    transition: background 0.2s ease, border-color 0.2s ease;
+  .quick-action-link {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    transition: all 0.2s ease;
     text-decoration: none !important;
-    color: var(--text-color, #dcdfe4);
+    color: #1e293b;
     display: flex;
     align-items: center;
     gap: 12px;
   }
-  .quick-action-card:hover {
-    background: rgba(91, 141, 238, 0.1);
-    border-color: rgba(91, 141, 238, 0.4);
-    color: #fff;
+  .quick-action-link:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateX(3px);
   }
   .quick-action-icon {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     flex-shrink: 0;
   }
 </style>
@@ -92,50 +111,58 @@
 <div class="row g-3 mb-4">
 
   <div class="col-6 col-md-3">
-    <div class="card h-100 kpi-card extracted-style-213" data-kpi-delay="0">
+    <div class="card h-100 kpi-card" data-kpi-delay="0">
       <div class="kpi-accent-bar" style="background: #5b8dee;"></div>
-      <div class="d-flex align-items-center justify-content-between mb-2">
-        <span class="extracted-style-215">Total herramientas</span>
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <span class="kpi-title-label">Total herramientas</span>
         <i class="bi bi-tools text-primary fs-5"></i>
       </div>
-      <div class="kpi-number extracted-style-216" data-target="{{ total_productos }}">0</div>
-      <div class="extracted-style-217">{{ total_categorias }} categoría{{ total_categorias|pluralize:",s" }}</div>
+      <div class="kpi-num-display kpi-number" data-target="{{ total_productos }}">0</div>
+      <div class="small text-muted" style="font-size: 0.78rem;">
+        <i class="bi bi-tags text-primary"></i> {{ total_categorias }} categoría{{ total_categorias|pluralize:",s" }}
+      </div>
     </div>
   </div>
 
   <div class="col-6 col-md-3">
-    <div class="card h-100 kpi-card extracted-style-213" data-kpi-delay="130">
+    <div class="card h-100 kpi-card" data-kpi-delay="130">
       <div class="kpi-accent-bar" style="background: #1D9E75;"></div>
-      <div class="d-flex align-items-center justify-content-between mb-2">
-        <span class="extracted-style-215">Préstamos activos</span>
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <span class="kpi-title-label">Préstamos activos</span>
         <i class="bi bi-clock-history text-success fs-5"></i>
       </div>
-      <div class="kpi-number extracted-style-219" data-target="{{ prestamos_activos_count }}">0</div>
-      <div class="extracted-style-217">en este momento</div>
+      <div class="kpi-num-display kpi-number" data-target="{{ prestamos_activos_count }}">0</div>
+      <div class="small text-success" style="font-size: 0.78rem;">
+        <i class="bi bi-check-circle"></i> En este momento
+      </div>
     </div>
   </div>
 
   <div class="col-6 col-md-3">
-    <div class="card h-100 kpi-card extracted-style-213" data-kpi-delay="260">
+    <div class="card h-100 kpi-card" data-kpi-delay="260">
       <div class="kpi-accent-bar" style="background: #98473E;"></div>
-      <div class="d-flex align-items-center justify-content-between mb-2">
-        <span class="extracted-style-215">Vencidos</span>
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <span class="kpi-title-label">Vencidos</span>
         <i class="bi bi-exclamation-triangle text-danger fs-5"></i>
       </div>
-      <div class="kpi-number extracted-style-221" data-target="{{ prestamos_vencidos_count }}">0</div>
-      <div class="extracted-style-217">requieren atención</div>
+      <div class="kpi-num-display kpi-number" data-target="{{ prestamos_vencidos_count }}">0</div>
+      <div class="small text-danger" style="font-size: 0.78rem;">
+        <i class="bi bi-exclamation-circle"></i> Requieren atención
+      </div>
     </div>
   </div>
 
   <div class="col-6 col-md-3">
-    <div class="card h-100 kpi-card extracted-style-213" data-kpi-delay="390">
+    <div class="card h-100 kpi-card" data-kpi-delay="390">
       <div class="kpi-accent-bar" style="background: #c4900a;"></div>
-      <div class="d-flex align-items-center justify-content-between mb-2">
-        <span class="extracted-style-215">Devoluciones pend.</span>
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <span class="kpi-title-label">Devoluciones pend.</span>
         <i class="bi bi-arrow-return-left text-warning fs-5"></i>
       </div>
-      <div class="kpi-number extracted-style-223" data-target="{{ devoluciones_pendientes_count }}">0</div>
-      <div class="extracted-style-217">por resolver</div>
+      <div class="kpi-num-display kpi-number" data-target="{{ devoluciones_pendientes_count }}">0</div>
+      <div class="small text-warning" style="font-size: 0.78rem;">
+        <i class="bi bi-hourglass-split"></i> Por resolver
+      </div>
     </div>
   </div>
 
@@ -151,7 +178,7 @@
     <div class="card h-100">
       <div class="card-header d-flex justify-content-between align-items-center">
         <span class="card-title"><i class="bi bi-pie-chart-fill me-2 text-primary"></i>Estado de Préstamos</span>
-        <a href="{% url 'prestamo' %}" class="btn-ghost text-decoration-none">Ver préstamos <i class="bi bi-arrow-right ms-1"></i></a>
+        <a href="{% url 'prestamo' %}" class="btn-ghost text-decoration-none">Ver todos</a>
       </div>
       <div class="card-body">
         <div class="chart-container">
@@ -165,8 +192,8 @@
   <div class="col-lg-6">
     <div class="card h-100">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <span class="card-title"><i class="bi bi-bar-chart-line-fill me-2 text-info"></i>Stock por Categoría</span>
-        <a href="{% url 'inventario:inventario' %}" class="btn-ghost text-decoration-none">Ver inventario <i class="bi bi-arrow-right ms-1"></i></a>
+        <span class="card-title"><i class="bi bi-bar-chart-line-fill me-2 text-info"></i>Herramientas por Categoría</span>
+        <a href="{% url 'inventario:inventario' %}" class="btn-ghost text-decoration-none">Ver inventario</a>
       </div>
       <div class="card-body">
         <div class="chart-container">
@@ -187,7 +214,7 @@
   <div class="col-lg-5">
     <div class="card h-100">
       <div class="card-header">
-        <span class="card-title"><i class="bi bi-heart-pulse-fill me-2 text-danger"></i>Salud del Inventario</span>
+        <span class="card-title"><i class="bi bi-heart-pulse-fill me-2 text-danger"></i>Estado de Disponibilidad</span>
       </div>
       <div class="card-body">
         <div class="chart-container">
@@ -202,7 +229,7 @@
     <div class="card h-100">
       <div class="card-header d-flex justify-content-between align-items-center">
         <span class="card-title"><i class="bi bi-activity me-2 text-warning"></i>Últimas Devoluciones y Accesos</span>
-        <a href="{% url 'devoluciones' %}" class="btn-ghost text-decoration-none">Devoluciones <i class="bi bi-arrow-right ms-1"></i></a>
+        <a href="{% url 'devoluciones' %}" class="btn-ghost text-decoration-none">Ver todas</a>
       </div>
       <div class="card-body">
         <div class="row g-3">
@@ -210,13 +237,13 @@
           <div class="col-md-7">
             <h6 class="text-muted small fw-bold mb-3 text-uppercase">Devoluciones Recientes</h6>
             {% for d in devoluciones_recientes %}
-            <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+            <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded border" style="background: #f8fafc;">
               <div>
-                <div class="fw-semibold text-truncate small">
+                <div class="fw-semibold text-truncate small" style="color: #1e293b;">
                   Préstamo #{{ d.prestamo.id }} — {{ d.prestamo.usuario }}
                 </div>
                 <div class="text-muted" style="font-size: 0.75rem;">
-                  {{ d.fecha_creacion|date:"d M Y" }}
+                  <i class="bi bi-calendar-event me-1"></i>{{ d.fecha|date:"d M Y" }}
                 </div>
               </div>
               <span class="badge-state 
@@ -238,34 +265,37 @@
           <div class="col-md-5 d-flex flex-column gap-2 justify-content-center">
             <h6 class="text-muted small fw-bold mb-2 text-uppercase">Accesos Rápidos</h6>
 
-            <a href="{% url 'inventario:inventario' %}" class="quick-action-card">
-              <div class="quick-action-icon" style="background: rgba(91,141,238,0.15); color: #5b8dee;">
+            <a href="{% url 'inventario:inventario' %}" class="quick-action-link">
+              <div class="quick-action-icon" style="background: rgba(91,141,238,0.15); color: #2563eb;">
                 <i class="bi bi-boxes"></i>
               </div>
-              <div>
+              <div class="flex-grow-1">
                 <div class="fw-semibold small">Gestión Inventario</div>
                 <div class="text-muted" style="font-size: 0.72rem;">Catálogo & Stock</div>
               </div>
+              <i class="bi bi-chevron-right text-muted small"></i>
             </a>
 
-            <a href="{% url 'prestamo' %}" class="quick-action-card">
-              <div class="quick-action-icon" style="background: rgba(29,158,117,0.15); color: #1D9E75;">
+            <a href="{% url 'prestamo' %}" class="quick-action-link">
+              <div class="quick-action-icon" style="background: rgba(16,185,129,0.15); color: #059669;">
                 <i class="bi bi-clipboard-check"></i>
               </div>
-              <div>
+              <div class="flex-grow-1">
                 <div class="fw-semibold small">Gestión Préstamos</div>
                 <div class="text-muted" style="font-size: 0.72rem;">Registros y entregas</div>
               </div>
+              <i class="bi bi-chevron-right text-muted small"></i>
             </a>
 
-            <a href="{% url 'devoluciones' %}" class="quick-action-card">
-              <div class="quick-action-icon" style="background: rgba(196,144,10,0.15); color: #c4900a;">
+            <a href="{% url 'devoluciones' %}" class="quick-action-link">
+              <div class="quick-action-icon" style="background: rgba(245,158,11,0.15); color: #d97706;">
                 <i class="bi bi-arrow-return-left"></i>
               </div>
-              <div>
+              <div class="flex-grow-1">
                 <div class="fw-semibold small">Devoluciones</div>
                 <div class="text-muted" style="font-size: 0.72rem;">Recepción de equipos</div>
               </div>
+              <i class="bi bi-chevron-right text-muted small"></i>
             </a>
           </div>
         </div>
@@ -285,7 +315,7 @@
 {% block js %}
 <!-- CDN Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script defer src="{% static 'js/pagina_principal.js' %}?v=4"></script>
+<script defer src="{% static 'js/pagina_principal.js' %}?v=6"></script>
 <script>
   // ── Animación de números KPI ──
   function initKpis() {
@@ -307,7 +337,7 @@
         card.querySelectorAll('.kpi-number').forEach(function (num) {
           animarContador(num, parseInt(num.getAttribute('data-target')) || 0, 950);
         });
-      }, delay + 150);
+      }, delay + 100);
     });
   }
 

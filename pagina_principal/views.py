@@ -12,6 +12,7 @@ from django.utils import timezone
 def dashboard_view(request):
     """Home del administrador — solo accesible por admins."""
     import json
+    from django.db.models import Count
     # Validar que el usuario sea administrador
     rol = (request.session.get('usuario_rol') or '').strip().lower()
     if rol not in ('administrador', 'admin'):
@@ -26,17 +27,16 @@ def dashboard_view(request):
     prestamos_vencidos_count  = Prestamo.objects.filter(estado='vencido').count()
     prestamos_devueltos_count = Prestamo.objects.filter(estado='devuelto').count()
     prestamos_parciales_count = Prestamo.objects.filter(estado='parcial').count()
-    prestamos_recientes       = Prestamo.objects.prefetch_related('items__codigo_herramienta').order_by('-fecha_prestamo')[:5]
+    prestamos_recientes       = Prestamo.objects.prefetch_related('items__codigo_herramienta').order_by('-fecha')[:5]
 
     # ── Devoluciones ──
     devoluciones_pendientes_count = Devolucion.objects.count()
-    devoluciones_recientes        = Devolucion.objects.select_related('codigo_prestamo').order_by('-fecha_creacion')[:5]
+    devoluciones_recientes        = Devolucion.objects.select_related('codigo_prestamo').order_by('-fecha')[:5]
 
     # ── Stock por categoría ──
     stock_por_categoria = list(
         Categoria.objects
-        .annotate(total_stock=Sum('productos__stock'))
-        .filter(total_stock__isnull=False)
+        .annotate(total_stock=Count('herramientas'))
         .order_by('-total_stock')
     )
     max_stock = max([c.total_stock for c in stock_por_categoria], default=1)
@@ -45,12 +45,12 @@ def dashboard_view(request):
     cat_labels = [c.nombre for c in stock_por_categoria[:7]]
     cat_values = [c.total_stock for c in stock_por_categoria[:7]]
 
-    # Salud de Inventario (Óptimo >= 5, Bajo 1-4, Agotado = 0)
-    stock_optimo  = Producto.objects.filter(stock__gte=5).count()
-    stock_bajo    = Producto.objects.filter(stock__gt=0, stock__lt=5).count()
-    stock_agotado = Producto.objects.filter(stock=0).count()
-
-    productos_recientes = Producto.objects.select_related('categoria').order_by('-actualizado_en')[:8]
+    # Salud de Inventario (Disponible / En Préstamo / No disponible)
+    herramientas_disponibles = Producto.objects.filter(disponibilidad='Disponible').count()
+    if herramientas_disponibles == 0 and total_productos > 0:
+        herramientas_disponibles = max(0, total_productos - prestamos_activos_count)
+    herramientas_en_prestamo = prestamos_activos_count
+    herramientas_no_disponibles = max(0, total_productos - herramientas_disponibles)
 
     context = {
         'total_productos':                total_productos,
@@ -62,7 +62,6 @@ def dashboard_view(request):
         'devoluciones_pendientes_count':  devoluciones_pendientes_count,
         'prestamos_recientes':            prestamos_recientes,
         'devoluciones_recientes':         devoluciones_recientes,
-        'productos_recientes':            productos_recientes,
         'stock_por_categoria':            stock_por_categoria,
         'max_stock':                      max_stock,
         # JSON para Chart.js
@@ -75,8 +74,8 @@ def dashboard_view(request):
             'data': cat_values
         }),
         'chart_salud_json': json.dumps({
-            'labels': ['Óptimo (≥5)', 'Stock Bajo (1-4)', 'Sin Stock (0)'],
-            'data': [stock_optimo, stock_bajo, stock_agotado]
+            'labels': ['Disponible', 'En Préstamo', 'No disponible'],
+            'data': [herramientas_disponibles, herramientas_en_prestamo, herramientas_no_disponibles]
         })
     }
 
@@ -86,9 +85,7 @@ def dashboard_view(request):
 def home_usuario_view(request):
     """Home del usuario — muestra sus propios préstamos."""
     from usuario.models import Usuario
-    from django.utils import timezone
 
-    # ← CORRECCIÓN: la sesión guarda 'usuario_documento', no 'usuario_id'
     doc = request.session.get('usuario_documento')
     if not doc:
         return redirect('login')
@@ -102,8 +99,8 @@ def home_usuario_view(request):
     all_prestamos = (
         Prestamo.objects
         .prefetch_related('items__codigo_herramienta')
-        .filter(usuario=doc)
-        .order_by('-fecha_prestamo')
+        .filter(documento=doc)
+        .order_by('-fecha')
     )
 
     total_prestamos    = all_prestamos.count()
@@ -111,10 +108,10 @@ def home_usuario_view(request):
     historial_reciente = all_prestamos.filter(estado='devuelto')
     vencidos_count     = all_prestamos.filter(estado='vencido').count()
 
-    productos_disponibles = Producto.objects.filter(stock__gt=0).order_by('nombre')
+    productos_disponibles = Producto.objects.filter(disponibilidad='Disponible').order_by('nombre_herramienta')
 
-    # Alertas de stock bajo
-    alertas_stock = list(Producto.objects.filter(stock__lt=5).values_list('nombre', 'stock'))
+    # Alertas de stock bajo / no disponible
+    alertas_stock = list(Producto.objects.filter(disponibilidad='No disponible').values_list('nombre_herramienta', flat=True))
     hay_alertas = len(alertas_stock) > 0
 
     context = {
@@ -129,20 +126,14 @@ def home_usuario_view(request):
         'hay_alertas':           hay_alertas,
     }
 
-
     return render(request, 'home_usuario.html', context)
+
+
 # ─────────────────────────────────────────────────────────────
 #  NOTIFICACIONES JSON — agregar a pagina_principal/views.py
-#  Importar JsonResponse si no está: from django.http import JsonResponse
 # ─────────────────────────────────────────────────────────────
 def notificaciones_json(request):
-    """Devuelve notificaciones activas para el usuario en sesión.
-
-    Acepta ?page= para filtrar por contexto:
-      - page=principal  → solo préstamos vencidos
-      - page=inventario → solo herramientas con stock < 5 unidades
-      - (sin param)     → todas las notificaciones
-    """
+    """Devuelve notificaciones activas para el usuario en sesión."""
     doc = request.session.get('usuario_documento')
     rol = (request.session.get('usuario_rol') or '').strip().lower()
     if not doc:
@@ -152,13 +143,11 @@ def notificaciones_json(request):
     proximos = hoy + timezone.timedelta(days=3)
     items    = []
 
-    # Parámetro de contexto de página
     page = (request.GET.get('page') or '').strip().lower()
 
     # ── Para admin/administrador: notificaciones globales ────────
     if rol in ('administrador', 'admin'):
 
-        # ─── PRÉSTAMOS ACTIVOS ───
         if page not in ('principal', 'inventario'):
             activos = Prestamo.objects.filter(estado__in=['activo', 'parcial']).count()
             if activos:
@@ -171,11 +160,6 @@ def notificaciones_json(request):
                     'url':   '/prestamo/?estado=activo',
                 })
 
-        # ─── SOLICITUDES PENDIENTES ───
-        # Se omiten las notificaciones generales de préstamos pendientes de aprobación
-        # para evitar alertas redundantes que no se desean mostrar en la campana.
-
-        # ─── PRÉSTAMOS VENCIDOS (en principal y en "todas") ───
         if page != 'inventario':
             venc = Prestamo.objects.filter(estado='vencido').count()
             if venc:
@@ -188,11 +172,9 @@ def notificaciones_json(request):
                     'url':   '/prestamo/?estado=vencido',
                 })
 
-            # También incluir préstamos activos/parciales cuya fecha ya pasó
-            # pero cuyo estado no se actualizó a "vencido" aún
             venc_no_marcados = Prestamo.objects.filter(
                 estado__in=['activo', 'parcial'],
-                fecha_vencimiento__lt=hoy,
+                fecha__lt=hoy,
             ).count()
             if venc_no_marcados:
                 items.append({
@@ -204,24 +186,6 @@ def notificaciones_json(request):
                     'url':   '/prestamo/',
                 })
 
-        # ─── PRÓXIMOS A VENCER ───
-        if page != 'inventario':
-            prox = Prestamo.objects.filter(
-                estado__in=['activo', 'parcial'],
-                fecha_vencimiento__lte=proximos,
-                fecha_vencimiento__gte=hoy,
-            ).count()
-            if prox:
-                items.append({
-                    'tipo':  'proximo',
-                    'icono': 'alarm',
-                    'color': '#c4900a',
-                    'titulo': f'{prox} préstamo{"s" if prox != 1 else ""} próximo{"s" if prox != 1 else ""} a vencer',
-                    'desc':  'Vencen en los próximos 3 días',
-                    'url':   '/prestamo/?vencidos=1',
-                })
-
-        # ─── DEVOLUCIONES ───
         if page not in ('principal', 'inventario'):
             devs = Devolucion.objects.count()
             if devs:
@@ -234,29 +198,11 @@ def notificaciones_json(request):
                     'url':   '/devoluciones/',
                 })
 
-        # ─── STOCK BAJO (en inventario y en "todas") ───
         if page != 'principal':
-            productos_bajo = list(
-                Producto.objects.filter(stock__gt=0, stock__lt=5)
-                .values_list('nombre', 'stock')
-                .order_by('stock')
-            )
-            if productos_bajo:
-                for nombre, stock in productos_bajo:
-                    items.append({
-                        'tipo':  'stock_bajo',
-                        'icono': 'exclamation-circle',
-                        'color': '#c4900a',
-                        'titulo': f'{nombre}',
-                        'desc':  f'Quedan {stock} unidad{"es" if stock != 1 else ""}',
-                        'url':   '/inventario/',
-                    })
-
-            # Stock crítico (sin stock) — también en inventario
             productos_sin = list(
-                Producto.objects.filter(stock=0)
-                .values_list('nombre', flat=True)
-                .order_by('nombre')
+                Producto.objects.filter(disponibilidad='No disponible')
+                .values_list('nombre_herramienta', flat=True)
+                .order_by('nombre_herramienta')
             )
             if productos_sin:
                 for nombre in productos_sin:
@@ -265,15 +211,13 @@ def notificaciones_json(request):
                         'icono': 'box-seam',
                         'color': '#71816D',
                         'titulo': f'{nombre}',
-                        'desc':  'Sin stock — verificar inventario',
+                        'desc':  'No disponible — verificar inventario',
                         'url':   '/inventario/',
                     })
 
     else:
         # ── Para usuario normal: solo sus préstamos ──────────────
-
-        # Sus préstamos vencidos
-        venc_u = Prestamo.objects.filter(usuario=doc, estado='vencido').count()
+        venc_u = Prestamo.objects.filter(documento=doc, estado='vencido').count()
         if venc_u:
             items.append({
                 'tipo':  'vencido',
@@ -283,25 +227,5 @@ def notificaciones_json(request):
                 'desc':  'Contacta al administrador',
                 'url':   '/prestamo/usuario/',
             })
-
-        # Sus préstamos próximos a vencer
-        prox_u = Prestamo.objects.filter(
-            usuario=doc,
-            estado__in=['activo', 'parcial'],
-            fecha_vencimiento__lte=proximos,
-            fecha_vencimiento__gte=hoy,
-        ).count()
-        if prox_u:
-            items.append({
-                'tipo':  'proximo',
-                'icono': 'alarm',
-                'color': '#c4900a',
-                'titulo': f'{prox_u} préstamo{"s" if prox_u != 1 else ""} vence{"n" if prox_u != 1 else ""} pronto',
-                'desc':  'En los próximos 3 días',
-                'url':   '/prestamo/usuario/',
-            })
-
-        # Solicitudes pendientes de aprobación propias
-        # No se generan notificaciones en la campana para solicitudes pendientes.
 
     return JsonResponse({'items': items, 'total': len(items)})
