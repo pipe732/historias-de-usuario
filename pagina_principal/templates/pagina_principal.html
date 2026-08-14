@@ -103,6 +103,40 @@
     font-size: 1.1rem;
     flex-shrink: 0;
   }
+  .recent-dev-row {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+  }
+  .recent-dev-title {
+    color: #1e293b;
+  }
+  /* Estilos específicos para modo oscuro */
+  body.dark-mode .kpi-card {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  body.dark-mode .kpi-title-label {
+    color: #94a3b8 !important;
+  }
+  body.dark-mode .kpi-num-display {
+    color: #f8fafc !important;
+  }
+  body.dark-mode .quick-action-link {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #f8fafc !important;
+  }
+  body.dark-mode .quick-action-link:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+  body.dark-mode .recent-dev-row {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  body.dark-mode .recent-dev-title {
+    color: #f8fafc !important;
+  }
 </style>
 
 <!-- ═══════════════════════════════════
@@ -237,9 +271,9 @@
           <div class="col-md-7">
             <h6 class="text-muted small fw-bold mb-3 text-uppercase">Devoluciones Recientes</h6>
             {% for d in devoluciones_recientes %}
-            <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded border" style="background: #f8fafc;">
+            <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded border recent-dev-row">
               <div>
-                <div class="fw-semibold text-truncate small" style="color: #1e293b;">
+                <div class="fw-semibold text-truncate small recent-dev-title">
                   Préstamo #{{ d.prestamo.id }} — {{ d.prestamo.usuario }}
                 </div>
                 <div class="text-muted" style="font-size: 0.75rem;">

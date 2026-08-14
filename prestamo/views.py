@@ -358,22 +358,7 @@ def prestamos_view(request):
                         
                         with transaction.atomic():
                             prestamo = form.save(commit=False)
-                            prestamo.nombre_usuario = request.POST.get('nombre_usuario', '')
                             prestamo.estado = 'activo'
-
-                            # Procesamiento seguro de fechas y horas
-                            fv = request.POST.get('fecha_vencimiento', '').strip()
-                            try:
-                                prestamo.fecha_vencimiento = datetime.date.fromisoformat(fv) if fv else None
-                            except ValueError:
-                                prestamo.fecha_vencimiento = None
-
-                            hme = request.POST.get('hora_max_entrega', '').strip()
-                            try:
-                                prestamo.hora_max_entrega = datetime.time.fromisoformat(hme) if hme else None
-                            except ValueError:
-                                prestamo.hora_max_entrega = None
-
                             prestamo.save()
 
                             # Guardado en lote (Bulk Create) para los ítems del préstamo
@@ -381,16 +366,15 @@ def prestamos_view(request):
                             for producto, cantidad in items_validated:
                                 items_a_crear.append(
                                     ItemPrestamo(
-                                        prestamo=prestamo,
-                                        producto=producto,
+                                        codigo_prestamo=prestamo,
+                                        codigo_herramienta=producto,
                                         cantidad=cantidad
                                     )
                                 )
-                                # Descontamos stock en memoria
-                                producto.stock -= cantidad
-                                producto.save(update_fields=['stock'])
+                                if producto.stock <= cantidad:
+                                    producto.disponibilidad = 'No disponible'
+                                    producto.save(update_fields=['disponibilidad'])
                             
-                            # Crea todos los registros de ítems con un solo golpe a la base de datos
                             ItemPrestamo.objects.bulk_create(items_a_crear)
 
                         messages.success(request, 'Préstamo registrado exitosamente.')
@@ -537,24 +521,17 @@ def usuario_solicitar_prestamo(request):
     from django.db import transaction
 
     with transaction.atomic():
-        prestamo = Prestamo()
-        prestamo.usuario          = doc
-        prestamo.nombre_usuario   = usuario.nombre_completo
-        prestamo.observaciones    = motivo
-        prestamo.motivo_solicitud = motivo
-        prestamo.estado           = 'pendiente'
-
-        try:
-            prestamo.fecha_vencimiento = datetime.date.fromisoformat(fecha_str) if fecha_str else None
-        except ValueError:
-            prestamo.fecha_vencimiento = None
-
+        prestamo = Prestamo(
+            documento=usuario,
+            observaciones=motivo,
+            estado='pendiente'
+        )
         prestamo.save()
 
         items_a_crear = [
             ItemPrestamo(
-                prestamo=prestamo,
-                producto=producto,
+                codigo_prestamo=prestamo,
+                codigo_herramienta=producto,
                 cantidad=cantidad,
             )
             for producto, cantidad in items_validated

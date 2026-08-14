@@ -1,20 +1,32 @@
 /* ─────────────────────────────────────────────────────────────
-   PÁGINA PRINCIPAL - DASHBOARD DE GRÁFICAS (TEMA CLARO NATIVO)
+   PÁGINA PRINCIPAL - DASHBOARD DE GRÁFICAS (SOPORTE MODO CLARO/OSCURO)
    ───────────────────────────────────────────────────────────── */
 
 (function () {
   'use strict';
 
-  // Configuración de paleta de colores nativos nítidos y legibles
-  const theme = {
-    activo: '#10b981',        // Verde esmeralda
-    vencido: '#ef4444',       // Rojo
-    devuelto: '#3b82f6',      // Azul
-    parcial: '#f59e0b',       // Amarillo/Ámbar
-    gridColor: 'rgba(0, 0, 0, 0.06)',
-    textColor: '#334155',     // Texto oscuro para alta legibilidad
-    fontFamily: "'Inter', system-ui, sans-serif"
-  };
+  let chartPrestamosInst = null;
+  let chartCategoriasInst = null;
+  let chartSaludInst = null;
+
+  function isDarkMode() {
+    return document.body.classList.contains('dark-mode');
+  }
+
+  function getThemeColors() {
+    const dark = isDarkMode();
+    return {
+      activo: '#10b981',        // Verde esmeralda
+      vencido: '#ef4444',       // Rojo
+      devuelto: '#3b82f6',      // Azul
+      parcial: '#f59e0b',       // Amarillo/Ámbar
+      gridColor: dark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
+      textColor: dark ? '#cbd5e1' : '#334155',
+      yTickColor: dark ? '#f1f5f9' : '#0f172a',
+      borderColor: dark ? '#1e293b' : '#ffffff',
+      fontFamily: "'Inter', system-ui, sans-serif"
+    };
+  }
 
   // ── 1. Gráfica de Estado de Préstamos (Doughnut) ──
   function initChartPrestamos() {
@@ -22,31 +34,37 @@
     const canvas = document.getElementById('chartPrestamos');
     if (!el || !canvas) return;
 
+    if (chartPrestamosInst) {
+      chartPrestamosInst.destroy();
+      chartPrestamosInst = null;
+    }
+
     try {
       const rawData = JSON.parse(el.textContent);
       const ctx = canvas.getContext('2d');
+      const tc = getThemeColors();
 
-      new Chart(ctx, {
+      chartPrestamosInst = new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels: rawData.labels || ['Activos', 'Vencidos', 'Devueltos', 'Parciales'],
           datasets: [{
             data: rawData.data || [0, 0, 0, 0],
-            backgroundColor: [theme.activo, theme.vencido, theme.devuelto, theme.parcial],
+            backgroundColor: [tc.activo, tc.vencido, tc.devuelto, tc.parcial],
             borderWidth: 2,
-            borderColor: '#ffffff'
+            borderColor: tc.borderColor
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          animation: { duration: 900 },
+          animation: { duration: 600 },
           plugins: {
             legend: {
               position: 'bottom',
               labels: {
-                color: theme.textColor,
-                font: { family: theme.fontFamily, size: 12, weight: '600' },
+                color: tc.textColor,
+                font: { family: tc.fontFamily, size: 12, weight: '600' },
                 padding: 16,
                 usePointStyle: true,
                 pointStyleWidth: 10
@@ -75,11 +93,17 @@
     const canvas = document.getElementById('chartCategorias');
     if (!el || !canvas) return;
 
+    if (chartCategoriasInst) {
+      chartCategoriasInst.destroy();
+      chartCategoriasInst = null;
+    }
+
     try {
       const rawData = JSON.parse(el.textContent);
       const ctx = canvas.getContext('2d');
+      const tc = getThemeColors();
 
-      new Chart(ctx, {
+      chartCategoriasInst = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: rawData.labels || [],
@@ -96,7 +120,7 @@
           responsive: true,
           maintainAspectRatio: false,
           indexAxis: 'y',
-          animation: { duration: 900 },
+          animation: { duration: 600 },
           plugins: {
             legend: { display: false },
             tooltip: {
@@ -110,12 +134,12 @@
           },
           scales: {
             x: {
-              grid: { color: theme.gridColor },
-              ticks: { color: theme.textColor, font: { family: theme.fontFamily, weight: '500' } }
+              grid: { color: tc.gridColor },
+              ticks: { color: tc.textColor, font: { family: tc.fontFamily, weight: '500' } }
             },
             y: {
               grid: { display: false },
-              ticks: { color: '#0f172a', font: { family: theme.fontFamily, weight: '600' } }
+              ticks: { color: tc.yTickColor, font: { family: tc.fontFamily, weight: '600' } }
             }
           }
         }
@@ -131,31 +155,37 @@
     const canvas = document.getElementById('chartSalud');
     if (!el || !canvas) return;
 
+    if (chartSaludInst) {
+      chartSaludInst.destroy();
+      chartSaludInst = null;
+    }
+
     try {
       const rawData = JSON.parse(el.textContent);
       const ctx = canvas.getContext('2d');
+      const tc = getThemeColors();
 
-      new Chart(ctx, {
+      chartSaludInst = new Chart(ctx, {
         type: 'pie',
         data: {
           labels: rawData.labels || ['Disponible', 'En Préstamo', 'No disponible'],
           datasets: [{
             data: rawData.data || [0, 0, 0],
-            backgroundColor: [theme.activo, theme.parcial, theme.vencido],
+            backgroundColor: [tc.activo, tc.parcial, tc.vencido],
             borderWidth: 2,
-            borderColor: '#ffffff'
+            borderColor: tc.borderColor
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          animation: { duration: 900 },
+          animation: { duration: 600 },
           plugins: {
             legend: {
               position: 'bottom',
               labels: {
-                color: theme.textColor,
-                font: { family: theme.fontFamily, size: 12, weight: '600' },
+                color: tc.textColor,
+                font: { family: tc.fontFamily, size: 12, weight: '600' },
                 padding: 16,
                 usePointStyle: true,
                 pointStyleWidth: 10
@@ -177,10 +207,24 @@
     }
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  function renderAllCharts() {
     initChartPrestamos();
     initChartCategorias();
     initChartSalud();
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    renderAllCharts();
+
+    // Observador reactivo para conmutar colores si cambia la clase dark-mode en el body
+    const observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (m) {
+        if (m.attributeName === 'class') {
+          renderAllCharts();
+        }
+      });
+    });
+    observer.observe(document.body, { attributes: true });
   });
 
 })();
