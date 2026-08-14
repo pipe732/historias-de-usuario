@@ -9,15 +9,15 @@ class PrestamoForm(forms.ModelForm):
 
     class Meta:
         model  = Prestamo
-        fields = ['usuario', 'nombre_usuario', 'observaciones', 'fecha_vencimiento']
+        fields = ['documento', 'nombre_usuario', 'observaciones', 'fecha_vencimiento']
         labels = {
-            'usuario':          'Documento / ID del usuario',
+            'documento':        'Documento / ID del usuario',
             'nombre_usuario':   'Nombre del usuario',
             'observaciones':    'Observaciones',
             'fecha_vencimiento': 'Fecha de vencimiento',
         }
         widgets = {
-            'usuario': forms.TextInput(attrs={
+            'documento': forms.TextInput(attrs={
                 'class':       'form-control',
                 'placeholder': 'Documento o ID',
                 'id':          'id_usuario',
@@ -41,22 +41,22 @@ class PrestamoForm(forms.ModelForm):
             ),
         }
 
-    def clean_usuario(self):
-        usuario = self.cleaned_data.get('usuario', '').strip()
-        if not usuario:
+    def clean_documento(self):
+        documento = self.cleaned_data.get('documento', '').strip()
+        if not documento:
             raise forms.ValidationError('El documento/ID del usuario no puede estar vacío.')
-        if usuario == '-1':
+        if documento == '-1':
             raise forms.ValidationError('Usuario no válido.')
-        return usuario
+        return documento
 
     def clean(self):
         cleaned_data = super().clean()
-        usuario = cleaned_data.get('usuario')
+        documento = cleaned_data.get('documento')
         nombre_usuario = cleaned_data.get('nombre_usuario')
-        if usuario and nombre_usuario:
+        if documento and nombre_usuario:
             from usuario.models import Usuario
             try:
-                user = Usuario.objects.get(numero_documento=usuario)
+                user = Usuario.objects.get(numero_documento=documento)
                 if user.nombre_completo != nombre_usuario:
                     raise forms.ValidationError('El nombre del usuario no coincide con el documento.')
             except Usuario.DoesNotExist:

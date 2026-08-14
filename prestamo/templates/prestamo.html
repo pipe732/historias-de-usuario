@@ -256,7 +256,7 @@
           <td>
             {% if p.estado == 'pendiente' %}
               <span class="badge-state prestamo__style-45">
-                <span style="width:5px; height:5px; border-radius:50%; background:#c4900a; display:inline-block;"></span>
+                <span class="badge-dot-amber"></span>
                 Pendiente
               </span>
             {% elif p.estado == 'activo' %}
@@ -265,7 +265,7 @@
               <span class="badge-state badge-pendiente">Parcial</span>
             {% elif p.estado == 'devuelto' %}
               <span class="badge-state prestamo__style-46">
-                <span style="width:5px; height:5px; border-radius:50%; background:var(--navy); display:inline-block;"></span>
+                <span class="badge-dot-navy"></span>
                 Devuelto
               </span>
             {% elif p.estado == 'vencido' %}

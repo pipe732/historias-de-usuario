@@ -24,12 +24,12 @@ class TipoEstadoAdmin(admin.ModelAdmin):
 @admin.register(Mantenimiento)
 class MantenimientoAdmin(admin.ModelAdmin):
     list_display = [
-        'producto',
+        'codigo_herramienta',
         'tipo_mantenimiento',
         'prioridad',
         'tipo_estado',
         'estado_registro',
-        'fecha_reporte',
+        'fecha_ingreso',
         'responsable',
     ]
     list_filter = [
@@ -39,8 +39,8 @@ class MantenimientoAdmin(admin.ModelAdmin):
         'tipo_estado',
     ]
     search_fields = [
-        'producto__nombre',
-        'producto__codigo_sku',
+        'codigo_herramienta__nombre',
+        'codigo_herramienta__codigo_sku',
         'detalles__descripcion',
     ]
     readonly_fields = [
@@ -48,7 +48,7 @@ class MantenimientoAdmin(admin.ModelAdmin):
         'actualizado_en',
         'ubicacion_snapshot',
     ]
-    date_hierarchy = 'fecha_reporte'
+    date_hierarchy = 'fecha_ingreso'
 
 
 @admin.register(MantenimientoCambio)
@@ -61,8 +61,8 @@ class MantenimientoCambioAdmin(admin.ModelAdmin):
     ]
     list_filter = ['motivo_edicion', 'fecha_edicion']
     search_fields = [
-        'mantenimiento__producto__nombre',
-        'mantenimiento__producto__codigo_sku',
+        'mantenimiento__codigo_herramienta__nombre',
+        'mantenimiento__codigo_herramienta__codigo_sku',
         'detalle_motivo',
     ]
     readonly_fields = [
