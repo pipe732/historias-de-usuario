@@ -46,6 +46,15 @@ class Usuario(models.Model):
     )
     programa         = models.CharField(max_length=100, blank=True, null=True, verbose_name='Programa')
     ficha            = models.CharField(max_length=50, blank=True, null=True, verbose_name='Ficha')
+    password         = models.CharField(max_length=255, blank=True, null=True, verbose_name='Contraseña')
+    rol              = models.CharField(
+        max_length=50,
+        choices=ROL_CHOICES,
+        default='Usuario',
+        blank=True,
+        null=True,
+        verbose_name='Rol',
+    )
 
     class Meta:
         db_table = 'usuario'

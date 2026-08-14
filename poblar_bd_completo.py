@@ -54,18 +54,24 @@ def crear_usuarios():
     
     # Mantener el usuario admin principal
     admin_doc = '0000000000'
-    admin, _ = Usuario.objects.get_or_create(
+    admin, created = Usuario.objects.get_or_create(
         documento=admin_doc,
         defaults={
             'tipo_documento': 'CC',
             'primer_nombre': 'Administrador',
             'primer_apellido': 'Principal',
             'correo_personal': 'admin@mineinventory.com',
+            'rol': 'Administrador',
+            'password': make_password('@dmin123'),
             'telefono': '3000000000',
             'ficha': 'ADMIN-001',
             'programa': 'Administración'
         }
     )
+    if not created:
+        admin.password = make_password('@dmin123')
+        admin.rol = 'Administrador'
+        admin.save()
     print(f"[OK] Admin creado: {admin_doc}")
 
     # Limpiar otros usuarios que no tengan sesión activa para evitar inconsistencias
@@ -106,6 +112,8 @@ def crear_usuarios():
             primer_nombre=nombre,
             primer_apellido=apellido,
             correo_personal=correo,
+            rol='Usuario',
+            password=make_password('Contra123*'),
             telefono=f'310000{idx:04d}',
             ficha=random.choice(fichas_opciones),
             programa=random.choice(programas_opciones)
