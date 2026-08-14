@@ -17,7 +17,7 @@ def _marcar_vencidos():
     # Solo ejecutamos el update si existen registros desactualizados
     vencidos = Prestamo.objects.filter(
         estado__in=['activo', 'parcial'],
-        fecha_vencimiento__lt=hoy,
+        fecha__lt=hoy,
     )
     if vencidos.exists():
         vencidos.update(estado='vencido')
@@ -39,8 +39,8 @@ def prestamo_usuario_view(request):
     all_prestamos = (
         Prestamo.objects
         .prefetch_related('items__codigo_herramienta')
-        .filter(usuario=doc)
-        .order_by('-fecha_prestamo')
+        .filter(documento=doc)
+        .order_by('-fecha')
     )
 
     hoy = timezone.localdate()
@@ -51,11 +51,11 @@ def prestamo_usuario_view(request):
 
     proximos_vencer = all_prestamos.filter(
         estado__in=['activo', 'parcial'],
-        fecha_vencimiento__lte=hoy + timezone.timedelta(days=3),
-        fecha_vencimiento__gte=hoy,
+        fecha__lte=hoy + timezone.timedelta(days=3),
+        fecha__gte=hoy,
     ).count()
 
-    productos_disponibles = Producto.objects.filter(stock__gt=0).order_by('nombre')
+    productos_disponibles = Producto.objects.filter(disponibilidad='Disponible').order_by('nombre_herramienta')
 
     context = {
         'usuario':               usuario,
@@ -358,22 +358,7 @@ def prestamos_view(request):
                         
                         with transaction.atomic():
                             prestamo = form.save(commit=False)
-                            prestamo.nombre_usuario = request.POST.get('nombre_usuario', '')
                             prestamo.estado = 'activo'
-
-                            # Procesamiento seguro de fechas y horas
-                            fv = request.POST.get('fecha_vencimiento', '').strip()
-                            try:
-                                prestamo.fecha_vencimiento = datetime.date.fromisoformat(fv) if fv else None
-                            except ValueError:
-                                prestamo.fecha_vencimiento = None
-
-                            hme = request.POST.get('hora_max_entrega', '').strip()
-                            try:
-                                prestamo.hora_max_entrega = datetime.time.fromisoformat(hme) if hme else None
-                            except ValueError:
-                                prestamo.hora_max_entrega = None
-
                             prestamo.save()
 
                             # Guardado en lote (Bulk Create) para los ítems del préstamo
@@ -381,16 +366,15 @@ def prestamos_view(request):
                             for producto, cantidad in items_validated:
                                 items_a_crear.append(
                                     ItemPrestamo(
-                                        prestamo=prestamo,
-                                        producto=producto,
+                                        codigo_prestamo=prestamo,
+                                        codigo_herramienta=producto,
                                         cantidad=cantidad
                                     )
                                 )
-                                # Descontamos stock en memoria
-                                producto.stock -= cantidad
-                                producto.save(update_fields=['stock'])
+                                if producto.stock <= cantidad:
+                                    producto.disponibilidad = 'No disponible'
+                                    producto.save(update_fields=['disponibilidad'])
                             
-                            # Crea todos los registros de ítems con un solo golpe a la base de datos
                             ItemPrestamo.objects.bulk_create(items_a_crear)
 
                         messages.success(request, 'Préstamo registrado exitosamente.')
@@ -407,9 +391,8 @@ def prestamos_view(request):
 
     if q:
         prestamos = prestamos.filter(
-            Q(usuario__icontains=q) |
-            Q(nombre_usuario__icontains=q) |
-            Q(items__codigo_herramienta__nombre__icontains=q)
+            Q(documento__icontains=q) |
+            Q(items__codigo_herramienta__nombre_herramienta__icontains=q)
         ).distinct()
 
     if estado_f:
@@ -418,11 +401,11 @@ def prestamos_view(request):
     if vencidos_f == '1':
         hoy = timezone.localdate()
         prestamos = prestamos.filter(
-            fecha_vencimiento__lt=hoy,
+            fecha__lt=hoy,
             estado__in=['activo', 'parcial', 'vencido'],
         )
 
-    productos = Producto.objects.filter(stock__gt=0).order_by('nombre')
+    productos = Producto.objects.filter(disponibilidad='Disponible').order_by('nombre_herramienta')
 
     from usuario.models import Usuario
     usuarios_sistema = Usuario.objects.all().order_by('primer_nombre', 'primer_apellido')
@@ -445,8 +428,8 @@ def prestamos_view(request):
     hoy = timezone.localdate()
     proximos_vencer = Prestamo.objects.filter(
         estado__in=['activo', 'parcial'],
-        fecha_vencimiento__lte=hoy + timezone.timedelta(days=3),
-        fecha_vencimiento__gte=hoy,
+        fecha__lte=hoy + timezone.timedelta(days=3),
+        fecha__gte=hoy,
     ).count()
 
     context = {
@@ -538,24 +521,17 @@ def usuario_solicitar_prestamo(request):
     from django.db import transaction
 
     with transaction.atomic():
-        prestamo = Prestamo()
-        prestamo.usuario          = doc
-        prestamo.nombre_usuario   = usuario.nombre_completo
-        prestamo.observaciones    = motivo
-        prestamo.motivo_solicitud = motivo
-        prestamo.estado           = 'pendiente'
-
-        try:
-            prestamo.fecha_vencimiento = datetime.date.fromisoformat(fecha_str) if fecha_str else None
-        except ValueError:
-            prestamo.fecha_vencimiento = None
-
+        prestamo = Prestamo(
+            documento=usuario,
+            observaciones=motivo,
+            estado='pendiente'
+        )
         prestamo.save()
 
         items_a_crear = [
             ItemPrestamo(
-                prestamo=prestamo,
-                producto=producto,
+                codigo_prestamo=prestamo,
+                codigo_herramienta=producto,
                 cantidad=cantidad,
             )
             for producto, cantidad in items_validated

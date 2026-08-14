@@ -28,42 +28,32 @@ class Usuario(models.Model):
         ('Administrador', 'Administrador'),
     ]
 
-    # Campos exactos del diagrama ER MySQL Workbench
-    documento        = models.CharField(max_length=20, primary_key=True, db_column='documento', default='')
-    primer_nombre    = models.CharField(max_length=50, default='', verbose_name="Primer Nombre")
+    # Campos de la tabla 'usuario' en MySQL Dump20260814.sql
+    documento        = models.CharField(max_length=20, primary_key=True, db_column='documento', verbose_name="Número de Documento")
+    primer_nombre    = models.CharField(max_length=50, verbose_name="Primer Nombre")
     segundo_nombre   = models.CharField(max_length=50, blank=True, null=True, verbose_name="Segundo Nombre")
-    primer_apellido  = models.CharField(max_length=50, default='', verbose_name="Primer Apellido")
+    primer_apellido  = models.CharField(max_length=50, verbose_name="Primer Apellido")
     segundo_apellido = models.CharField(max_length=50, blank=True, null=True, verbose_name="Segundo Apellido")
-    correo_personal  = models.EmailField(max_length=100, default='', verbose_name="Correo Personal", db_column='correo_personal')
+    correo_personal  = models.CharField(max_length=100, blank=True, null=True, verbose_name="Correo Personal", db_column='correo_personal')
     telefono         = models.CharField(max_length=20, blank=True, null=True, verbose_name="Teléfono")
     tipo_documento   = models.CharField(
         max_length=30,
         choices=TIPO_DOCUMENTO_CHOICES,
         default='CC',
+        blank=True,
+        null=True,
         verbose_name='Tipo de documento',
     )
     programa         = models.CharField(max_length=100, blank=True, null=True, verbose_name='Programa')
     ficha            = models.CharField(max_length=50, blank=True, null=True, verbose_name='Ficha')
-
-    # Campos requeridos por el sistema para autenticación y rol
-    rol              = models.CharField(max_length=20, choices=ROL_CHOICES, default='Usuario')
-    password         = models.CharField(max_length=255, default='')
-
-    # Recuperación de contraseña
-    reset_token        = models.CharField(max_length=40, blank=True, default='')
-    reset_token_expira = models.FloatField(default=0)
-
-    destinado = models.ForeignKey(
-        'self', null=True, blank=True,
-        on_delete=models.SET_NULL,
-        related_name='destinados',
-        db_column='destinado'
-    )
-    solicitado = models.ForeignKey(
-        'self', null=True, blank=True,
-        on_delete=models.SET_NULL,
-        related_name='solicita',
-        db_column='solicitado'
+    password         = models.CharField(max_length=255, blank=True, null=True, verbose_name='Contraseña')
+    rol              = models.CharField(
+        max_length=50,
+        choices=ROL_CHOICES,
+        default='Usuario',
+        blank=True,
+        null=True,
+        verbose_name='Rol',
     )
 
     class Meta:
@@ -71,7 +61,7 @@ class Usuario(models.Model):
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
 
-    # Propiedades de compatibilidad con vistas existentes
+    # Propiedades de compatibilidad con vistas y formularios del sistema
     @property
     def numero_documento(self):
         return self.documento
@@ -100,7 +90,7 @@ class Usuario(models.Model):
 
     @property
     def correo(self):
-        return self.correo_personal
+        return self.correo_personal or ''
 
     @correo.setter
     def correo(self, val):
@@ -124,7 +114,8 @@ class Usuario(models.Model):
 
     def clean(self):
         super().clean()
-        validar_numero_documento(self.documento, self.tipo_documento)
+        if self.documento and self.tipo_documento:
+            validar_numero_documento(self.documento, self.tipo_documento)
 
     def __str__(self):
-        return f"{self.nombre_completo} ({self.get_tipo_documento_display()} {self.documento})"
+        return f"{self.nombre_completo} ({self.tipo_documento or ''} {self.documento})"
