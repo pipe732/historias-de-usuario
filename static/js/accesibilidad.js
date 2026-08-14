@@ -9,6 +9,21 @@
   // El modo claro es predeterminado a menos que acc_dark sea true
   var lightMode = localStorage.getItem('acc_light')    !== 'false' && !darkMode;
   var antigravity = localStorage.getItem('acc_antigravity') === 'true';
+  var compactTable = localStorage.getItem('acc_compact_table') === 'true';
+
+  /* ══════════════════════════════════════════
+     APLICAR DENSIDAD DE TABLAS
+  ══════════════════════════════════════════ */
+  function applyTableDensity(compact) {
+    compactTable = compact;
+    if (compact) {
+      document.body.classList.add('table-compact');
+      localStorage.setItem('acc_compact_table', 'true');
+    } else {
+      document.body.classList.remove('table-compact');
+      localStorage.setItem('acc_compact_table', 'false');
+    }
+  }
 
   /* ══════════════════════════════════════════
      APLICAR TAMAÑO DE LETRA DE ACCESIBILIDAD
@@ -50,6 +65,7 @@
   ══════════════════════════════════════════ */
   if (contrast) document.body.classList.add('high-contrast');
   if (antigravity) document.body.classList.add('antigravity-active');
+  if (compactTable) document.body.classList.add('table-compact');
   if (darkMode) {
     document.body.classList.add('dark-mode');
     document.body.classList.remove('light-mode');
@@ -68,10 +84,12 @@
     var d = document.getElementById('acc-btn-dark');
     var l = document.getElementById('acc-btn-light');
     var a = document.getElementById('acc-btn-antigravity');
+    var den = document.getElementById('acc-btn-density');
     if (c) c.classList.toggle('acc-active', contrast);
     if (d) d.classList.toggle('acc-active', darkMode);
     if (l) l.classList.toggle('acc-active', lightMode);
     if (a) a.classList.toggle('acc-active', antigravity);
+    if (den) den.classList.toggle('acc-active', compactTable);
   }
 
   /* ══════════════════════════════════════════
@@ -167,6 +185,14 @@
       });
     }
 
+    var densityBtn = document.getElementById('acc-btn-density');
+    if (densityBtn) {
+      densityBtn.addEventListener('click', function () {
+        applyTableDensity(!compactTable);
+        syncButtons();
+      });
+    }
+
     var plusBtn = document.getElementById('acc-btn-plus');
     if (plusBtn) {
       plusBtn.addEventListener('click', function () {
@@ -186,8 +212,8 @@
     var resetBtn = document.getElementById('acc-btn-reset');
     if (resetBtn) {
       resetBtn.addEventListener('click', function () {
-        contrast = false; darkMode = false; lightMode = true; antigravity = false;
-        document.body.classList.remove('high-contrast', 'dark-mode', 'antigravity-active');
+        contrast = false; darkMode = false; lightMode = true; antigravity = false; compactTable = false;
+        document.body.classList.remove('high-contrast', 'dark-mode', 'antigravity-active', 'table-compact');
         document.body.classList.add('light-mode');
         applyFontSize(100);
         resetAsideDark();
@@ -195,6 +221,7 @@
         localStorage.setItem('acc_dark', 'false');
         localStorage.setItem('acc_light', 'true');
         localStorage.removeItem('acc_antigravity');
+        localStorage.setItem('acc_compact_table', 'false');
         syncButtons();
       });
     }
