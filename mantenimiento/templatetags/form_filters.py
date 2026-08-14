@@ -10,4 +10,5 @@ def add_class(bound_field, css_class):
     except Exception:
         existing = ''
     new_class = (existing + ' ' + css_class).strip()
-    return bound_field.as_widget(attrs={**bound_field.field.widget.attrs, 'class': new_class})
+    attrs = {**bound_field.field.widget.attrs, 'class': new_class}
+    return bound_field.as_widget(attrs=attrs)

@@ -1,14 +1,9 @@
 from django.contrib import admin
-from .models import Producto, Categoria, Proveedor, Inventario, Movimientos, Detalle_Movimientos,Edicion_limitada
+from .models import Herramienta, CategoriaHerramienta, Proveedor, Suministro, Traslado, DetalleTraslado
 
-admin.site.register(Producto)
-admin.site.register(Categoria)
+admin.site.register(Herramienta)
+admin.site.register(CategoriaHerramienta)
 admin.site.register(Proveedor)
-admin.site.register(Inventario)
-admin.site.register(Movimientos)
-admin.site.register(Detalle_Movimientos)
-admin.site.register(Edicion_limitada)
-
-
-
-
+admin.site.register(Suministro)
+admin.site.register(Traslado)
+admin.site.register(DetalleTraslado)
