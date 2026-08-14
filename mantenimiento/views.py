@@ -12,7 +12,6 @@ from .models import (
     TipoEstado,
     TipoMantenimiento,
     Mantenimiento,
-    DetalleMantenimiento,
     ESTADO_REGISTRO_CHOICES,
 )
 from .forms import (
@@ -33,7 +32,7 @@ def _get_usuario_sesion(request):
     if not documento:
         return None
     try:
-        return Usuario.objects.get(numero_documento=documento)
+        return Usuario.objects.get(documento=documento)
     except Usuario.DoesNotExist:
         return None
 
@@ -225,7 +224,7 @@ def tipo_mantenimiento_crear(request):
         doc = request.session.get("usuario_documento")
         if doc:
             try:
-                tipo.creado_por = Usuario.objects.get(numero_documento=doc)
+                tipo.creado_por = Usuario.objects.get(documento=doc)
             except Usuario.DoesNotExist:
                 pass
         tipo.save()
@@ -270,7 +269,8 @@ def tipo_mantenimiento_inactivar(request, pk):
         if not tipo.puede_inactivarse():
             messages.error(
                 request,
-                f'No se puede inactivar "{tipo.nombre}" porque tiene órdenes de mantenimiento abiertas.',
+                f'No se puede inactivar "{tipo.nombre}" porque '
+                'tiene órdenes de mantenimiento abiertas.',
             )
         else:
             tipo.activo = False
@@ -299,7 +299,8 @@ def tipo_mantenimiento_eliminar(request, pk):
         if not tipo.puede_eliminarse():
             messages.error(
                 request,
-                f'No se puede eliminar "{tipo.nombre}" porque ya fue utilizado en órdenes de mantenimiento.',
+                f'No se puede eliminar "{tipo.nombre}" porque ya fue utilizado '
+                'en órdenes de mantenimiento.',
             )
         else:
             nombre = tipo.nombre
@@ -328,8 +329,8 @@ class MantenimientoListView(SesionRequeridaMixin, ListView):
 
     def get_queryset(self):
         qs = Mantenimiento.objects.select_related(
-            "producto", "tipo_estado", "tipo_mantenimiento", "responsable"
-        ).order_by("-fecha_reporte")
+            "codigo_herramienta", "tipo_estado", "tipo_mantenimiento", "responsable"
+        ).order_by("-fecha_ingreso")
 
         q = self.request.GET.get("q", "")
         tipo = self.request.GET.get("tipo", "")
@@ -337,8 +338,8 @@ class MantenimientoListView(SesionRequeridaMixin, ListView):
 
         if q:
             qs = qs.filter(
-                Q(producto__nombre__icontains=q)
-                | Q(producto__codigo_sku__icontains=q)
+                Q(codigo_herramienta__nombre__icontains=q)
+                | Q(codigo_herramienta__codigo_sku__icontains=q)
                 | Q(detalles__descripcion__icontains=q)
             )
         if tipo:
@@ -365,8 +366,16 @@ class MantenimientoDetailView(SesionRequeridaMixin, DetailView):
 
     def get_queryset(self):
         return Mantenimiento.objects.select_related(
-            "producto", "tipo_estado", "responsable", "creado_por", "actualizado_por"
-        ).prefetch_related("cambios_auditoria__editado_por", "detalles__registrado_por", "detalles__tipo_mantenimiento")
+            "codigo_herramienta",
+            "tipo_estado",
+            "responsable",
+            "creado_por",
+            "actualizado_por",
+        ).prefetch_related(
+            "cambios_auditoria__editado_por",
+            "detalles__registrado_por",
+            "detalles__tipo_mantenimiento",
+        )
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -426,12 +435,12 @@ class MantenimientoUpdateView(SesionRequeridaMixin, ContextoMixin, UpdateView):
     subtitulo = "Actualiza la orden sin perder trazabilidad"
     boton_texto = "Guardar cambios"
     url_cancelar = "mantenimiento:mantenimiento_lista"
-    
-    #Metodo para tráer el mismo JOIN el producto, el estado, el responsable y quien lo creó
-    #Metodo para realizar una sola consulta a la bd por cada join mejorando el rendimiento
-    def get_queryset(self):                            
+
+    # Método para traer con el mismo JOIN producto, estado, responsable y creador
+    # Método para realizar una sola consulta a la bd por cada join
+    def get_queryset(self):
         return Mantenimiento.objects.select_related(
-            "producto", "tipo_estado", "responsable", "creado_por"
+            "codigo_herramienta", "tipo_estado", "responsable", "creado_por"
         )
 
     def dispatch(self, request, *args, **kwargs):
@@ -439,7 +448,8 @@ class MantenimientoUpdateView(SesionRequeridaMixin, ContextoMixin, UpdateView):
         if not _puede_editar_mantenimiento(request, self.object):
             messages.error(
                 request,
-                "No tienes permisos para editar este registro o su estado no permite edición.",
+                "No tienes permisos para editar este registro o "
+                "su estado no permite edición.",
             )
             return HttpResponseForbidden(
                 "Acceso denegado para editar este mantenimiento."
@@ -474,7 +484,8 @@ class MantenimientoUpdateView(SesionRequeridaMixin, ContextoMixin, UpdateView):
         if _es_cambio_significativo(cambios):
             messages.info(
                 self.request,
-                "Se registró un cambio significativo; puedes notificar al supervisor desde el historial.",
+                "Se registró un cambio significativo; puedes "
+                "notificar al supervisor desde el historial.",
             )
         return redirect("mantenimiento:mantenimiento_detalle", pk=mantenimiento.pk)
 
@@ -515,7 +526,8 @@ class EstadoActualListView(SesionRequeridaMixin, ListView):
         ctx = super().get_context_data(**kwargs)
         ctx["q"] = self.request.GET.get("q", "")
         ctx["disponible_filtro"] = self.request.GET.get("disponible", "")
-        # Estos counts usan el queryset completo sin filtros, correcto para los totales globales
+        # Estos counts usan el queryset completo sin filtros,
+        # correcto para los totales globales
         ctx["total_disponibles"] = Producto.objects.filter(disponible=True).count()
         ctx["total_no_disponibles"] = Producto.objects.filter(disponible=False).count()
         return ctx
@@ -534,11 +546,11 @@ class HistorialProductoView(SesionRequeridaMixin, ListView):
         self.producto = get_object_or_404(Producto, pk=self.kwargs["producto_id"])
 
         qs = (
-            Mantenimiento.objects.filter(producto=self.producto)
+            Mantenimiento.objects.filter(codigo_herramienta=self.producto)
             .select_related(
                 "tipo_estado", "tipo_mantenimiento", "responsable", "creado_por"
             )
-            .order_by("-fecha_reporte")
+            .order_by("-fecha_ingreso")
         )
 
         q = self.request.GET.get("q", "").strip()
@@ -601,13 +613,13 @@ def registrar_desde_inventario(request):
 
     if form.is_valid():
         mantenimiento = form.save(commit=False)
-        mantenimiento.producto = producto #Esta linea corrige el error de la query duplicada
-        
+        # Esta línea corrige el error de la query duplicada
+        mantenimiento.producto = producto
         # Auditoría: asignar creado_por desde la sesión propia
         doc = request.session.get("usuario_documento")
         if doc:
             try:
-                usuario = Usuario.objects.get(numero_documento=doc)
+                usuario = Usuario.objects.get(documento=doc)
                 mantenimiento.creado_por = usuario
                 mantenimiento.actualizado_por = usuario
             except Usuario.DoesNotExist:

@@ -103,7 +103,7 @@ def login_view(request):
 
         try:
             usuario = Usuario.objects.get(
-                numero_documento=documento,
+                documento=documento,
                 tipo_documento=tipo_documento,
             )
         except Usuario.DoesNotExist:
@@ -200,11 +200,11 @@ def registro_view(request):
             messages.error(request, 'Las contraseñas no coinciden.')
             return render(request, 'registro.html', ctx)
 
-        if Usuario.objects.filter(numero_documento=documento).exists():
+        if Usuario.objects.filter(documento=documento).exists():
             messages.error(request, 'Ya existe un usuario con ese número de documento.')
             return render(request, 'registro.html', ctx)
 
-        if Usuario.objects.filter(correo=email).exists():
+        if Usuario.objects.filter(correo_personal=email).exists():
             messages.error(request, 'El correo ya está registrado.')
             return render(request, 'registro.html', ctx)
 
@@ -253,7 +253,7 @@ def olvido_contrasena_view(request):
             return render(request, 'olvido_contrasena.html')
 
         try:
-            usuario = Usuario.objects.get(correo=email)
+            usuario = Usuario.objects.get(correo_personal=email)
         except Usuario.DoesNotExist:
             # Mensaje genérico por seguridad
             messages.success(request, 'Si el correo está registrado, recibirás un enlace.')
@@ -302,7 +302,7 @@ def olvido_contrasena_view(request):
 def nueva_contrasena_view(request, uid, token):
     try:
         documento = force_str(urlsafe_base64_decode(uid))
-        usuario   = Usuario.objects.get(numero_documento=documento)
+        usuario   = Usuario.objects.get(documento=documento)
     except Exception:
         messages.error(request, 'El enlace no es válido.')
         return redirect('olvido_contrasena')
@@ -366,7 +366,7 @@ def lista_usuarios_view(request):
         rol_id          = request.POST.get('rol', '').strip()
         nueva_password  = request.POST.get('nueva_password', '').strip()
 
-        usuario = get_object_or_404(Usuario, numero_documento=doc)
+        usuario = get_object_or_404(Usuario, documento=doc)
 
         if not nombre:
             messages.error(request, 'El nombre no puede estar vacío.')
@@ -380,7 +380,7 @@ def lista_usuarios_view(request):
             messages.error(request, 'El teléfono solo debe contener dígitos.')
             return redirect('lista_usuarios')
 
-        if Usuario.objects.filter(correo=correo).exclude(numero_documento=doc).exists():
+        if Usuario.objects.filter(correo_personal=correo).exclude(documento=doc).exists():
             messages.error(request, 'Ese correo ya está en uso por otro usuario.')
             return redirect('lista_usuarios')
 
@@ -388,13 +388,16 @@ def lista_usuarios_view(request):
             messages.error(request, 'Rol no válido.')
             return redirect('lista_usuarios')
 
-        campos = ['nombre_completo', 'correo', 'telefono', 'numero_ficha', 'nombre_programa', 'rol']
-        usuario.nombre_completo  = nombre
-        usuario.correo           = correo
+        parts = nombre.split(' ', 1)
+        usuario.primer_nombre    = parts[0]
+        usuario.primer_apellido  = parts[1] if len(parts) > 1 else ''
+        usuario.correo_personal  = correo
         usuario.telefono         = telefono
-        usuario.numero_ficha     = numero_ficha
-        usuario.nombre_programa  = nombre_programa
+        usuario.ficha            = numero_ficha
+        usuario.programa         = nombre_programa
         usuario.rol              = rol_id
+
+        campos = ['primer_nombre', 'primer_apellido', 'correo_personal', 'telefono', 'ficha', 'programa', 'rol']
 
         if nueva_password:
             if len(nueva_password) < 8:
@@ -409,7 +412,7 @@ def lista_usuarios_view(request):
         return redirect('lista_usuarios')
 
     # ── GET: listar con filtros ───────────────────────────────
-    qs = Usuario.objects.order_by('nombre_completo')
+    qs = Usuario.objects.order_by('primer_nombre', 'primer_apellido')
 
     q        = request.GET.get('q', '').strip()
     rol      = request.GET.get('rol', '')
@@ -417,9 +420,10 @@ def lista_usuarios_view(request):
 
     if q:
         qs = qs.filter(
-            Q(nombre_completo__icontains=q) |
-            Q(numero_documento__icontains=q) |
-            Q(correo__icontains=q)
+            Q(primer_nombre__icontains=q) |
+            Q(primer_apellido__icontains=q) |
+            Q(documento__icontains=q) |
+            Q(correo_personal__icontains=q)
         )
     if rol:
         qs = qs.filter(rol=rol)
@@ -445,12 +449,12 @@ def lista_usuarios_view(request):
 def detalle_usuario_json(request, numero_documento):
     usuario = get_object_or_404(
         Usuario.objects.select_related('destinado', 'solicitado'),
-        numero_documento=numero_documento,
+        documento=numero_documento,
     )
 
     prestamos_qs = (
         Prestamo.objects
-        .prefetch_related('items__producto')
+        .prefetch_related('items__codigo_herramienta')
         .filter(usuario=usuario.numero_documento)
         .order_by('-fecha_prestamo')
     )
@@ -506,7 +510,7 @@ def detalle_usuario_json(request, numero_documento):
 # ─────────────────────────────────────────────────────────────
 @sesion_requerida
 def exportar_usuarios_csv(request):
-    qs = Usuario.objects.order_by('nombre_completo')
+    qs = Usuario.objects.order_by('primer_nombre', 'primer_apellido')
 
     q        = request.GET.get('q', '').strip()
     rol      = request.GET.get('rol', '')
@@ -514,9 +518,10 @@ def exportar_usuarios_csv(request):
 
     if q:
         qs = qs.filter(
-            Q(nombre_completo__icontains=q) |
-            Q(numero_documento__icontains=q) |
-            Q(correo__icontains=q)
+            Q(primer_nombre__icontains=q) |
+            Q(primer_apellido__icontains=q) |
+            Q(documento__icontains=q) |
+            Q(correo_personal__icontains=q)
         )
     if rol:
         qs = qs.filter(rol=rol)
@@ -550,7 +555,7 @@ def exportar_usuarios_csv(request):
 @sesion_requerida
 def perfil_view(request):
     doc     = request.session.get('usuario_documento')
-    usuario = get_object_or_404(Usuario, numero_documento=doc)
+    usuario = get_object_or_404(Usuario, documento=doc)
     errores = {}
     accion_activa = ''
 
@@ -571,18 +576,20 @@ def perfil_view(request):
             if telefono and not telefono.isdigit():
                 errores['telefono'] = 'El teléfono solo debe contener dígitos.'
             if not errores.get('correo'):
-                if Usuario.objects.filter(correo=correo).exclude(numero_documento=doc).exists():
+                if Usuario.objects.filter(correo_personal=correo).exclude(documento=doc).exists():
                     errores['correo'] = 'Este correo ya está en uso por otro usuario.'
 
             if not errores:
-                usuario.nombre_completo  = nombre
-                usuario.correo           = correo
+                parts = nombre.split(' ', 1)
+                usuario.primer_nombre    = parts[0]
+                usuario.primer_apellido  = parts[1] if len(parts) > 1 else ''
+                usuario.correo_personal  = correo
                 usuario.telefono         = telefono
-                usuario.numero_ficha     = numero_ficha
-                usuario.nombre_programa  = nombre_programa
+                usuario.ficha            = numero_ficha
+                usuario.programa         = nombre_programa
                 usuario.save(update_fields=[
-                    'nombre_completo', 'correo', 'telefono',
-                    'numero_ficha', 'nombre_programa',
+                    'primer_nombre', 'primer_apellido', 'correo_personal', 'telefono',
+                    'ficha', 'programa',
                 ])
                 request.session['usuario_nombre'] = nombre
                 messages.success(request, 'Perfil actualizado correctamente.')

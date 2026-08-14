@@ -1,170 +1,211 @@
 from django.db import models
+from almacenamiento.models import Existencia
 
 
-class Categoria(models.Model):
-    nombre = models.CharField(max_length=100, unique=True, verbose_name="Nombre")
+class CategoriaHerramienta(models.Model):
+    codigo_categoria = models.AutoField(primary_key=True, db_column='codigo_categoria')
+    tipo_herramienta = models.CharField(max_length=100, blank=True, null=True, verbose_name="Tipo de herramienta")
+    nombre_categoria = models.CharField(max_length=100, verbose_name="Nombre de categoría")
     descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
-    creado_en = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = "Categoría"
-        verbose_name_plural = "Categorías"
-        ordering = ["nombre"]
+        db_table = 'categoria_herramienta'
+        verbose_name = "Categoría de Herramienta"
+        verbose_name_plural = "Categorías de Herramientas"
+        ordering = ["nombre_categoria"]
+
+    @property
+    def nombre(self):
+        return self.nombre_categoria
+
+    @nombre.setter
+    def nombre(self, val):
+        self.nombre_categoria = val
 
     def __str__(self):
-        return self.nombre
+        return self.nombre_categoria
 
 
-class Producto(models.Model):
-    codigo_sku = models.CharField(max_length=50, unique=True, verbose_name="Código / SKU")
-    nombre = models.CharField(max_length=200, verbose_name="Nombre")
+# Alias para retrocompatibilidad
+Categoria = CategoriaHerramienta
+
+
+class Herramienta(models.Model):
+    codigo_herramienta = models.AutoField(primary_key=True, db_column='codigo_herramienta')
+    codigo_SKU = models.CharField(max_length=50, unique=True, blank=True, null=True, db_column='codigo_SKU', verbose_name="Código SKU")
+    nombre_herramienta = models.CharField(max_length=100, db_column='nombre_herramienta', verbose_name="Nombre de herramienta")
     descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
-    stock = models.PositiveIntegerField(default=0, verbose_name="Stock / Cantidad")
-
-    categoria = models.ForeignKey(
-        'Categoria',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="productos",
+    disponibilidad = models.CharField(max_length=50, blank=True, null=True, verbose_name="Disponibilidad")
+    fecha_ingreso = models.DateField(blank=True, null=True, verbose_name="Fecha de ingreso")
+    codigo_categoria = models.ForeignKey(
+        CategoriaHerramienta,
+        on_delete=models.RESTRICT,
+        db_column='codigo_categoria',
+        related_name='herramientas',
         verbose_name="Categoría"
     )
 
-    numero_serie = models.CharField(max_length=100, blank=True, null=True, verbose_name="Número de serie")
-    disponible = models.BooleanField(default=True, verbose_name="Disponible para préstamo")
-    ubicacion = models.CharField(max_length=150, blank=True, null=True, verbose_name="Almacén / Estante")
-    creado_en = models.DateTimeField(auto_now_add=True)
-    actualizado_en = models.DateTimeField(auto_now=True)
-
     class Meta:
-        verbose_name = "Producto"
-        verbose_name_plural = "Productos"
-        ordering = ["nombre"]
-        indexes = [
-            models.Index(fields=['codigo_sku']),
-            models.Index(fields=['nombre']),
-            models.Index(fields=['stock']),
-        ]
+        db_table = 'herramienta'
+        verbose_name = "Herramienta"
+        verbose_name_plural = "Herramientas"
+        ordering = ["nombre_herramienta"]
+
+    # Propiedades de compatibilidad con Producto
+    @property
+    def codigo_sku(self):
+        return self.codigo_SKU
+
+    @codigo_sku.setter
+    def codigo_sku(self, val):
+        self.codigo_SKU = val
+
+    @property
+    def nombre(self):
+        return self.nombre_herramienta
+
+    @nombre.setter
+    def nombre(self, val):
+        self.nombre_herramienta = val
+
+    @property
+    def categoria(self):
+        return self.codigo_categoria
+
+    @categoria.setter
+    def categoria(self, val):
+        self.codigo_categoria = val
+
+    @property
+    def disponible(self):
+        return self.disponibilidad == 'Disponible' if self.disponibilidad else True
+
+    @disponible.setter
+    def disponible(self, val):
+        self.disponibilidad = 'Disponible' if val else 'No disponible'
 
     def __str__(self):
-        return f"[{self.codigo_sku}] {self.nombre}"
+        sku = f"[{self.codigo_SKU}] " if self.codigo_SKU else ""
+        return f"{sku}{self.nombre_herramienta}"
+
+
+# Alias para retrocompatibilidad con Producto
+Producto = Herramienta
 
 
 class Proveedor(models.Model):
-    nit_proveedor = models.CharField(max_length=50, unique=True, verbose_name="NIT")
-    telefono_contacto = models.CharField(max_length=20, verbose_name="Teléfono de contacto")
-    correo_proveedor = models.EmailField(verbose_name="Correo")
+    codigo_proveedor = models.AutoField(primary_key=True, db_column='codigo_proveedor')
+    nit_proveedor = models.CharField(max_length=50, unique=True, blank=True, null=True, verbose_name="NIT")
+    telefono_contacto = models.CharField(max_length=20, blank=True, null=True, verbose_name="Teléfono de contacto")
+    correo_proveedor = models.CharField(max_length=100, blank=True, null=True, verbose_name="Correo del proveedor")
     descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
 
     class Meta:
+        db_table = 'proveedor'
         verbose_name = "Proveedor"
         verbose_name_plural = "Proveedores"
         ordering = ["nit_proveedor"]
 
     def __str__(self):
-        return self.nit_proveedor
+        return self.nit_proveedor or f"Proveedor #{self.codigo_proveedor}"
 
 
-class Inventario(models.Model):
-    producto = models.ForeignKey(
-        Producto,
-        on_delete=models.CASCADE,
-        related_name="inventarios",
-        verbose_name="Producto"
+class Suministro(models.Model):
+    codigo_suministro = models.AutoField(primary_key=True, db_column='codigo_suministro')
+    codigo_proveedor = models.ForeignKey(
+        Proveedor,
+        on_delete=models.RESTRICT,
+        db_column='codigo_proveedor',
+        related_name='suministros',
+        verbose_name="Proveedor"
     )
-    id_estante = models.CharField(max_length=100, verbose_name="Estante")
-    cantidad = models.PositiveIntegerField(default=0, verbose_name="Cantidad")
-    responsable = models.CharField(max_length=150, verbose_name="Responsable")
+    codigo_herramienta = models.ForeignKey(
+        Herramienta,
+        on_delete=models.RESTRICT,
+        db_column='codigo_herramienta',
+        related_name='suministros',
+        verbose_name="Herramienta"
+    )
+    codigo_inventario = models.ForeignKey(
+        Existencia,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        db_column='codigo_inventario',
+        related_name='suministros',
+        verbose_name="Existencia"
+    )
+    fecha = models.DateField(verbose_name="Fecha")
+    cantidad = models.IntegerField(verbose_name="Cantidad")
     observaciones = models.TextField(blank=True, null=True, verbose_name="Observaciones")
 
     class Meta:
-        verbose_name = "Inventario"
-        verbose_name_plural = "Inventarios"
-        ordering = ["id_estante"]
-        indexes = [models.Index(fields=['id_estante'])]
+        db_table = 'suministro'
+        verbose_name = "Suministro"
+        verbose_name_plural = "Suministros"
+        ordering = ["-fecha"]
 
     def __str__(self):
-        return f"Inventario #{self.id} - {self.producto.nombre}"
+        return f"Suministro #{self.codigo_suministro} - {self.codigo_herramienta.nombre_herramienta} ({self.cantidad})"
 
 
-class Movimientos(models.Model):
-    TIPO_MOVIMIENTO_CHOICES = [
-        ("entrada", "Entrada"),
-        ("salida", "Salida"),
-        ("ajuste", "Ajuste"),
-    ]
-
-    inventario = models.ForeignKey(Inventario, on_delete=models.CASCADE, related_name="movimientos", verbose_name="Inventario")
-    proveedor = models.ForeignKey(Proveedor, on_delete=models.SET_NULL, null=True, blank=True, related_name="movimientos", verbose_name="Proveedor")
-    cantidad = models.PositiveIntegerField(verbose_name="Cantidad")
-    tipo_de_movimiento = models.CharField(max_length=20, choices=TIPO_MOVIMIENTO_CHOICES, verbose_name="Tipo de movimiento")
-    fecha_movimiento = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de movimiento")
+class Traslado(models.Model):
+    codigo_traslado = models.AutoField(primary_key=True, db_column='codigo_traslado')
+    cantidad_total = models.IntegerField(verbose_name="Cantidad Total")
+    tipo_movimiento = models.CharField(max_length=50, blank=True, null=True, verbose_name="Tipo de movimiento")
+    fecha_movimiento = models.DateField(verbose_name="Fecha de movimiento")
+    observaciones = models.TextField(blank=True, null=True, verbose_name="Observaciones")
+    codigo_inventario = models.ForeignKey(
+        Existencia,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        db_column='codigo_inventario',
+        related_name='traslados',
+        verbose_name="Existencia"
+    )
 
     class Meta:
-        verbose_name = "Movimiento"
-        verbose_name_plural = "Movimientos"
+        db_table = 'traslado'
+        verbose_name = "Traslado"
+        verbose_name_plural = "Traslados"
         ordering = ["-fecha_movimiento"]
-        indexes = [
-            models.Index(fields=['fecha_movimiento']),
-            models.Index(fields=['tipo_de_movimiento']),
-        ]
 
     def __str__(self):
-        return f"Movimiento #{self.id} - {self.tipo_de_movimiento}"
+        return f"Traslado #{self.codigo_traslado} - {self.fecha_movimiento}"
 
 
-class Detalle_Movimientos(models.Model):
-    movimiento = models.ForeignKey(Movimientos, on_delete=models.CASCADE, related_name="detalles", verbose_name="Movimiento")
-    inventario = models.ForeignKey(Inventario, on_delete=models.CASCADE, related_name="detalles", verbose_name="Inventario")
-    descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
+class DetalleTraslado(models.Model):
+    codigo_detalle = models.AutoField(primary_key=True, db_column='codigo_detalle')
+    codigo_traslado = models.ForeignKey(
+        Traslado,
+        on_delete=models.CASCADE,
+        db_column='codigo_traslado',
+        related_name='detalles',
+        verbose_name="Traslado"
+    )
+    codigo_herramienta = models.ForeignKey(
+        Herramienta,
+        on_delete=models.RESTRICT,
+        db_column='codigo_herramienta',
+        related_name='detalles_traslado',
+        verbose_name="Herramienta"
+    )
+    cantidad = models.IntegerField(verbose_name="Cantidad")
+    observaciones = models.TextField(blank=True, null=True, verbose_name="Observaciones")
 
     class Meta:
-        verbose_name = "Detalle de movimiento"
-        verbose_name_plural = "Detalles de movimiento"
+        db_table = 'detalle_traslado'
+        verbose_name = "Detalle de Traslado"
+        verbose_name_plural = "Detalles de Traslado"
 
     def __str__(self):
-        return f"Detalle #{self.id} de Movimiento #{self.movimiento_id}"
-    
-class Edicion_limitada(models.Model):
-    ESTADO = [
-        ('V', 'Vigente'),
-        ('D', 'Descontinuado'),
-    ]
-    producto = models.OneToOneField(Producto,on_delete=models.CASCADE,)      
-    nombre = models.CharField(max_length=100)
-    estado = models.CharField(max_length=20,choices=ESTADO)
-    observaciones = models.TextField(blank=True, null=True)
-    fecha_inicio = models.DateField()
-    fecha_fin = models.DateTimeField()
+        return f"Detalle #{self.codigo_detalle} de Traslado #{self.codigo_traslado_id}"
 
 
-    def __str__(self):
-        return f"{self.producto.codigo_sku}  {self.nombre}  {self.estado}"
-
-
-class MovimientoKardex(models.Model):
-    TIPO_CHOICES = [
-        ('entrada', 'Entrada (Stock)'),
-        ('salida', 'Salida (Baja)'),
-        ('prestamo', 'Préstamo Entregado'),
-        ('devolucion', 'Devolución Recibida'),
-        ('ajuste', 'Ajuste Manual'),
-    ]
-
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="kardex_movimientos", verbose_name="Producto")
-    tipo_movimiento = models.CharField(max_length=20, choices=TIPO_CHOICES, verbose_name="Tipo de movimiento")
-    cantidad = models.PositiveIntegerField(verbose_name="Cantidad")
-    stock_anterior = models.PositiveIntegerField(default=0, verbose_name="Stock anterior")
-    stock_nuevo = models.PositiveIntegerField(default=0, verbose_name="Stock nuevo")
-    usuario_nombre = models.CharField(max_length=150, blank=True, default="Sistema", verbose_name="Usuario / Responsable")
-    observaciones = models.TextField(blank=True, default="", verbose_name="Observaciones")
-    creado_en = models.DateTimeField(auto_now_add=True, verbose_name="Fecha y Hora")
-
-    class Meta:
-        verbose_name = "Movimiento Kardex"
-        verbose_name_plural = "Movimientos Kardex"
-        ordering = ["-creado_en"]
-
-    def __str__(self):
-        return f"[{self.tipo_movimiento.upper()}] {self.producto.nombre} ({self.cantidad}) - {self.creado_en.strftime('%d/%m/%Y %H:%M')}"
-    
+# Aliases de retrocompatibilidad para vistas
+Inventario = Existencia
+Movimientos = Traslado
+Detalle_Movimientos = DetalleTraslado
+MovimientoKardex = DetalleTraslado
+Edicion_limitada = Herramienta

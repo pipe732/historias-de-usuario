@@ -35,11 +35,12 @@ def migrate():
     lite_cursor.execute("PRAGMA foreign_keys = OFF;")
     lite_conn.commit()
     
-    # Get all tables from SQLite (excluding system tables)
+    # Get all tables from SQLite (excluding system tables and session tables)
+    SKIP_TABLES = {'django_session', 'django_migrations', 'django_content_type', 'auth_permission', 'auth_group', 'auth_group_permissions', 'auth_user_groups', 'auth_user_user_permissions'}
     lite_cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
-    tables = [row[0] for row in lite_cursor.fetchall()]
+    tables = [row[0] for row in lite_cursor.fetchall() if row[0] not in SKIP_TABLES]
     
-    print(f"Found {len(tables)} tables to migrate.")
+    print(f"Found {len(tables)} tables to migrate (skipping session/auth tables).")
     
     for table in tables:
         print(f"Migrating table: {table}...")
@@ -68,9 +69,10 @@ def migrate():
         placeholders = ", ".join(["?" for _ in columns])
         insert_query = f"INSERT INTO \"{table}\" ({col_names}) VALUES ({placeholders});"
         
+        import datetime
         from decimal import Decimal
 
-        # Convert values (handling bytes/memoryview/decimal/etc.)
+        # Convert values (handling bytes/memoryview/decimal/time/date/etc.)
         processed_rows = []
         for row in rows:
             processed_row = []
@@ -79,6 +81,8 @@ def migrate():
                     processed_row.append(val.tobytes())
                 elif isinstance(val, Decimal):
                     processed_row.append(float(val))
+                elif isinstance(val, (datetime.time, datetime.date)):
+                    processed_row.append(str(val))
                 else:
                     processed_row.append(val)
             processed_rows.append(processed_row)
@@ -148,10 +152,11 @@ def migrate_local_to_cloud():
         print(f"Warning: Could not set session_replication_role or prep schema: {e}")
         pg_conn.rollback()
 
+    SKIP_TABLES = {'django_session', 'django_migrations', 'django_content_type', 'auth_permission', 'auth_group', 'auth_group_permissions', 'auth_user_groups', 'auth_user_user_permissions'}
     lite_cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
-    tables = [row[0] for row in lite_cursor.fetchall()]
+    tables = [row[0] for row in lite_cursor.fetchall() if row[0] not in SKIP_TABLES]
     
-    print(f"Found {len(tables)} tables to migrate to cloud.")
+    print(f"Found {len(tables)} tables to migrate to cloud (skipping session/auth tables).")
     
     for table in tables:
         print(f"Migrating table: {table}...")

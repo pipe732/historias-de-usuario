@@ -49,21 +49,24 @@ def recalcular_estado_en_cambio_item(sender, instance, **kwargs):
     if not items.exists():
         return
 
-    total     = items.count()
-    devueltos = items.filter(devuelto=True).count()
+    total = items.count()
+    try:
+        devueltos = items.filter(devuelto=True).count()
+    except Exception:
+        devueltos = 0
 
-    if devueltos == total:
+    if devueltos == total and total > 0:
         nuevo = 'devuelto'
     elif devueltos == 0:
-        nuevo = 'vencido' if prestamo.esta_vencido else 'activo'
+        nuevo = 'vencido' if getattr(prestamo, 'esta_vencido', False) else prestamo.estado
     else:
         nuevo = 'parcial'
 
     if prestamo.estado != nuevo:
-        Prestamo.objects.filter(pk=prestamo.pk).update(
-            estado=nuevo,
-            fecha_actualizacion=timezone.now(),
-        )
+        update_fields = {'estado': nuevo}
+        if hasattr(prestamo, 'fecha_actualizacion'):
+            update_fields['fecha_actualizacion'] = timezone.now()
+        Prestamo.objects.filter(pk=prestamo.pk).update(**update_fields)
 
 
 @receiver(post_delete, sender=ItemPrestamo)
@@ -82,21 +85,24 @@ def recalcular_estado_en_borrado_item(sender, instance, **kwargs):
     if not items.exists():
         return
 
-    total     = items.count()
-    devueltos = items.filter(devuelto=True).count()
+    total = items.count()
+    try:
+        devueltos = items.filter(devuelto=True).count()
+    except Exception:
+        devueltos = 0
 
-    if devueltos == total:
+    if devueltos == total and total > 0:
         nuevo = 'devuelto'
     elif devueltos == 0:
-        nuevo = 'vencido' if prestamo.esta_vencido else 'activo'
+        nuevo = 'vencido' if getattr(prestamo, 'esta_vencido', False) else prestamo.estado
     else:
         nuevo = 'parcial'
 
     if prestamo.estado != nuevo:
-        Prestamo.objects.filter(pk=prestamo.pk).update(
-            estado=nuevo,
-            fecha_actualizacion=timezone.now(),
-        )
+        update_fields = {'estado': nuevo}
+        if hasattr(prestamo, 'fecha_actualizacion'):
+            update_fields['fecha_actualizacion'] = timezone.now()
+        Prestamo.objects.filter(pk=prestamo.pk).update(**update_fields)
 
 
 # ── 2. Auto-marcar vencidos al guardar cualquier Prestamo ──────────────────
@@ -119,10 +125,11 @@ def auto_marcar_vencido(sender, instance, created, update_fields, **kwargs):
     if instance.estado in ESTADOS_PROTEGIDOS:
         return
 
+    fecha_venc = getattr(instance, 'fecha_vencimiento', None)
     if (
-        instance.fecha_vencimiento
+        fecha_venc
         and instance.estado in ('activo', 'parcial')
-        and timezone.localdate() > instance.fecha_vencimiento
+        and timezone.localdate() > fecha_venc
     ):
         Prestamo.objects.filter(pk=instance.pk).update(
             estado='vencido',

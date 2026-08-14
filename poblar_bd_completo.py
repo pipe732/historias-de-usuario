@@ -54,25 +54,30 @@ def crear_usuarios():
     
     # Mantener el usuario admin principal
     admin_doc = '0000000000'
-    admin, _ = Usuario.objects.get_or_create(
-        numero_documento=admin_doc,
+    admin, created = Usuario.objects.get_or_create(
+        documento=admin_doc,
         defaults={
             'tipo_documento': 'CC',
-            'nombre_completo': 'Administrador Principal',
-            'correo': 'admin@mineinventory.com',
+            'primer_nombre': 'Administrador',
+            'primer_apellido': 'Principal',
+            'correo_personal': 'admin@mineinventory.com',
             'rol': 'Administrador',
             'password': make_password('@dmin123'),
             'telefono': '3000000000',
-            'numero_ficha': 'ADMIN-001',
-            'nombre_programa': 'Administración'
+            'ficha': 'ADMIN-001',
+            'programa': 'Administración'
         }
     )
+    if not created:
+        admin.password = make_password('@dmin123')
+        admin.rol = 'Administrador'
+        admin.save()
     print(f"[OK] Admin creado: {admin_doc}")
 
     # Limpiar otros usuarios que no tengan sesión activa para evitar inconsistencias
     docs_activos = obtener_documentos_activos()
     excluidos = ['0000000000'] + list(docs_activos)
-    Usuario.objects.exclude(numero_documento__in=excluidos).delete()
+    Usuario.objects.exclude(documento__in=excluidos).delete()
 
     nombres_usuarios = [
         ('Juan', 'Pérez'), ('María', 'García'), ('Carlos', 'López'), ('Ana', 'Martínez'),
@@ -102,15 +107,16 @@ def crear_usuarios():
         correo = f"{nombre.lower()}.{apellido.lower()}@sena.edu.co"
         
         usuario = Usuario.objects.create(
-            numero_documento=doc,
+            documento=doc,
             tipo_documento='CC',
-            nombre_completo=f'{nombre} {apellido}',
-            correo=correo,
+            primer_nombre=nombre,
+            primer_apellido=apellido,
+            correo_personal=correo,
             rol='Usuario',
             password=make_password('Contra123*'),
             telefono=f'310000{idx:04d}',
-            numero_ficha=random.choice(fichas_opciones),
-            nombre_programa=random.choice(programas_opciones)
+            ficha=random.choice(fichas_opciones),
+            programa=random.choice(programas_opciones)
         )
         usuarios.append(usuario)
         print(f"[OK] Usuario creado: {doc} - {nombre} {apellido}")
@@ -125,25 +131,24 @@ def crear_almacenamiento():
     print("="*70)
     
     almacenes_datos = [
-        ('Almacén A - Principal', 'Almacén general de herramientas manuales', 500),
-        ('Almacén B - Eléctricos', 'Bodega especializada en herramientas de poder', 200),
-        ('Almacén C - Reactivos y Seguridad', 'Almacén de EPP y equipos químicos', 300)
+        ('Almacén A - Principal', 'Almacén general de herramientas manuales'),
+        ('Almacén B - Eléctricos', 'Bodega especializada en herramientas de poder'),
+        ('Almacén C - Reactivos y Seguridad', 'Almacén de EPP y equipos químicos')
     ]
     
     almacenes = []
     estantes = []
-    for nombre, detalles, cap in almacenes_datos:
-        alm = Almacen.objects.create(nombre=nombre, detalles=detalles, capacidad=cap)
+    for nombre, ubic in almacenes_datos:
+        alm = Almacen.objects.create(nombre=nombre, dimensiones="10x15m", ubicacion=ubic)
         almacenes.append(alm)
         print(f"[OK] Almacén: {nombre}")
         
         for i in range(1, 4):
             codigo_estante = f"EST-{nombre.split(' ')[1]}-{i}"
             est = Estante.objects.create(
-                almacen=alm,
+                codigo_almacen=alm,
                 codigo=codigo_estante,
-                detalles=f"Estante {i} en {nombre}",
-                capacidad=100
+                dimensiones="2x1m"
             )
             estantes.append(est)
             print(f"  [OK] Estante: {codigo_estante}")
@@ -175,26 +180,25 @@ def crear_productos(categorias):
     print("="*70)
     
     datos = [
-        ('MART-001', 'Martillo de Goma', 'Martillo profesional anti-rebote', 35, 'Herramientas Manuales'),
-        ('TALD-20V', 'Taladro Inalámbrico 20V', 'Taladro percutor compacto de 20V', 12, 'Herramientas Eléctricas'),
-        ('CASC-001', 'Casco de Seguridad', 'Casco de protección ANSI clase E', 50, 'Equipos de Seguridad'),
-        ('MULT-001', 'Multímetro Digital', 'Multímetro automotriz y profesional', 8, 'Equipos de Medición'),
-        ('PINZ-001', 'Pinza Amperimétrica', 'Pinza para medición de corriente alterna', 15, 'Equipos de Medición'),
-        ('ESME-001', 'Esmeril Angular 4.5"', 'Esmeriladora angular de alto rendimiento', 6, 'Herramientas Eléctricas'),
+        ('MART-001', 'Martillo de Goma', 'Martillo profesional anti-rebote', 'Herramientas Manuales'),
+        ('TALD-20V', 'Taladro Inalámbrico 20V', 'Taladro percutor compacto de 20V', 'Herramientas Eléctricas'),
+        ('CASC-001', 'Casco de Seguridad', 'Casco de protección ANSI clase E', 'Equipos de Seguridad'),
+        ('MULT-001', 'Multímetro Digital', 'Multímetro automotriz y profesional', 'Equipos de Medición'),
+        ('PINZ-001', 'Pinza Amperimétrica', 'Pinza para medición de corriente alterna', 'Equipos de Medición'),
+        ('ESME-001', 'Esmeril Angular 4.5"', 'Esmeriladora angular de alto rendimiento', 'Herramientas Eléctricas'),
     ]
     
     cat_map = {c.nombre: c for c in categorias}
     productos = []
-    for sku, nombre, desc, stock, cat_name in datos:
+    for sku, nombre, desc, cat_name in datos:
         cat = cat_map.get(cat_name, categorias[0])
         prod = Producto.objects.create(
             codigo_sku=sku,
             nombre=nombre,
             descripcion=desc,
-            stock=stock,
             categoria=cat,
             disponible=True,
-            ubicacion='Almacén A - Principal'
+            fecha_ingreso=timezone.now().date()
         )
         productos.append(prod)
         print(f"[OK] Producto: {sku} - {nombre}")
@@ -222,7 +226,7 @@ def crear_proveedores():
 
 
 def crear_inventario(productos, estantes, usuarios):
-    """Crear inventarios en estantes específicos."""
+    """Crear existencias en estantes específicos."""
     print("\n" + "="*70)
     print(">>> CREANDO INVENTARIOS")
     print("="*70)
@@ -232,14 +236,14 @@ def crear_inventario(productos, estantes, usuarios):
         est = random.choice(estantes)
         resp = random.choice(usuarios)
         inv = Inventario.objects.create(
-            producto=prod,
-            id_estante=est.codigo,
-            cantidad=prod.stock,
+            num_estante=est,
+            cantidad=random.randint(10, 50),
             responsable=resp.nombre_completo,
-            observaciones=f"Inventario físico inicial en {est.codigo}"
+            fecha_creacion=timezone.now().date(),
+            observaciones=f"Inventario físico inicial de {prod.nombre} en {est.codigo}"
         )
         inventarios.append(inv)
-        print(f"[OK] Inventario: [{prod.codigo_sku}] {prod.nombre} -> Estante {est.codigo}")
+        print(f"[OK] Inventario: Existencia #{inv.pk} -> Estante {est.codigo}")
     return inventarios
 
 
@@ -249,137 +253,57 @@ def crear_movimientos(inventarios, proveedores):
     print(">>> CREANDO MOVIMIENTOS")
     print("="*70)
     
-    tipos = ['entrada', 'salida', 'ajuste']
+    tipos = ['Entrada', 'Salida', 'Traslado']
     for i in range(1, 11):
         inv = random.choice(inventarios)
-        prov = random.choice(proveedores) if random.choice([True, False]) else None
         tipo = random.choice(tipos)
         cant = random.randint(2, 10)
         
         mov = Movimientos.objects.create(
-            inventario=inv,
-            proveedor=prov,
-            cantidad=cant,
-            tipo_de_movimiento=tipo
+            codigo_inventario=inv,
+            cantidad_total=cant,
+            tipo_movimiento=tipo,
+            fecha_movimiento=timezone.now().date(),
+            observaciones=f"Movimiento de {tipo} de {cant} unidades"
         )
-        
-        Detalle_Movimientos.objects.create(
-            movimiento=mov,
-            inventario=inv,
-            descripcion=f"Movimiento de {tipo} de {cant} unidades del producto {inv.producto.nombre}."
-        )
-        print(f"[OK] Movimiento #{i} ({tipo}) | {inv.producto.nombre}")
+        print(f"[OK] Movimiento #{mov.pk} ({tipo})")
 
 
 def crear_edicion_limitada(productos):
-    """Crear ediciones limitadas de productos."""
-    print("\n" + "="*70)
-    print(">>> CREANDO EDICIONES LIMITADAS")
-    print("="*70)
-    
-    for prod in productos[:2]:
-        ed = Edicion_limitada.objects.create(
-            producto=prod,
-            nombre=f"Edición Oro - {prod.nombre}",
-            estado='V',
-            observaciones="Edición especial numerada",
-            fecha_inicio=timezone.now().date(),
-            fecha_fin=timezone.now() + timedelta(days=60)
-        )
-        print(f"[OK] Edición Limitada: {ed.nombre} para {prod.nombre}")
+    pass
 
 
-def crear_tipos_mantenimiento():
-    """Crear tipos de mantenimiento."""
-    print("\n" + "="*70)
-    print(">>> CREANDO TIPOS DE MANTENIMIENTO")
-    print("="*70)
-    
-    datos = [
-        ("Mantenimiento Correctivo", "Reparación de fallas y daños", "#FF4D4D"),
-        ("Mantenimiento Preventivo", "Mantenimiento periódico preventivo", "#4CAF50"),
-        ("Calibración", "Ajuste de precisión de instrumentos", "#2196F3"),
-        ("Reparación Externa", "Servicio técnico tercerizado", "#FF9800"),
-    ]
-    
-    tipos = []
-    for nombre, desc, color in datos:
-        tipo = TipoMantenimiento.objects.create(nombre=nombre, descripcion=desc, color=color, activo=True)
-        tipos.append(tipo)
-        print(f"[OK] Tipo: {nombre}")
-    return tipos
-
-
-def crear_tipos_estado():
-    """Crear tipos de estado para mantenimiento."""
-    print("\n" + "="*70)
-    print(">>> CREANDO TIPOS DE ESTADO")
-    print("="*70)
-    
-    datos = [
-        ('DANADO', 'Dañado', 'danado', 'no_disponible', '#FF0000'),
-        ('REPARACION', 'En Reparación', 'reparacion', 'no_disponible', '#FFA500'),
-        ('CALIBRACION', 'Calibración Pendiente', 'calibracion', 'disponible_restringido', '#FFD700'),
-        ('PREVENTIVO', 'Mantenimiento Preventivo', 'preventivo', 'parcialmente_disponible', '#4CAF50'),
-    ]
-    
-    tipos = []
-    for codigo, nombre, categoria, impacto, color in datos:
-        tipo = TipoEstado.objects.create(
-            codigo=codigo,
-            nombre=nombre,
-            categoria=categoria,
-            impacto_disponibilidad=impacto,
-            color=color,
-            nivel_estado=3,
-            activo=True
-        )
-        tipos.append(tipo)
-        print(f"[OK] Estado: {codigo} - {nombre}")
-    return tipos
-
-
-def crear_mantenimientos(productos, tipos_estado, tipos_mantenimiento, usuarios):
-    """Crear órdenes de mantenimiento y sus detalles."""
+def crear_mantenimientos(productos):
+    """Crear órdenes de mantenimiento y sus detalles según los modelos actuales."""
     print("\n" + "="*70)
     print(">>> CREANDO MANTENIMIENTOS Y DETALLES")
     print("="*70)
     
-    prioridades = ['baja', 'media', 'alta', 'critica']
-    estados = ['abierto', 'en_proceso', 'cerrado']
+    tipos = ["Mantenimiento Preventivo", "Mantenimiento Correctivo", "Calibración", "Reparación Externa"]
     
-    for i in range(1, 26):
+    for i in range(1, 16):
         producto = random.choice(productos)
-        tipo_estado = random.choice(tipos_estado)
-        tipo_mant = random.choice(tipos_mantenimiento)
-        responsable = random.choice(usuarios)
-        creado_por = random.choice(usuarios)
+        tipo_mant = random.choice(tipos)
         
-        fecha_reporte = timezone.now().date() - timedelta(days=random.randint(1, 60))
-        fecha_inicio = fecha_reporte + timedelta(days=random.randint(1, 5))
+        fecha_ingreso = timezone.now().date() - timedelta(days=random.randint(5, 60))
+        fecha_salida = fecha_ingreso + timedelta(days=random.randint(1, 5))
         
         mant = Mantenimiento.objects.create(
-            pk=i,
-            producto=producto,
+            codigo_herramienta=producto,
             tipo_mantenimiento=tipo_mant,
-            tipo_estado=tipo_estado,
-            estado_registro=random.choice(estados),
-            prioridad=random.choice(prioridades),
-            fecha_reporte=fecha_reporte,
-            fecha_inicio=fecha_inicio,
-            responsable=responsable,
-            creado_por=creado_por,
-            costo_estimado=Decimal(random.randint(50000, 800000)),
+            fecha_ingreso=fecha_ingreso,
+            fecha_salida=fecha_salida,
+            observaciones=f"Mantenimiento de rutinas para {producto.nombre}."
         )
         
         DetalleMantenimiento.objects.create(
-            mantenimiento=mant,
-            tipo_mantenimiento=tipo_mant,
-            tipo='diagnostico',
-            descripcion=f"Diagnóstico inicial: {random.choice(['Desgaste severo', 'Falla eléctrica', 'Problema mecánico', 'Falta de calibración'])} en {producto.nombre}.",
-            registrado_por=creado_por
+            num_mantenimiento=mant,
+            accion_realizada=f"Diagnóstico e inspección de {tipo_mant.lower()}.",
+            materiales_usados="Lubricante industrial, repuestos básicos",
+            fecha_mantenimiento=fecha_ingreso,
+            observacion="Servicio ejecutado correctamente."
         )
-        print(f"[OK] Mantenimiento #{i:2d} | {producto.nombre[:35]}")
+        print(f"[OK] Mantenimiento #{mant.pk} | {producto.nombre[:35]}")
 
 
 def crear_prestamos(usuarios, productos):
@@ -402,24 +326,20 @@ def crear_prestamos(usuarios, productos):
             fecha_venc = timezone.localdate() + timedelta(days=random.randint(2, 10))
             
         pres = Prestamo.objects.create(
-            usuario=user.numero_documento,
-            nombre_usuario=user.nombre_completo,
+            documento=user,
             observaciones=f"Préstamo de prueba número {i}",
-            motivo_solicitud="Trabajo de campo en el centro de formación",
             estado=est,
-            fecha_vencimiento=fecha_venc,
-            hora_max_entrega=time(17, 0)
+            fecha=fecha_pres
         )
         
         num_items = random.randint(1, 3)
         selected_prods = random.sample(productos, num_items)
         for prod in selected_prods:
             ItemPrestamo.objects.create(
-                prestamo=pres,
-                producto=prod,
+                codigo_prestamo=pres,
+                codigo_herramienta=prod,
                 cantidad=random.randint(1, 2),
-                serial_entregado=f"SR-{prod.codigo_sku}-{random.randint(1000, 9999)}",
-                devuelto=(est == 'devuelto')
+                observaciones=f"Entrega de {prod.nombre}"
             )
             
         print(f"[OK] Préstamo #{pres.pk} ({est}) | {user.nombre_completo}")
@@ -427,28 +347,23 @@ def crear_prestamos(usuarios, productos):
     return prestamos
 
 
-def crear_devoluciones(prestamos):
+def crear_devoluciones(prestamos, usuarios):
     """Crear devoluciones vinculadas a préstamos."""
     print("\n" + "="*70)
     print(">>> CREANDO DEVOLUCIONES")
     print("="*70)
     
-    estados = ['pendiente', 'aprobada', 'rechazada']
-    prestamos_validos = [p for p in prestamos if p.estado in ['activo', 'vencido']]
+    prestamos_validos = [p for p in prestamos if p.estado in ['activo', 'vencido', 'devuelto']]
     
-    for idx, pres in enumerate(prestamos_validos[:4], 1):
-        est = random.choice(estados)
+    for idx, pres in enumerate(prestamos_validos[:5], 1):
+        user_recibe = random.choice(usuarios)
         dev = Devolucion.objects.create(
-            prestamo=pres,
-            devolucion_total=random.choice([True, False]),
-            motivo="Devolución rutinaria de fin de formación",
-            estado=est
+            codigo_prestamo=pres,
+            codigo_recibe=user_recibe,
+            observaciones=f"Devolución recibida sin novedad por {user_recibe.primer_nombre}.",
+            fecha=timezone.now().date()
         )
-        
-        for item in pres.items.all():
-            dev.items.add(item)
-            
-        print(f"[OK] Devolución #{dev.pk} ({est}) | Préstamo #{pres.pk}")
+        print(f"[OK] Devolución #{dev.pk} | Préstamo #{pres.pk}")
 
 
 def crear_reportes():
@@ -486,15 +401,12 @@ def main():
         Devolucion.objects.all().delete()
         ItemPrestamo.objects.all().delete()
         Prestamo.objects.all().delete()
-        Edicion_limitada.objects.all().delete()
         Detalle_Movimientos.objects.all().delete()
         Movimientos.objects.all().delete()
         Inventario.objects.all().delete()
         Proveedor.objects.all().delete()
         DetalleMantenimiento.objects.all().delete()
         Mantenimiento.objects.all().delete()
-        TipoMantenimiento.objects.all().delete()
-        TipoEstado.objects.all().delete()
         Producto.objects.all().delete()
         Categoria.objects.all().delete()
         Estante.objects.all().delete()
@@ -511,12 +423,10 @@ def main():
         crear_movimientos(inventarios, proveedores)
         crear_edicion_limitada(productos)
         
-        tipos_mant = crear_tipos_mantenimiento()
-        tipos_estado = crear_tipos_estado()
-        crear_mantenimientos(productos, tipos_estado, tipos_mant, usuarios)
+        crear_mantenimientos(productos)
         
         prestamos = crear_prestamos(usuarios, productos)
-        crear_devoluciones(prestamos)
+        crear_devoluciones(prestamos, usuarios)
         crear_reportes()
         
         print("\n" + "="*70)
