@@ -10,11 +10,6 @@ from .models import (
     DetalleMantenimiento,
     MOTIVO_CAMBIO_CHOICES,
 )
-
-
-# ==================== TIPO MANTENIMIENTO ====================
-
-
 class TipoMantenimientoForm(forms.ModelForm):
     """Formulario para crear y editar tipos de mantenimiento."""
 
@@ -61,11 +56,6 @@ class TipoMantenimientoForm(forms.ModelForm):
                     "Ya existe un tipo de mantenimiento con este nombre."
                 )
         return nombre
-
-
-# ==================== TIPO ESTADO ====================
-
-
 class TipoEstadoForm(forms.ModelForm):
 
     class Meta:
@@ -140,8 +130,9 @@ class MantenimientoForm(forms.ModelForm):
             "codigo_herramienta",
             "tipo_mantenimiento",
             "tipo_estado",
-            "fecha_ingreso",
-            "fecha_salida",
+            "fecha_reporte",
+            "fecha_inicio",
+            "fecha_fin_real",
             "fecha_fin_estimada",
             "tiempo_empleado_horas",
             "prioridad",
@@ -155,10 +146,13 @@ class MantenimientoForm(forms.ModelForm):
             "tipo_estado": forms.Select(attrs={"class": "form-select"}),
             "prioridad": forms.Select(attrs={"class": "form-select"}),
             "responsable": forms.Select(attrs={"class": "form-select"}),
-            "fecha_ingreso": forms.DateInput(
+            "fecha_reporte": forms.DateInput(
                 format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}
             ),
-            "fecha_salida": forms.DateInput(
+            "fecha_inicio": forms.DateInput(
+                format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}
+            ),
+            "fecha_fin_real": forms.DateInput(
                 format="%Y-%m-%d", attrs={"class": "form-control", "type": "date"}
             ),
             "fecha_fin_estimada": forms.DateInput(
@@ -179,7 +173,7 @@ class MantenimientoForm(forms.ModelForm):
             "tipo_mantenimiento": "Tipo de mantenimiento *",
             "tipo_estado": "Tipo de estado actual *",
             "fecha_reporte": "Fecha de reporte / detección *",
-            "fecha_inicio": "Fecha inicio mantenimiento *",
+            "fecha_inicio": "Fecha inicio mantenimiento",
             "fecha_fin_estimada": "Fecha fin estimada",
             "fecha_fin_real": "Fecha fin real",
             "tiempo_empleado_horas": "Tiempo empleado (horas)",
@@ -191,17 +185,6 @@ class MantenimientoForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        if 'data' in kwargs and kwargs['data']:
-            d = kwargs['data'].copy()
-            if 'producto' in d and 'codigo_herramienta' not in d:
-                d['codigo_herramienta'] = d['producto']
-            if 'fecha_reporte' in d and 'fecha_ingreso' not in d:
-                d['fecha_ingreso'] = d['fecha_reporte']
-            elif 'fecha_inicio' in d and 'fecha_ingreso' not in d:
-                d['fecha_ingreso'] = d['fecha_inicio']
-            if 'fecha_fin_real' in d and 'fecha_salida' not in d:
-                d['fecha_salida'] = d['fecha_fin_real']
-            kwargs['data'] = d
         super().__init__(*args, **kwargs)
 
         self.fields["tipo_mantenimiento"].queryset = TipoMantenimiento.objects.filter(
@@ -223,23 +206,15 @@ class MantenimientoForm(forms.ModelForm):
             lambda u: f"{u.nombre_completo} ({u.numero_documento})"
         )
 
-        if self.instance.pk and self.instance.producto_id:
-            p = self.instance.producto
+        if self.instance.pk and self.instance.codigo_herramienta_id:
+            p = self.instance.codigo_herramienta
             self.fields["producto_busqueda"].initial = f"[{p.codigo_sku}] {p.nombre}"
 
-    def __getitem__(self, name):
-        if name in ("fecha_reporte", "fecha_inicio") and name not in self.fields and "fecha_ingreso" in self.fields:
-            return super().__getitem__("fecha_ingreso")
-        if name == "producto" and name not in self.fields and "codigo_herramienta" in self.fields:
-            return super().__getitem__("codigo_herramienta")
-        return super().__getitem__(name)
-
-    # Métodos clean (mantengo la lógica que tenías)
-    def clean_producto(self):
-        producto = self.cleaned_data.get("producto")
-        if not producto:
+    def clean_codigo_herramienta(self):
+        codigo = self.cleaned_data.get("codigo_herramienta")
+        if not codigo:
             raise ValidationError("El ítem/herramienta es obligatorio.")
-        return producto
+        return codigo
 
     def clean_tipo_mantenimiento(self):
         tipo = self.cleaned_data.get("tipo_mantenimiento")
@@ -264,10 +239,7 @@ class MantenimientoForm(forms.ModelForm):
         return fecha
 
     def clean_fecha_inicio(self):
-        fecha_inicio = self.cleaned_data.get("fecha_inicio")
-        if not fecha_inicio:
-            raise ValidationError("La fecha de inicio es obligatoria.")
-        return fecha_inicio
+        return self.cleaned_data.get("fecha_inicio")
 
     def clean_responsable(self):
         responsable = self.cleaned_data.get("responsable")
@@ -277,10 +249,14 @@ class MantenimientoForm(forms.ModelForm):
 
     def clean(self):
         cleaned = super().clean()
-        # Validaciones cruzadas (resumidas)
         fecha_reporte = cleaned.get("fecha_reporte")
         fecha_inicio = cleaned.get("fecha_inicio")
         fecha_fin_estimada = cleaned.get("fecha_fin_estimada")
+        fecha_fin_real = cleaned.get("fecha_fin_real")
+        tiempo = cleaned.get("tiempo_empleado_horas")
+
+        if tiempo is not None and tiempo < 0:
+            self.add_error("tiempo_empleado_horas", "El tiempo empleado no puede ser negativo.")
 
         if fecha_reporte and fecha_inicio and fecha_inicio < fecha_reporte:
             self.add_error(
@@ -288,18 +264,22 @@ class MantenimientoForm(forms.ModelForm):
                 "La fecha de inicio no puede ser anterior a la de reporte.",
             )
 
-        if fecha_inicio and fecha_fin_estimada and fecha_fin_estimada < fecha_inicio:
+        fecha_base = fecha_inicio or fecha_reporte
+        if fecha_fin_estimada and fecha_base and fecha_fin_estimada < fecha_base:
             self.add_error(
                 "fecha_fin_estimada",
-                "La fecha estimada no puede ser anterior a la de inicio.",
+                "La fecha estimada no puede ser anterior a la fecha de inicio o reporte.",
+            )
+
+        if fecha_fin_real and fecha_base and fecha_fin_real < fecha_base:
+            self.add_error(
+                "fecha_fin_real",
+                "La fecha real no puede ser anterior a la fecha de inicio o reporte.",
             )
 
         return cleaned
 
-
 # ==================== MANTENIMIENTO UPDATE ====================
-
-
 class MantenimientoUpdateForm(MantenimientoForm):
     MOTIVOS = MOTIVO_CAMBIO_CHOICES
     CAMPOS_TECNICO_EDITABLES = {"tiempo_empleado_horas"}

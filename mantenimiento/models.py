@@ -129,8 +129,9 @@ class Mantenimiento(models.Model):
         verbose_name="Tipo de mantenimiento",
     )
     descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
-    fecha_ingreso = models.DateField(default=timezone.now, verbose_name="Fecha de ingreso / reporte")
-    fecha_salida = models.DateField(blank=True, null=True, verbose_name="Fecha de salida / entrega real")
+    fecha_reporte = models.DateField(default=timezone.now, verbose_name="Fecha de reporte / detección")
+    fecha_inicio = models.DateField(blank=True, null=True, verbose_name="Fecha de inicio del mantenimiento")
+    fecha_fin_real = models.DateField(blank=True, null=True, verbose_name="Fecha de fin real / entrega")
     observaciones = models.TextField(blank=True, null=True, verbose_name="Observaciones")
     codigo_herramienta = models.ForeignKey(
         Producto,
@@ -195,54 +196,6 @@ class Mantenimiento(models.Model):
     creado_en = models.DateTimeField(auto_now_add=True)
     actualizado_en = models.DateTimeField(auto_now=True)
 
-    def __init__(self, *args, **kwargs):
-        if 'producto' in kwargs:
-            kwargs['codigo_herramienta'] = kwargs.pop('producto')
-        if 'fecha_reporte' in kwargs:
-            kwargs['fecha_ingreso'] = kwargs.pop('fecha_reporte')
-        if 'fecha_inicio' in kwargs and 'fecha_ingreso' not in kwargs:
-            kwargs['fecha_ingreso'] = kwargs.pop('fecha_inicio')
-        if 'fecha_fin_real' in kwargs:
-            kwargs['fecha_salida'] = kwargs.pop('fecha_fin_real')
-        super().__init__(*args, **kwargs)
-
-    # Propiedades de compatibilidad
-    @property
-    def producto(self):
-        return self.codigo_herramienta
-
-    @producto.setter
-    def producto(self, val):
-        self.codigo_herramienta = val
-
-    @property
-    def producto_id(self):
-        return self.codigo_herramienta_id
-
-    @property
-    def fecha_reporte(self):
-        return self.fecha_ingreso
-
-    @fecha_reporte.setter
-    def fecha_reporte(self, val):
-        self.fecha_ingreso = val
-
-    @property
-    def fecha_inicio(self):
-        return self.fecha_ingreso
-
-    @fecha_inicio.setter
-    def fecha_inicio(self, val):
-        self.fecha_ingreso = val
-
-    @property
-    def fecha_fin_real(self):
-        return self.fecha_salida
-
-    @fecha_fin_real.setter
-    def fecha_fin_real(self, val):
-        self.fecha_salida = val
-
     def registrar_cambio(self, *, editado_por, motivo_edicion, cambios, detalle_motivo=""):
         if not cambios:
             return None
@@ -259,14 +212,28 @@ class Mantenimiento(models.Model):
         from django.utils.translation import gettext_lazy as _
 
         errors = {}
-        if self.fecha_fin_estimada and self.fecha_ingreso and self.fecha_fin_estimada < self.fecha_ingreso:
-            errors["fecha_fin_estimada"] = _("La fecha estimada debe ser posterior a la de inicio.")
-        if self.tiempo_empleado_horas and self.tiempo_empleado_horas < 0:
+
+        if self.fecha_inicio and self.fecha_reporte and self.fecha_inicio < self.fecha_reporte:
+            errors["fecha_inicio"] = _("La fecha de inicio no puede ser anterior a la fecha de reporte.")
+
+        fecha_base = self.fecha_inicio or self.fecha_reporte
+        if self.fecha_fin_estimada and fecha_base and self.fecha_fin_estimada < fecha_base:
+            errors["fecha_fin_estimada"] = _(
+                "La fecha estimada no puede ser anterior a la fecha de inicio o reporte."
+            )
+
+        if self.fecha_fin_real and fecha_base and self.fecha_fin_real < fecha_base:
+            errors["fecha_fin_real"] = _(
+                "La fecha real no puede ser anterior a la fecha de inicio o reporte."
+            )
+
+        if self.tiempo_empleado_horas is not None and self.tiempo_empleado_horas < 0:
             errors["tiempo_empleado_horas"] = _("El tiempo no puede ser negativo.")
-        if self.costo_estimado and self.costo_estimado < 0:
+        if self.costo_estimado is not None and self.costo_estimado < 0:
             errors["costo_estimado"] = _("El costo estimado no puede ser negativo.")
-        if self.costo_real and self.costo_real < 0:
+        if self.costo_real is not None and self.costo_real < 0:
             errors["costo_real"] = _("El costo real no puede ser negativo.")
+
         if errors:
             raise DjangoValidationError(errors)
 
@@ -304,12 +271,12 @@ class Mantenimiento(models.Model):
                 prod.save(update_fields=["disponible"])
 
     def __str__(self):
-        return f"[{self.tipo_mantenimiento}] {self.codigo_herramienta} — {self.fecha_ingreso}"
+        return f"[{self.tipo_mantenimiento}] {self.codigo_herramienta} — {self.fecha_reporte}"
 
     class Meta:
         verbose_name = "Mantenimiento"
         verbose_name_plural = "Mantenimientos"
-        ordering = ["-fecha_ingreso"]
+        ordering = ["-fecha_reporte"]
         db_table = "mantenimiento"
 
 

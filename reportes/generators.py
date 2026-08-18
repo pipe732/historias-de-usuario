@@ -274,7 +274,7 @@ def _data_mantenimiento():
     rows = [
         (
             m.pk,
-            m.producto.nombre,
+            m.codigo_herramienta.nombre if m.codigo_herramienta else '—',
             m.tipo_mantenimiento.nombre if m.tipo_mantenimiento else '—',
             m.tipo_estado.nombre if m.tipo_estado else '—',
             m.get_prioridad_display(),

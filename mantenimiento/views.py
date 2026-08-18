@@ -3,7 +3,6 @@ from django.views.generic import ListView, UpdateView, DetailView
 from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import HttpResponseForbidden
 from django.urls import reverse_lazy
 from usuario.models import Usuario
 
@@ -25,7 +24,7 @@ from .forms import (
 from inventario.models import Producto
 
 ROLES_ADMIN_EDICION = {"supervisor", "administrador", "admin"}
-ESTADOS_EDITABLES = {"abierto", "en_proceso", "pendiente", "cerrado_parcial", "cerrado"}
+ESTADOS_EDITABLES = {"abierto", "en_proceso", "cerrado"}
 
 
 def _get_usuario_sesion(request):
@@ -73,9 +72,10 @@ def _puede_editar_mantenimiento(request, mantenimiento):
         return True
 
     if _es_rol_tecnico(rol):
-        if not mantenimiento.responsable_id:
-            return False
-        return mantenimiento.responsable_id == documento
+        return (
+            mantenimiento.responsable is not None
+            and str(mantenimiento.responsable.documento) == str(documento)
+        )
 
     return False
 
@@ -219,8 +219,6 @@ def tipo_mantenimiento_crear(request):
     form = TipoMantenimientoForm(request.POST)
 
     if form.is_valid():
-        from usuario.models import Usuario
-
         tipo = form.save(commit=False)
         doc = request.session.get("usuario_documento")
         if doc:
@@ -329,7 +327,7 @@ class MantenimientoListView(SesionRequeridaMixin, ListView):
     def get_queryset(self):
         qs = Mantenimiento.objects.select_related(
             "codigo_herramienta", "tipo_estado", "tipo_mantenimiento", "responsable"
-        ).order_by("-fecha_ingreso")
+        ).order_by("-fecha_reporte")
 
         q = self.request.GET.get("q", "")
         tipo = self.request.GET.get("tipo", "")
@@ -402,7 +400,7 @@ def detalle_mantenimiento_crear(request, pk):
 
     if form.is_valid():
         detalle = form.save(commit=False)
-        detalle.mantenimiento = mantenimiento
+        detalle.num_mantenimiento = mantenimiento
 
         usuario = _get_usuario_sesion(request)
         if usuario:
@@ -427,8 +425,8 @@ class MantenimientoUpdateView(SesionRequeridaMixin, ContextoMixin, UpdateView):
     boton_texto = "Guardar cambios"
     url_cancelar = "mantenimiento:mantenimiento_lista"
     
-    #Metodo para tráer el mismo JOIN el producto, el estado, el responsable y quien lo creó
-    #Metodo para realizar una sola consulta a la bd por cada join mejorando el rendimiento
+    # Método para traer el mismo JOIN el producto, el estado, el responsable y quien lo creó
+    # Método para realizar una sola consulta a la bd por cada join mejorando el rendimiento
     def get_queryset(self):                            
         return Mantenimiento.objects.select_related(
             "codigo_herramienta", "tipo_estado", "responsable", "creado_por"
@@ -441,9 +439,7 @@ class MantenimientoUpdateView(SesionRequeridaMixin, ContextoMixin, UpdateView):
                 request,
                 "No tienes permisos para editar este registro o su estado no permite edición.",
             )
-            return HttpResponseForbidden(
-                "Acceso denegado para editar este mantenimiento."
-            )
+            return redirect("mantenimiento:mantenimiento_detalle", pk=self.object.pk)
         return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
@@ -538,7 +534,7 @@ class HistorialProductoView(SesionRequeridaMixin, ListView):
             .select_related(
                 "tipo_estado", "tipo_mantenimiento", "responsable", "creado_por"
             )
-            .order_by("-fecha_ingreso")
+            .order_by("-fecha_reporte")
         )
 
         q = self.request.GET.get("q", "").strip()
@@ -592,16 +588,16 @@ def registrar_desde_inventario(request):
     producto_id = request.POST.get("producto_id")
     producto = get_object_or_404(Producto, pk=producto_id)
 
-    # MantenimientoForm espera 'producto' como HiddenInput.
+    # MantenimientoForm espera 'codigo_herramienta' como campo real del modelo.
     # Lo inyectamos en el POST mutable para que el form lo valide.
     post_data = request.POST.copy()
-    post_data["producto"] = producto_id
+    post_data["codigo_herramienta"] = producto_id
 
     form = MantenimientoForm(post_data, request.FILES)
 
     if form.is_valid():
         mantenimiento = form.save(commit=False)
-        mantenimiento.producto = producto #Esta linea corrige el error de la query duplicada
+        mantenimiento.codigo_herramienta = producto
         
         # Auditoría: asignar creado_por desde la sesión propia
         doc = request.session.get("usuario_documento")

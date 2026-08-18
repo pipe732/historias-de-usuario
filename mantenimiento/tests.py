@@ -153,3 +153,11 @@ class MantenimientoDisponibilidadTests(TestCase):
 
         self.assertIn('value="2026-04-10"', form["fecha_reporte"].as_widget())
         self.assertIn('value="2026-04-10"', form["fecha_inicio"].as_widget())
+
+    def test_modelo_usa_campos_reales_de_fechas(self):
+        fields = {field.name for field in Mantenimiento._meta.get_fields()}
+
+        self.assertIn("fecha_reporte", fields)
+        self.assertIn("fecha_inicio", fields)
+        self.assertIn("fecha_fin_real", fields)
+        self.assertTrue({"fecha_reporte", "fecha_inicio", "fecha_fin_real"}.issubset(fields))

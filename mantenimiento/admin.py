@@ -29,7 +29,7 @@ class MantenimientoAdmin(admin.ModelAdmin):
         'prioridad',
         'tipo_estado',
         'estado_registro',
-        'fecha_ingreso',
+        'fecha_reporte',
         'responsable',
     ]
     list_filter = [
@@ -48,7 +48,7 @@ class MantenimientoAdmin(admin.ModelAdmin):
         'actualizado_en',
         'ubicacion_snapshot',
     ]
-    date_hierarchy = 'fecha_ingreso'
+    date_hierarchy = 'fecha_reporte'
 
 
 @admin.register(MantenimientoCambio)
