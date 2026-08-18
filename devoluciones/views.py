@@ -128,8 +128,8 @@ def devoluciones_view(request):
                 try:
                     prestamo = Prestamo.objects.get(pk=prestamo_id)
                     if (
-                        prestamo.fecha_vencimiento
-                        and prestamo.fecha_vencimiento < timezone.localdate()
+                        prestamo.fecha
+                        and prestamo.fecha < timezone.localdate()
                     ):
                         errores.append(
                             "No se puede devolver un préstamo con fecha "
@@ -177,8 +177,7 @@ def devoluciones_view(request):
             return redirect("devoluciones")
 
     devoluciones = (
-        Devolucion.objects.select_related("codigo_prestamo")
-        .prefetch_related("items__codigo_herramienta")
+        Devolucion.objects.select_related("codigo_prestamo", "codigo_recibe")
         .all()
     )
 
@@ -186,7 +185,7 @@ def devoluciones_view(request):
     prestamos_activos = (
         Prestamo.objects.filter(estado__in=["activo", "parcial", "vencido"])
         .prefetch_related("items__codigo_herramienta")
-        .order_by("-fecha_prestamo")
+        .order_by("-fecha")
     )
 
     context = {

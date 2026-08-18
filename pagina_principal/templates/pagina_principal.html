@@ -7,12 +7,22 @@
 ═══════════════════════════════════ -->
 <div class="d-flex align-items-center justify-content-between mb-4">
   <div>
-    <h5 class="extracted-style-13">
+    <h5 class="fw-bold mb-1" style="color: var(--text-main, #1B2021);">
       Resumen general del sistema
     </h5>
+    <p class="text-muted small mb-0">Indicadores clave y distribución gráfica en tiempo real</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{% url 'inventario:inventario' %}" class="btn-outline-mine text-decoration-none">
+      <i class="bi bi-boxes me-1"></i> Ver inventario
+    </a>
+    <a href="{% url 'prestamo' %}" class="btn-primary-mine text-decoration-none">
+      <i class="bi bi-clipboard-check me-1"></i> Ver préstamos
+    </a>
   </div>
 </div>
-<!-- ══ ESTILOS ANIMACIONES KPI ══ -->
+
+<!-- ══ ESTILOS Y ANIMACIONES KPI & DASHBOARD ══ -->
 <style>
   .kpi-card {
     opacity: 0;
@@ -20,6 +30,11 @@
     transition: opacity 0.5s ease, transform 0.5s ease;
     position: relative !important;
     overflow: hidden !important;
+    background: #ffffff;
+    border: 1px solid rgba(27, 32, 33, 0.09);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(27, 32, 33, 0.04);
   }
   .kpi-card.kpi-visible {
     opacity: 1;
@@ -27,13 +42,13 @@
   }
   .kpi-card:hover {
     transform: translateY(-3px) !important;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 24px rgba(27, 32, 33, 0.1);
     transition: opacity 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
   }
   .kpi-accent-bar {
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 3px;
+    height: 4px;
     border-radius: 4px 4px 0 0;
     transform: scaleX(0);
     transform-origin: left;
@@ -42,361 +57,301 @@
   .kpi-card.kpi-visible .kpi-accent-bar {
     transform: scaleX(1);
   }
-  .badge-ubicacion {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-family: var(--font-mono);
-    font-size: .72rem;
+  .kpi-title-label {
+    font-size: 0.82rem;
     font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 20px;
-    background: rgba(91,141,238,0.12);
-    border: 1px solid rgba(91,141,238,0.35);
-    color: #5b8dee;
-    white-space: nowrap;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
   }
-  .badge-ubicacion svg {
+  .kpi-num-display {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1.1;
+    margin: 8px 0;
+  }
+  .chart-container {
+    position: relative;
+    width: 100%;
+    height: 250px;
+  }
+  .quick-action-link {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .quick-action-link:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateX(3px);
+  }
+  .quick-action-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
     flex-shrink: 0;
-    opacity: .7;
   }
-  .stock-rust {
-    color: var(--rust) !important;
+  .recent-dev-row {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
   }
-  .stock-warning {
-    color: #c4900a !important;
+  .recent-dev-title {
+    color: #1e293b;
   }
-  .stock-sage {
-    color: var(--sage) !important;
+  /* Estilos específicos para modo oscuro */
+  body.dark-mode .kpi-card {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  body.dark-mode .kpi-title-label {
+    color: #94a3b8 !important;
+  }
+  body.dark-mode .kpi-num-display {
+    color: #f8fafc !important;
+  }
+  body.dark-mode .quick-action-link {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #f8fafc !important;
+  }
+  body.dark-mode .quick-action-link:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+  body.dark-mode .recent-dev-row {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  body.dark-mode .recent-dev-title {
+    color: #f8fafc !important;
   }
 </style>
+
 <!-- ═══════════════════════════════════
      KPI CARDS
 ═══════════════════════════════════ -->
 <div class="row g-3 mb-4">
 
   <div class="col-6 col-md-3">
-    <div class="card h-100 kpi-card extracted-style-213" data-kpi-delay="0">
-      <div class="kpi-accent-bar extracted-style-214"></div>
-      <div class="d-flex align-items-center justify-content-between mb-2">
-        <span class="extracted-style-215">Total herramientas</span>
+    <div class="card h-100 kpi-card" data-kpi-delay="0">
+      <div class="kpi-accent-bar" style="background: #5b8dee;"></div>
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <span class="kpi-title-label">Total herramientas</span>
+        <i class="bi bi-tools text-primary fs-5"></i>
       </div>
-      <div class="kpi-number extracted-style-216" data-target="{{ total_productos }}">0</div>
-      <div class="extracted-style-217">{{ total_categorias }} categoría{{ total_categorias|pluralize:",s" }}</div>
+      <div class="kpi-num-display kpi-number" data-target="{{ total_productos }}">0</div>
+      <div class="small text-muted" style="font-size: 0.78rem;">
+        <i class="bi bi-tags text-primary"></i> {{ total_categorias }} categoría{{ total_categorias|pluralize:",s" }}
+      </div>
     </div>
   </div>
 
   <div class="col-6 col-md-3">
-    <div class="card h-100 kpi-card extracted-style-213" data-kpi-delay="130">
-      <div class="kpi-accent-bar extracted-style-218"></div>
-      <div class="d-flex align-items-center justify-content-between mb-2">
-        <span class="extracted-style-215">Préstamos activos</span>
+    <div class="card h-100 kpi-card" data-kpi-delay="130">
+      <div class="kpi-accent-bar" style="background: #1D9E75;"></div>
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <span class="kpi-title-label">Préstamos activos</span>
+        <i class="bi bi-clock-history text-success fs-5"></i>
       </div>
-      <div class="kpi-number extracted-style-219" data-target="{{ prestamos_activos_count }}">0</div>
-      <div class="extracted-style-217">en este momento</div>
+      <div class="kpi-num-display kpi-number" data-target="{{ prestamos_activos_count }}">0</div>
+      <div class="small text-success" style="font-size: 0.78rem;">
+        <i class="bi bi-check-circle"></i> En este momento
+      </div>
     </div>
   </div>
 
   <div class="col-6 col-md-3">
-    <div class="card h-100 kpi-card extracted-style-213" data-kpi-delay="260">
-      <div class="kpi-accent-bar extracted-style-220"></div>
-      <div class="d-flex align-items-center justify-content-between mb-2">
-        <span class="extracted-style-215">Vencidos</span>
+    <div class="card h-100 kpi-card" data-kpi-delay="260">
+      <div class="kpi-accent-bar" style="background: #98473E;"></div>
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <span class="kpi-title-label">Vencidos</span>
+        <i class="bi bi-exclamation-triangle text-danger fs-5"></i>
       </div>
-      <div class="kpi-number extracted-style-221" data-target="{{ prestamos_vencidos_count }}">0</div>
-      <div class="extracted-style-217">requieren atención</div>
+      <div class="kpi-num-display kpi-number" data-target="{{ prestamos_vencidos_count }}">0</div>
+      <div class="small text-danger" style="font-size: 0.78rem;">
+        <i class="bi bi-exclamation-circle"></i> Requieren atención
+      </div>
     </div>
   </div>
 
   <div class="col-6 col-md-3">
-    <div class="card h-100 kpi-card extracted-style-213" data-kpi-delay="390">
-      <div class="kpi-accent-bar extracted-style-222"></div>
-      <div class="d-flex align-items-center justify-content-between mb-2">
-        <span class="extracted-style-215">Devoluciones pend.</span>
+    <div class="card h-100 kpi-card" data-kpi-delay="390">
+      <div class="kpi-accent-bar" style="background: #c4900a;"></div>
+      <div class="d-flex align-items-center justify-content-between mb-1">
+        <span class="kpi-title-label">Devoluciones pend.</span>
+        <i class="bi bi-arrow-return-left text-warning fs-5"></i>
       </div>
-      <div class="kpi-number extracted-style-223" data-target="{{ devoluciones_pendientes_count }}">0</div>
-      <div class="extracted-style-217">por resolver</div>
+      <div class="kpi-num-display kpi-number" data-target="{{ devoluciones_pendientes_count }}">0</div>
+      <div class="small text-warning" style="font-size: 0.78rem;">
+        <i class="bi bi-hourglass-split"></i> Por resolver
+      </div>
     </div>
   </div>
 
 </div>
 
 <!-- ═══════════════════════════════════
-     FILA PRINCIPAL
+     FILA 1 DE GRÁFICAS PRINCIPALES
 ═══════════════════════════════════ -->
 <div class="row g-3 mb-4">
 
-  <!-- TABLA PRÉSTAMOS -->
-  <div class="col-lg-8">
-    <div class="card table-card h-100">
+  <!-- GRÁFICA 1: ESTADO DE PRÉSTAMOS -->
+  <div class="col-lg-6">
+    <div class="card h-100">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <span class="card-title"><i class="bi bi-clipboard-check"></i> Préstamos recientes</span>
-        <a href="{% url 'prestamo' %}" class="btn-ghost">Ver todos</a>
-      </div>
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table table-app mb-0 datatable-disabled" id="tbl-prestamos">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Producto</th>
-                <th>Usuario</th>
-                <th>Cant.</th>
-                <th>Estado</th>
-                <th>Fecha</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for p in prestamos_recientes %}
-              <tr>
-                <td class="extracted-style-224">#{{ p.id }}</td>
-                <td>
-                  {% for item in p.items.all %}
-                    <strong>{{ item.producto.nombre }}</strong>{% if not forloop.last %}, {% endif %}
-                  {% empty %}—{% endfor %}
-                </td>
-                <td>{{ p.usuario }}</td>
-                <td class="extracted-style-225">
-                  {% for item in p.items.all %}{{ item.cantidad }}{% if not forloop.last %}+{% endif %}{% endfor %}
-                </td>
-                <td>
-                  {% if p.estado == 'activo' %}
-                    <span class="badge-state badge-aprobada">Activo</span>
-                  {% elif p.estado == 'vencido' %}
-                    <span class="badge-state badge-rechazada">Vencido</span>
-                  {% elif p.estado == 'parcial' %}
-                    <span class="badge-state badge-pendiente">Parcial</span>
-                  {% else %}
-                    <span class="badge-state badge-pendiente">Devuelto</span>
-                  {% endif %}
-                </td>
-                <td class="extracted-style-224">
-                  {{ p.fecha_prestamo|date:"d M Y" }}
-                </td>
-                <td>
-                  <a href="{% url 'prestamo' %}" class="btn-ghost">Ver</a>
-                </td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td colspan="7" class="text-center py-4 extracted-style-226">
-                  No hay préstamos registrados aún.
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SIDEBAR DERECHO -->
-  <div class="col-lg-4 d-flex flex-column gap-3">
-
-    <!-- DEVOLUCIONES RECIENTES -->
-    <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <span class="card-title"><i class="bi bi-arrow-return-left"></i> Devoluciones</span>
-        <a href="{% url 'devoluciones' %}" class="btn-ghost">Ver todas</a>
-      </div>
-      <div class="card-body p-0">
-        {% for d in devoluciones_recientes %}
-        <div class="d-flex align-items-start gap-3 px-3 py-2 extracted-style-227">
-          <div class="flex-grow-1 extracted-style-228">
-            <div class="fw-semibold text-truncate extracted-style-229">
-              Préstamo #{{ d.prestamo.id }} — {{ d.prestamo.usuario }}
-            </div>
-            <div class="extracted-style-230">
-              {{ d.fecha_creacion|date:"d M Y" }} · {% if d.devolucion_total %}Total{% else %}Parcial{% endif %}
-            </div>
-          </div>
-          <span class="badge-state flex-shrink-0
-            {% if d.estado == 'pendiente' %}badge-pendiente
-            {% elif d.estado == 'aprobada' %}badge-aprobada
-            {% else %}badge-rechazada{% endif %}">
-            {{ d.get_estado_display }}
-          </span>
-        </div>
-        {% empty %}
-        <div class="px-3 py-4 text-center extracted-style-231">
-          Sin devoluciones recientes.
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-
-    <!-- STOCK POR CATEGORÍA -->
-    <div class="card flex-grow-1">
-      <div class="card-header">
-        <span class="card-title"><i class="bi bi-tags"></i> Stock por categoría</span>
+        <span class="card-title"><i class="bi bi-pie-chart-fill me-2 text-primary"></i>Estado de Préstamos</span>
+        <a href="{% url 'prestamo' %}" class="btn-ghost text-decoration-none">Ver todos</a>
       </div>
       <div class="card-body">
-        {% for cat in stock_por_categoria %}
-        <div class="d-flex align-items-center gap-2 mb-2">
-          <span class="extracted-style-232">{{ cat.nombre }}</span>
-          <div class="flex-grow-1 extracted-style-233">
-            <div class="category-stock-bar extracted-style-234" data-width="{% widthratio cat.total_stock max_stock 100 %}"></div>
-          </div>
-          <span class="extracted-style-235">{{ cat.total_stock }}</span>
+        <div class="chart-container">
+          <canvas id="chartPrestamos"></canvas>
         </div>
-        {% empty %}
-        <p class="extracted-style-231">Sin categorías registradas.</p>
-        {% endfor %}
       </div>
     </div>
-
   </div>
+
+  <!-- GRÁFICA 2: STOCK POR CATEGORÍA -->
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="card-title"><i class="bi bi-bar-chart-line-fill me-2 text-info"></i>Herramientas por Categoría</span>
+        <a href="{% url 'inventario:inventario' %}" class="btn-ghost text-decoration-none">Ver inventario</a>
+      </div>
+      <div class="card-body">
+        <div class="chart-container">
+          <canvas id="chartCategorias"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ═══════════════════════════════════
-     INVENTARIO RECIENTE
+     FILA 2: SALUD DE INVENTARIO & ACTIVIDAD
 ═══════════════════════════════════ -->
-<div class="card table-card">
-  <div class="card-header d-flex justify-content-between align-items-center">
-    <span class="card-title"><i class="bi bi-boxes"></i> Inventario — últimas herramientas</span>
-    <a href="{% url 'inventario:inventario' %}" class="btn-ghost">Ver inventario completo</a>
-  </div>
-  <div class="card-body p-0">
-    <div class="table-responsive">
-      <table class="table table-app mb-0 datatable-disabled">
-        <thead>
-          <tr>
-            <th>SKU</th>
-            <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Stock</th>
-            <th>Actualizado</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for prod in productos_recientes %}
-          <tr>
-            <td class="extracted-style-224">
-              {{ prod.codigo_sku }}
-            </td>
-            <td>
-              <strong>{{ prod.nombre }}</strong>
-              {% if prod.descripcion %}
-              <br><small class="extracted-style-226">{{ prod.descripcion|truncatechars:50 }}</small>
-              {% endif %}
-            </td>
-            <td>
-              {% if prod.categoria %}
-                <span class="badge-state badge-pendiente">{{ prod.categoria.nombre }}</span>
-              {% else %}
-                <span class="extracted-style-236">—</span>
-              {% endif %}
-            </td>
-            <td>
-              <span class="{% if prod.stock == 0 %}stock-rust{% elif prod.stock < 3 %}stock-warning{% else %}stock-sage{% endif %} extracted-style-237">
-                {{ prod.stock }}
-              </span>
-            </td>
-            <td class="extracted-style-224">
-              {{ prod.actualizado_en|date:"d M Y" }}
-            </td>
-            <td>
-              <button class="btn-ghost btn-ver-producto-home"
-                      data-sku="{{ prod.codigo_sku|escapejs }}"
-                      data-nombre="{{ prod.nombre|escapejs }}"
-                      data-descripcion="{% if prod.descripcion %}{{ prod.descripcion|escapejs }}{% endif %}"
-                      data-stock="{{ prod.stock }}"
-                      data-categoria="{% if prod.categoria %}{{ prod.categoria.nombre|escapejs }}{% endif %}">
-                Ver
-              </button>
-            </td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="6" class="text-center py-4 extracted-style-226">
-              No hay productos registrados.
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+<div class="row g-3 mb-4">
+
+  <!-- GRÁFICA 3: SALUD DE INVENTARIO -->
+  <div class="col-lg-5">
+    <div class="card h-100">
+      <div class="card-header">
+        <span class="card-title"><i class="bi bi-heart-pulse-fill me-2 text-danger"></i>Estado de Disponibilidad</span>
+      </div>
+      <div class="card-body">
+        <div class="chart-container">
+          <canvas id="chartSalud"></canvas>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- PANEL DE ACTIVIDAD RECIENTE Y ACCESOS RÁPIDOS -->
+  <div class="col-lg-7">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="card-title"><i class="bi bi-activity me-2 text-warning"></i>Últimas Devoluciones y Accesos</span>
+        <a href="{% url 'devoluciones' %}" class="btn-ghost text-decoration-none">Ver todas</a>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <!-- Feed de Devoluciones Recientes -->
+          <div class="col-md-7">
+            <h6 class="text-muted small fw-bold mb-3 text-uppercase">Devoluciones Recientes</h6>
+            {% for d in devoluciones_recientes %}
+            <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded border recent-dev-row">
+              <div>
+                <div class="fw-semibold text-truncate small recent-dev-title">
+                  Préstamo #{{ d.prestamo.id }} — {{ d.prestamo.usuario }}
+                </div>
+                <div class="text-muted" style="font-size: 0.75rem;">
+                  <i class="bi bi-calendar-event me-1"></i>{{ d.fecha|date:"d M Y" }}
+                </div>
+              </div>
+              <span class="badge-state 
+                {% if d.estado == 'pendiente' %}badge-pendiente
+                {% elif d.estado == 'aprobada' %}badge-aprobada
+                {% else %}badge-rechazada{% endif %}">
+                {{ d.get_estado_display }}
+              </span>
+            </div>
+            {% empty %}
+            <div class="text-center py-4 text-muted small">
+              <i class="bi bi-inbox fs-3 d-block mb-1"></i>
+              Sin devoluciones recientes.
+            </div>
+            {% endfor %}
+          </div>
+
+          <!-- Accesos Rápidos Directos -->
+          <div class="col-md-5 d-flex flex-column gap-2 justify-content-center">
+            <h6 class="text-muted small fw-bold mb-2 text-uppercase">Accesos Rápidos</h6>
+
+            <a href="{% url 'inventario:inventario' %}" class="quick-action-link">
+              <div class="quick-action-icon" style="background: rgba(91,141,238,0.15); color: #2563eb;">
+                <i class="bi bi-boxes"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="fw-semibold small">Gestión Inventario</div>
+                <div class="text-muted" style="font-size: 0.72rem;">Catálogo & Stock</div>
+              </div>
+              <i class="bi bi-chevron-right text-muted small"></i>
+            </a>
+
+            <a href="{% url 'prestamo' %}" class="quick-action-link">
+              <div class="quick-action-icon" style="background: rgba(16,185,129,0.15); color: #059669;">
+                <i class="bi bi-clipboard-check"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="fw-semibold small">Gestión Préstamos</div>
+                <div class="text-muted" style="font-size: 0.72rem;">Registros y entregas</div>
+              </div>
+              <i class="bi bi-chevron-right text-muted small"></i>
+            </a>
+
+            <a href="{% url 'devoluciones' %}" class="quick-action-link">
+              <div class="quick-action-icon" style="background: rgba(245,158,11,0.15); color: #d97706;">
+                <i class="bi bi-arrow-return-left"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="fw-semibold small">Devoluciones</div>
+                <div class="text-muted" style="font-size: 0.72rem;">Recepción de equipos</div>
+              </div>
+              <i class="bi bi-chevron-right text-muted small"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
-<!-- ── MODAL: Ver Producto (solo lectura) ── -->
-<div class="modal fade" id="modalVerProducto" tabindex="-1"
-     aria-labelledby="modalVerProductoLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalVerProductoLabel">
-          <i class="bi bi-box me-2"></i>Detalle de Herramienta
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body p-0">
-        <table class="table table-app mb-0 datatable-disabled">
-          <tbody>
-            <tr>
-              <th class="extracted-style-238">SKU</th>
-              <td class="extracted-style-225" id="vpd-sku">—</td>
-            </tr>
-            <tr>
-              <th class="extracted-style-239">Nombre</th>
-              <td id="vpd-nombre">—</td>
-            </tr>
-            <tr>
-              <th class="extracted-style-239">Categoría</th>
-              <td id="vpd-cat">—</td>
-            </tr>
-            <tr>
-              <th class="extracted-style-239">Stock</th>
-              <td class="extracted-style-237" id="vpd-stock">—</td>
-            </tr>
-            <tr>
-              <th class="extracted-style-239">Descripción</th>
-              <td id="vpd-desc">—</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-outline-mine" data-bs-dismiss="modal">Cerrar</button>
-        <a id="vpd-link" href="{% url 'inventario:inventario' %}" class="btn-primary-mine">
-          <i class="bi bi-pencil"></i> Ver en inventario
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- Data scripts JSON para Chart.js -->
+<script id="chart-prestamos-data" type="application/json">{{ chart_prestamos_json|safe }}</script>
+<script id="chart-categorias-data" type="application/json">{{ chart_categorias_json|safe }}</script>
+<script id="chart-salud-data" type="application/json">{{ chart_salud_json|safe }}</script>
 
 {% endblock content %}
 
 {% block js %}
-<script defer src="{% static 'js/pagina_principal.js' %}?v=3"></script>
+<!-- CDN Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script defer src="{% static 'js/pagina_principal.js' %}?v=6"></script>
 <script>
-  // ── Inicializar barras de stock de categorías ──
-  function initCategoryBars() {
-    document.querySelectorAll('.category-stock-bar').forEach(function (bar) {
-      var w = bar.getAttribute('data-width') || '0';
-      bar.style.width = w + '%';
-    });
-  }
-
-  // ── Evento botón ver producto ──
-  function initVerProductos() {
-    document.querySelectorAll('.btn-ver-producto-home').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var sku = btn.getAttribute('data-sku') || '';
-        var nombre = btn.getAttribute('data-nombre') || '';
-        var desc = btn.getAttribute('data-descripcion') || '';
-        var stock = parseInt(btn.getAttribute('data-stock')) || 0;
-        var cat = btn.getAttribute('data-categoria') || '';
-        verProducto(sku, nombre, desc, stock, cat);
-      });
-    });
-  }
-
-  // ── Animación KPI ──
+  // ── Animación de números KPI ──
   function initKpis() {
     function animarContador(el, target, duracion) {
       var inicio = performance.now();
@@ -416,20 +371,14 @@
         card.querySelectorAll('.kpi-number').forEach(function (num) {
           animarContador(num, parseInt(num.getAttribute('data-target')) || 0, 950);
         });
-      }, delay + 150);
+      }, delay + 100);
     });
   }
 
-  function initAll() {
-    initCategoryBars();
-    initVerProductos();
-    initKpis();
-  }
-
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAll);
+    document.addEventListener('DOMContentLoaded', initKpis);
   } else {
-    initAll();
+    initKpis();
   }
 </script>
 {% endblock js %}

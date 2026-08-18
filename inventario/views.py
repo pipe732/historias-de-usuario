@@ -50,12 +50,12 @@ def inventario(request):
                     cat_instancia = Categoria.objects.get(pk=post_categoria)
 
                 Producto.objects.create(
-                    codigo_sku=post_sku,
-                    nombre=post_nombre,
+                    codigo_SKU=post_sku,
+                    nombre_herramienta=post_nombre,
                     descripcion=post_descripcion,
-                    stock=stock_value,
-                    categoria=cat_instancia,
-                    disponible=True
+                    disponibilidad='Disponible' if stock_value > 0 else 'No disponible',
+                    codigo_categoria=cat_instancia,
+                    fecha_ingreso=timezone.now().date(),
                 )
                 messages.success(request, f"Herramienta '{post_nombre}' registrada con éxito.")
                 return redirect("inventario:inventario")
@@ -75,24 +75,24 @@ def inventario(request):
             producto_id = request.POST.get("producto_id")
             prod = get_object_or_404(Producto, pk=producto_id)
             
-            prod.codigo_sku = request.POST.get("codigo_sku", "").strip()
-            prod.nombre = request.POST.get("nombre", "").strip()
+            prod.codigo_SKU = request.POST.get("codigo_sku", "").strip()
+            prod.nombre_herramienta = request.POST.get("nombre", "").strip()
             prod.descripcion = request.POST.get("descripcion", "").strip()
             
             try:
                 stock_value = int(request.POST.get("stock", prod.stock))
                 if stock_value < 0:
                     raise ValueError
-                prod.stock = stock_value
+                prod.disponibilidad = 'Disponible' if stock_value > 0 else 'No disponible'
             except ValueError:
                 messages.error(request, "El stock debe ser un número entero mayor o igual a 0.")
                 return redirect("inventario:inventario")
 
             cat_id = request.POST.get("categoria")
             if cat_id:
-                prod.categoria = Categoria.objects.get(pk=cat_id)
+                prod.codigo_categoria = Categoria.objects.get(pk=cat_id)
             else:
-                prod.categoria = None
+                prod.codigo_categoria = None
                 
             try:
                 prod.save()
@@ -112,7 +112,6 @@ def inventario(request):
             return redirect("inventario:inventario")
 
         # ── CATEGORIA: crear rápida ──
-       # ── CATEGORIA: crear rápida ──
         elif accion == "crear_categoria":
             post_cat_nombre = request.POST.get("cat_nombre", "").strip()
             post_cat_descripcion = request.POST.get("cat_descripcion", "").strip()
@@ -124,7 +123,7 @@ def inventario(request):
             post_stock = request.POST.get("stock", "1").strip() or "1"
 
             try:
-                nueva_cat = Categoria.objects.create(nombre=post_cat_nombre, descripcion=post_cat_descripcion)
+                nueva_cat = Categoria.objects.create(nombre_categoria=post_cat_nombre, descripcion=post_cat_descripcion)
                 messages.success(request, f"Categoría '{post_cat_nombre}' creada correctamente.")
                 
                 # Si el usuario vino desde el modal de producto, guardamos su ID para preseleccionarla
@@ -161,11 +160,11 @@ def inventario(request):
         mant_form = MantenimientoForm()
         mant_modal_errors = False
 
-  # KPIs adaptados a la lógica unitaria
+    # KPIs adaptados a la lógica unitaria
     total_productos = productos.count()
-    total_stock = productos.aggregate(s=Sum("stock"))["s"] or 0
-    sin_stock = productos.filter(stock=0).count()
-    stock_bajo = productos.filter(stock__lte=5, stock__gt=0).count()
+    total_stock = total_productos
+    sin_stock = productos.filter(disponibilidad='No disponible').count()
+    stock_bajo = 0
     
     # ── CONTROL DE REAPERTURA: Validación de categoría rápida ──
     # Si la sesión tiene la bandera, forzamos a True para que el script del HTML abra el modal de herramientas
@@ -198,7 +197,7 @@ def inventario(request):
         "kpi_total_stock": total_stock,
         "kpi_sin_stock": sin_stock,
         "kpi_stock_bajo": stock_bajo,
-        "kardex_list": MovimientoKardex.objects.select_related("producto").all()[:100],
+        "kardex_list": MovimientoKardex.objects.select_related("codigo_herramienta").all()[:100],
     }
 
     return render(request, "inventario.html", context)
@@ -215,7 +214,7 @@ def lista_inventario_detalle(request):
 
     """Vista de los registros de Inventario (estantes/cantidades), separada de Producto."""
 
-    registros = Inventario.objects.select_related("producto").all()
+    registros = Inventario.objects.select_related("num_estante").all()
 
     if request.method == "POST":
         form = InventarioForm(request.POST)
@@ -241,7 +240,7 @@ def lista_inventario_detalle(request):
 
 @sesion_requerida
 def lista_movimientos(request):
-    movimientos = Movimientos.objects.select_related("inventario", "proveedor").all().order_by("-fecha_movimiento")
+    movimientos = Movimientos.objects.select_related("codigo_inventario").all().order_by("-fecha_movimiento")
 
     if request.method == "POST":
         form = MovimientosForm(request.POST)
