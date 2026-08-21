@@ -108,7 +108,7 @@ def aprobar_prestamo_view(request, pk):
                         item.save(update_fields=['serial_entregado'])
 
                     item.producto.stock -= item.cantidad
-                    item.producto.save(update_fields=['stock', 'actualizado_en'])
+                    item.producto.save(update_fields=['stock_real', 'disponibilidad'])
 
                 fv = request.POST.get('fecha_vencimiento', '').strip()
                 try:
@@ -117,7 +117,7 @@ def aprobar_prestamo_view(request, pk):
                     prestamo.fecha_vencimiento = None
 
                 prestamo.estado = 'activo'
-                prestamo.save(update_fields=['estado', 'fecha_actualizacion', 'fecha_vencimiento'])
+                prestamo.save(update_fields=['estado'])
 
                 messages.success(
                     request,
@@ -132,7 +132,7 @@ def aprobar_prestamo_view(request, pk):
             else:
                 prestamo.motivo_rechazo = motivo_rechazo
                 prestamo.estado = 'rechazado'
-                prestamo.save(update_fields=['estado', 'motivo_rechazo', 'fecha_actualizacion'])
+                prestamo.save(update_fields=['estado'])
                 messages.warning(request, f'Solicitud #{prestamo.pk} rechazada.')
                 return redirect('prestamo')
 
@@ -185,7 +185,7 @@ def prestamos_view(request):
 
                     stock_ant = item.producto.stock
                     item.producto.stock -= item.cantidad
-                    item.producto.save(update_fields=['stock', 'actualizado_en'])
+                    item.producto.save(update_fields=['stock_real', 'disponibilidad'])
 
                     try:
                         MovimientoKardex.objects.create(
@@ -207,7 +207,7 @@ def prestamos_view(request):
                     prestamo.fecha_vencimiento = None
 
                 prestamo.estado = 'activo'
-                prestamo.save(update_fields=['estado', 'fecha_actualizacion', 'fecha_vencimiento'])
+                prestamo.save(update_fields=['estado'])
 
                 messages.success(
                     request,
@@ -227,7 +227,7 @@ def prestamos_view(request):
             motivo_rechazo = request.POST.get('motivo_rechazo', '').strip()
             prestamo.motivo_rechazo = motivo_rechazo
             prestamo.estado = 'rechazado'
-            prestamo.save(update_fields=['estado', 'motivo_rechazo', 'fecha_actualizacion'])
+            prestamo.save(update_fields=['estado'])
             messages.warning(request, f'Solicitud #{prestamo.pk} rechazada.')
             return redirect('prestamo')
 
@@ -353,12 +353,10 @@ def prestamos_view(request):
                         for e in errores:
                             form.add_error(None, e)
                     else:
-                        # Usamos una transacción atómica para que todo se guarde junto y sea seguro
                         from django.db import transaction
-                        
                         with transaction.atomic():
                             prestamo = form.save(commit=False)
-                            prestamo.estado = 'activo'
+                            prestamo.estado = 'pendiente'
                             prestamo.save()
 
                             # Guardado en lote (Bulk Create) para los ítems del préstamo
@@ -371,13 +369,10 @@ def prestamos_view(request):
                                         cantidad=cantidad
                                     )
                                 )
-                                if producto.stock <= cantidad:
-                                    producto.disponibilidad = 'No disponible'
-                                    producto.save(update_fields=['disponibilidad'])
                             
                             ItemPrestamo.objects.bulk_create(items_a_crear)
 
-                        messages.success(request, 'Préstamo registrado exitosamente.')
+                        messages.success(request, 'Préstamo solicitado exitosamente (pendiente de aprobación).')
                         return redirect('prestamo')
     else:
         form = PrestamoForm()
@@ -598,7 +593,7 @@ def actualizar_observacion_prestamo(request, pk):
     prestamo = get_object_or_404(Prestamo, pk=pk)
     observaciones = request.POST.get('observaciones', '').strip()
     prestamo.observaciones = observaciones
-    prestamo.save(update_fields=['observaciones', 'fecha_actualizacion'])
+    prestamo.save(update_fields=['observaciones'])
     return JsonResponse({'ok': True, 'observaciones': prestamo.observaciones})
 
 

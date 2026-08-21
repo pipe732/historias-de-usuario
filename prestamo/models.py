@@ -32,6 +32,14 @@ class Prestamo(models.Model):
         self.documento = val
 
     @property
+    def nombre_usuario(self):
+        return self.documento.nombre_completo if self.documento else ''
+
+    @nombre_usuario.setter
+    def nombre_usuario(self, val):
+        pass
+
+    @property
     def usuario_id(self):
         return self.documento_id
 
