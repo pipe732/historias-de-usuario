@@ -230,13 +230,6 @@ def lista_inventario_detalle(request):
 
     return render(request, "inventario_detalle.html", {"registros": registros, "form": form})
 
-    context = {
-        "registros": registros,
-        "form": form,
-    }
-    return render(request, "inventario_detalle.html", context)
-
-
 
 @sesion_requerida
 def lista_movimientos(request):
@@ -252,11 +245,7 @@ def lista_movimientos(request):
                 inv.cantidad += movimiento.cantidad
             elif movimiento.tipo_de_movimiento == "salida":
                 if movimiento.cantidad > inv.cantidad:
-
-                    messages.error(request, "No hay suficiente stock.")
-
                     messages.error(request, "No hay suficiente stock en este inventario para esa salida.")
-
                     movimiento.delete()
                     return redirect("inventario:lista_movimientos")
                 inv.cantidad -= movimiento.cantidad
@@ -272,13 +261,6 @@ def lista_movimientos(request):
 
 
     return render(request, "movimientos.html", {"movimientos": movimientos, "form": form})
-
-    context = {
-        "movimientos": movimientos,
-        "form": form,
-    }
-    return render(request, "movimientos.html", context)
-
 
 
 @sesion_requerida
@@ -308,10 +290,4 @@ def mostrar_producto(request):
     )
 
     return HttpResponse(producto.nombre)
-
-    context = {
-        "proveedores": proveedores,
-        "form": form,
-    }
-    return render(request, "proveedores.html", context)
 

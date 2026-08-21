@@ -84,16 +84,19 @@ class Herramienta(models.Model):
     def disponible(self, val):
         self.disponibilidad = 'Disponible' if val else 'No disponible'
 
+    stock_real = models.IntegerField(default=1, db_column='stock', verbose_name="Stock")
+
     @property
     def stock(self):
-        return 1 if (self.disponibilidad or 'Disponible').lower() == 'disponible' else 0
+        return self.stock_real
 
     @stock.setter
     def stock(self, val):
-        if isinstance(val, (int, float)):
-            self.disponibilidad = 'Disponible' if val > 0 else 'No disponible'
-        else:
-            self.disponibilidad = 'Disponible' if val else 'No disponible'
+        try:
+            self.stock_real = int(val)
+        except (ValueError, TypeError):
+            self.stock_real = 0
+        self.disponibilidad = 'Disponible' if self.stock_real > 0 else 'No disponible'
 
     def __str__(self):
         sku = f"[{self.codigo_SKU}] " if self.codigo_SKU else ""
