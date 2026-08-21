@@ -143,28 +143,44 @@ def devoluciones_view(request):
                     messages.error(request, e)
             else:
                 prestamo = get_object_or_404(Prestamo, pk=prestamo_id)
+                from usuario.models import Usuario
+                from django.db import transaction
+                doc = request.session.get('usuario_documento')
+                usuario_admin = Usuario.objects.get(documento=doc)
+                
                 est_eq = request.POST.get("estado_equipo", "excelente").strip()
-                devolucion = Devolucion.objects.create(
-                    prestamo=prestamo,
-                    motivo=motivo,
-                    devolucion_total=devolucion_total,
-                    estado="aprobada",
-                    estado_equipo=est_eq,
-                )
-                items = ItemPrestamo.objects.filter(pk__in=items_ids, prestamo=prestamo)
-                devolucion.items.set(items)
-
-                # Recoger cantidades parciales por ítem
-                cantidades = {}
-                for item in items:
-                    key = f"cantidad_{item.pk}"
-                    try:
-                        cant = int(request.POST.get(key, item.cantidad))
-                        cantidades[item.pk] = max(1, min(cant, item.cantidad))
-                    except (ValueError, TypeError):
-                        cantidades[item.pk] = item.cantidad
-
-                devolucion.aplicar(cantidades=cantidades)
+                
+                with transaction.atomic():
+                    devolucion = Devolucion.objects.create(
+                        codigo_prestamo=prestamo,
+                        observaciones=f"Motivo: {motivo} | Estado: {est_eq}".strip(),
+                        codigo_recibe=usuario_admin,
+                    )
+                    
+                    items = ItemPrestamo.objects.filter(pk__in=items_ids, codigo_prestamo=prestamo)
+                    for item in items:
+                        key = f"cantidad_{item.pk}"
+                        try:
+                            cant = int(request.POST.get(key, item.cantidad))
+                            cant = max(1, min(cant, item.cantidad))
+                        except (ValueError, TypeError):
+                            cant = item.cantidad
+                            
+                        item.producto.stock += cant
+                        item.producto.save(update_fields=['stock_real', 'disponibilidad'])
+                        
+                        item.cantidad -= cant
+                        if item.cantidad <= 0:
+                            item.delete()
+                        else:
+                            item.save()
+                    
+                    if not prestamo.items.exists():
+                        prestamo.estado = 'devuelto'
+                    else:
+                        prestamo.estado = 'parcial'
+                    prestamo.save(update_fields=['estado'])
+                
                 messages.success(request, "Devolución registrada exitosamente.")
                 return redirect("devoluciones")
 

@@ -29,7 +29,7 @@ def revertir_al_eliminar(sender, instance, **kwargs):
     if getattr(instance, '_aplicada', False):
         for item in instance.items.select_related('codigo_herramienta'):
             item.producto.stock = max(0, item.producto.stock - item.cantidad)
-            item.producto.save(update_fields=['stock', 'actualizado_en'])
+            item.producto.save(update_fields=['stock_real', 'disponibilidad'])
             item.devuelto = False
             item.save(update_fields=['devuelto'])
 
