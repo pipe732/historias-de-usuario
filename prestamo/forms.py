@@ -7,12 +7,10 @@ class PrestamoForm(forms.ModelForm):
 
     class Meta:
         model = Prestamo
-        fields = ['documento', 'observaciones', 'fecha', 'estado']
+        fields = ['documento', 'observaciones']
         labels = {
             'documento': 'Usuario responsable',
             'observaciones': 'Observaciones',
-            'fecha': 'Fecha de préstamo',
-            'estado': 'Estado',
         }
         widgets = {
             'documento': forms.Select(attrs={'class': 'form-select'}),

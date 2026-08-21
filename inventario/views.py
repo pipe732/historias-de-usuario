@@ -53,6 +53,7 @@ def inventario(request):
                     codigo_SKU=post_sku,
                     nombre_herramienta=post_nombre,
                     descripcion=post_descripcion,
+                    stock_real=stock_value,
                     disponibilidad='Disponible' if stock_value > 0 else 'No disponible',
                     codigo_categoria=cat_instancia,
                     fecha_ingreso=timezone.now().date(),
@@ -83,6 +84,7 @@ def inventario(request):
                 stock_value = int(request.POST.get("stock", prod.stock))
                 if stock_value < 0:
                     raise ValueError
+                prod.stock_real = stock_value
                 prod.disponibilidad = 'Disponible' if stock_value > 0 else 'No disponible'
             except ValueError:
                 messages.error(request, "El stock debe ser un número entero mayor o igual a 0.")
