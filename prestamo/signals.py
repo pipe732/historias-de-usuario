@@ -132,6 +132,5 @@ def auto_marcar_vencido(sender, instance, created, update_fields, **kwargs):
         and timezone.localdate() > fecha_venc
     ):
         Prestamo.objects.filter(pk=instance.pk).update(
-            estado='vencido',
-            fecha_actualizacion=timezone.now(),
+            estado='vencido'
         )

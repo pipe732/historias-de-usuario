@@ -694,6 +694,23 @@
     new bootstrap.Modal(modalEl, { backdrop: 'static' }).show();
   }
 
+  function abrirEditar(id, sku, nombre, descripcion, stock, categoria) {
+    document.getElementById('edit_producto_id').value = id;
+    document.getElementById('edit_sku').value = sku;
+    document.getElementById('edit_nombre').value = nombre;
+    document.getElementById('edit_descripcion').value = descripcion;
+    document.getElementById('edit_stock').value = stock;
+    
+    let catSelect = document.getElementById('edit_categoria');
+    if (categoria && categoria !== 'None' && categoria !== '') {
+      catSelect.value = categoria;
+    } else {
+      catSelect.value = "";
+    }
+    
+    new bootstrap.Modal(document.getElementById('modalEditarHerramienta'), { backdrop: 'static' }).show();
+  }
+
   // Flujo puente: Abrir categoría desde el modal de producto conservando datos
   function abrirCategoriaDesdeProducto() {
     // Cerramos el modal de herramientas temporalmente
