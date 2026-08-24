@@ -2,6 +2,14 @@
 {% load static %}
 
 {% block css %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+<style>
+  /* Ensure Select2 fills the container */
+  .select2-container {
+    width: 100% !important;
+  }
+</style>
 {% endblock css %}
 
 {% block content %}
@@ -479,18 +487,18 @@
               <input type="text" name="nombre" class="form-control" placeholder="Nombre de la herramienta" value="{{ post_nombre }}" required>
             </div>
             <div class="col-md-6">
-              <label class="form-label text-muted fw-bold small uppercase mb-1">Categoría</label>
-              <div class="input-group">
-                <select name="categoria" class="form-select">
-                  <option value="">-- Sin Categoría --</option>
-                  {% for cat in categorias %}
-                  <option value="{{ cat.pk }}" {% if post_categoria|slugify == cat.pk|slugify %}selected{% endif %}>{{ cat.nombre }}</option>
-                  {% endfor %}
-                </select>
-                <button type="button" class="btn btn-outline-success" onclick="abrirCategoriaDesdeProducto();" title="Crear categoría instantánea">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label text-muted fw-bold small uppercase mb-0">Categoría</label>
+                <button type="button" class="btn btn-sm btn-outline-success py-0 px-2" onclick="abrirCategoriaDesdeProducto();" title="Crear categoría instantánea">
                   <i class="bi bi-plus-lg"></i>
                 </button>
               </div>
+              <select name="categoria" class="form-select" id="select-categoria-nueva">
+                <option value="">-- Sin Categoría --</option>
+                {% for cat in categorias %}
+                <option value="{{ cat.pk }}" {% if post_categoria|slugify == cat.pk|slugify %}selected{% endif %}>{{ cat.nombre }}</option>
+                {% endfor %}
+              </select>
             </div>
             <div class="col-md-6">
               <label class="form-label text-muted fw-bold small uppercase mb-1">Stock / Cantidad inicial</label>
@@ -691,7 +699,8 @@
     document.getElementById('mantProductoId').value = id;
     document.getElementById('mantTextDisplay').innerText = '[' + sku + '] ' + nombre;
 
-    new bootstrap.Modal(modalEl, { backdrop: 'static' }).show();
+    var modalInst = bootstrap.Modal.getOrCreateInstance(modalEl, { backdrop: 'static' });
+    modalInst.show();
   }
 
   function abrirEditar(id, sku, nombre, descripcion, stock, categoria) {
@@ -708,7 +717,8 @@
       catSelect.value = "";
     }
     
-    new bootstrap.Modal(document.getElementById('modalEditarHerramienta'), { backdrop: 'static' }).show();
+    var modalEdit = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEditarHerramienta'), { backdrop: 'static' });
+    modalEdit.show();
   }
 
   // Flujo puente: Abrir categoría desde el modal de producto conservando datos
@@ -726,17 +736,18 @@
     formCat.querySelector('input[name="stock"]').value = modalProdElement.querySelector('input[name="stock"]').value;
 
     // Abrimos el modal de categoría
-    var modalCat = new bootstrap.Modal(document.getElementById('modalNuevaCategoria'));
+    var modalCat = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevaCategoria'));
     modalCat.show();
   }
 
 // Control de Reapertura automática mediante banderas del backend
   document.addEventListener("DOMContentLoaded", function() {
     {% if form_modal_errors or request.session.abrir_modal_producto %}
-      var modalProd = new bootstrap.Modal(document.getElementById('modalNuevaHerramienta'));
+      // Usamos getOrCreateInstance para evitar crear múltiples instancias del mismo modal y bugs visuales
+      var modalProd = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevaHerramienta'));
       modalProd.show();
     {% elif modal_categoria_errors %}
-      var modalCat = new bootstrap.Modal(document.getElementById('modalNuevaCategoria'));
+      var modalCat = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevaCategoria'));
       modalCat.show();
     {% endif %}
   });
@@ -808,7 +819,36 @@
 {% endblock %}
 
 {% block js %}
-<script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script defer src="{% static 'js/datatables.min.js' %}?v=3"></script>
 <script defer src="{% static 'js/tables/inventario_table.js' %}?v=3"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      $('#select-categoria-nueva').select2({
+          theme: 'bootstrap-5',
+          dropdownParent: $('#modalNuevaHerramienta'),
+          placeholder: '-- Sin Categoría --',
+          allowClear: true,
+          width: '100%',
+          language: {
+            noResults: function() {
+              return "No se encontraron resultados";
+            }
+          }
+      });
+      
+      $('#edit_categoria').select2({
+          theme: 'bootstrap-5',
+          dropdownParent: $('#modalEditarHerramienta'),
+          placeholder: '-- Sin Categoría --',
+          allowClear: true,
+          width: '100%',
+          language: {
+            noResults: function() {
+              return "No se encontraron resultados";
+            }
+          }
+      });
+  });
+</script>
 {% endblock js %}
